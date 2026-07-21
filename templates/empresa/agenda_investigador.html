@@ -1,0 +1,107 @@
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}Minha Agenda | FALAE{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>👤 Minha Agenda</h1>
+    <p>Casos sob sua responsabilidade.</p>
+</div>
+
+<div class="metric-grid">
+
+    <div class="card card-metric metric-danger">
+        <span class="metric-label">Críticas</span>
+        <div class="metric-value">{{ indicadores.criticas }}</div>
+    </div>
+
+    <div class="card card-metric metric-primary">
+        <span class="metric-label">Em andamento</span>
+        <div class="metric-value">{{ indicadores.abertas }}</div>
+    </div>
+
+    <div class="card card-metric metric-warning">
+        <span class="metric-label">Vencidas</span>
+        <div class="metric-value">{{ indicadores.vencidas }}</div>
+    </div>
+
+    <div class="card card-metric metric-success">
+        <span class="metric-label">Concluídas no mês</span>
+        <div class="metric-value">{{ indicadores.concluidas }}</div>
+    </div>
+
+</div>
+
+<div class="card">
+
+    <h2>📋 Minhas Investigações</h2>
+
+    {% if minhas_denuncias %}
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>Protocolo</th>
+                <th>Categoria</th>
+                <th>Criticidade</th>
+                <th>Etapa</th>
+                <th>SLA</th>
+                <th>Unidade</th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+        {% for denuncia in minhas_denuncias %}
+
+            <tr>
+
+                <td>{{ denuncia.protocolo }}</td>
+
+                <td>{{ denuncia.categoria or denuncia.tipo }}</td>
+
+                <td>{{ denuncia.criticidade }}</td>
+
+                <td>{{ denuncia.etapa_atual }}</td>
+
+                <td>
+                    <span class="badge badge-{{ denuncia.sla.classe }}">
+                        {{ denuncia.sla.icone }}
+                        {{ denuncia.sla.texto }}
+                    </span>
+                </td>
+
+                <td>{{ denuncia.unidade }}</td>
+
+                <td>
+
+                    <a
+                        class="btn"
+                        href="{{ url_for('denuncia.empresa_denuncia_detalhe', denuncia_id=denuncia.id) }}">
+
+                        Abrir
+
+                    </a>
+
+                </td>
+
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    {% else %}
+
+        <p>Você não possui investigações atribuídas.</p>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

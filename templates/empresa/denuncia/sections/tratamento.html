@@ -1,0 +1,69 @@
+<section class="denuncia-tab-panel {% if denuncia.etapa_atual == 'TRATAMENTO' %}ativo{% endif %}"
+         data-denuncia-panel="tratamento">
+    <div class="card">
+        <div class="triagem-header">
+            <div>
+                <h2>⚖️ Tratamento da Denúncia</h2>
+                <p>Defina os fundamentos, responsáveis e medidas decorrentes do parecer técnico.</p>
+            </div>
+            <span class="triagem-status {% if denuncia.etapa_atual == 'TRATAMENTO' %}pendente{% else %}concluida{% endif %}">
+                {% if denuncia.etapa_atual == 'TRATAMENTO' %}Em tratamento{% else %}Etapa registrada{% endif %}
+            </span>
+        </div>
+
+        <form method="POST" action="/empresa/denuncia/{{ denuncia.id }}/atualizar" class="form-card">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Criticidade</label>
+                    <select name="criticidade">
+                        <option value="">Não informada</option>
+                        <option value="Alta" {% if denuncia.criticidade == 'Alta' %}selected{% endif %}>Alta</option>
+                        <option value="Média" {% if denuncia.criticidade in ['Média', 'Media'] %}selected{% endif %}>Média</option>
+                        <option value="Baixa" {% if denuncia.criticidade == 'Baixa' %}selected{% endif %}>Baixa</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Status operacional</label>
+                    <select name="status" required>
+                        <option value="EM_ANALISE" {% if denuncia.status == 'EM_ANALISE' %}selected{% endif %}>Em análise</option>
+                        <option value="ARQUIVADA" {% if denuncia.status == 'ARQUIVADA' %}selected{% endif %}>Arquivada</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Fundamentação e encaminhamento interno</label>
+                <textarea name="observacao_interna" rows="8"
+                          placeholder="Registre a base jurídica, norma interna aplicável, áreas envolvidas, medidas administrativas e encaminhamentos necessários.">{{ denuncia.observacao_interna or '' }}</textarea>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit">💾 Salvar Tratamento</button>
+            </div>
+        </form>
+    </div>
+
+    {% if denuncia.etapa_atual == 'TRATAMENTO' and denuncia.status not in ['CONCLUIDA', 'ARQUIVADA'] %}
+        <div class="card">
+            <div class="triagem-header">
+                <div>
+                    <h2>📋 Encaminhamento para Plano de Ação</h2>
+                    <p>Conclua o tratamento e registre o direcionamento que dará origem às ações corretivas.</p>
+                </div>
+            </div>
+
+            <form method="POST" action="/empresa/denuncia/{{ denuncia.id }}/avancar-etapa" class="form-card">
+                <div class="form-group">
+                    <label>Conclusão do tratamento *</label>
+                    <textarea name="observacao_workflow" rows="7" required
+                              placeholder="Informe a decisão adotada, áreas responsáveis, fundamentos considerados e medidas que deverão compor o plano de ação."></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit">➜ Avançar para Plano de Ação</button>
+                </div>
+            </form>
+        </div>
+    {% endif %}
+</section>

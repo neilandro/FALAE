@@ -1,0 +1,86 @@
+{% extends "layouts/admin_base.html" %}
+
+{% from "components/badges/status_badge.html" import status_badge %}
+
+{% block title %}Tratamento da Denúncia | FALAE{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/denuncia.css') }}">
+{% endblock %}
+
+{% block content %}
+
+{% include "empresa/denuncia/_cabecalho.html" %}
+{% include "empresa/denuncia/_stepper.html" %}
+
+<div class="denuncia-workspace">
+
+    <main class="denuncia-workspace-main">
+
+        {% include "empresa/denuncia/_navegacao.html" %}
+
+        {% include "empresa/denuncia/workflow/triagem.html" %}
+        {% include "empresa/denuncia/workflow/investigacao.html" %}
+        {% include "empresa/denuncia/workflow/evidencias.html" %}
+        {% include "empresa/denuncia/workflow/parecer.html" %}
+        {% include "empresa/denuncia/sections/tratamento.html" %}
+        {% include "empresa/denuncia/sections/planos_acao.html" %}
+        {% include "empresa/denuncia/workflow/validacao.html" %}
+        {% include "empresa/denuncia/workflow/encerramento.html" %}
+        {% include "empresa/denuncia/sections/historico.html" %}
+
+    </main>
+
+    <aside class="denuncia-workspace-sidebar">
+        {% include "empresa/denuncia/_resumo.html" %}
+        {% include "empresa/denuncia/_anexos.html" %}
+        {% include "empresa/denuncia/_timeline.html" %}
+    </aside>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function abrirAbaDenuncia(nomeAba) {
+    const botoes = document.querySelectorAll("[data-denuncia-tab]");
+    const paineis = document.querySelectorAll("[data-denuncia-panel]");
+
+    botoes.forEach(function (botao) {
+        const abaAtiva = botao.dataset.denunciaTab === nomeAba;
+        botao.classList.toggle("ativa", abaAtiva);
+        botao.setAttribute("aria-selected", abaAtiva ? "true" : "false");
+    });
+
+    paineis.forEach(function (painel) {
+        const painelAtivo = painel.dataset.denunciaPanel === nomeAba;
+        painel.classList.toggle("ativo", painelAtivo);
+        painel.hidden = !painelAtivo;
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    const botoes = document.querySelectorAll("[data-denuncia-tab]");
+    const painelAtivoServidor = document.querySelector("[data-denuncia-panel].ativo");
+
+    if (!botoes.length) {
+        console.error("FALAE: botões de navegação não encontrados.");
+        return;
+    }
+
+    botoes.forEach(function (botao) {
+        botao.addEventListener("click", function () {
+            abrirAbaDenuncia(botao.dataset.denunciaTab);
+        });
+    });
+
+    let abaInicial = "triagem";
+    if (painelAtivoServidor) {
+        abaInicial = painelAtivoServidor.dataset.denunciaPanel;
+    }
+
+    abrirAbaDenuncia(abaInicial);
+});
+</script>
+{% endblock %}

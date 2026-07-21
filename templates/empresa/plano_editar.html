@@ -1,0 +1,60 @@
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}Editar Plano de Ação | FALAE{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>🎯 Editar Plano de Ação</h1>
+    <p>Atualize os dados do plano de ação vinculado à investigação.</p>
+</div>
+
+<div class="card">
+    <div class="triagem-header">
+        <div>
+            <h2>Dados do Plano</h2>
+            <p>Altere responsável, prazo, status e descrição do plano.</p>
+        </div>
+    </div>
+
+    <form method="POST" class="form-card">
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Título *</label>
+                <input type="text" name="titulo" value="{{ plano.titulo }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Responsável</label>
+                <input type="text" name="responsavel" value="{{ plano.responsavel or '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>Prazo</label>
+                <input type="date" name="prazo" value="{{ plano.prazo or '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>Status</label>
+                <select name="status">
+                    <option value="PENDENTE" {% if plano.status == 'PENDENTE' %}selected{% endif %}>Pendente</option>
+                    <option value="EM_ANDAMENTO" {% if plano.status == 'EM_ANDAMENTO' %}selected{% endif %}>Em andamento</option>
+                    <option value="CONCLUIDA" {% if plano.status == 'CONCLUIDA' %}selected{% endif %}>Concluída</option>
+                    <option value="CANCELADA" {% if plano.status == 'CANCELADA' %}selected{% endif %}>Cancelada</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Descrição</label>
+            <textarea name="descricao" rows="5">{{ plano.descricao or '' }}</textarea>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit">💾 Salvar Alterações</button>
+            <a href="/empresa/denuncia/{{ plano.denuncia_id }}" class="btn-secundario">← Voltar</a>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

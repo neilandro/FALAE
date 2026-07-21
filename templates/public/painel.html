@@ -1,0 +1,59 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>Painel de Denúncias</h2>
+
+    <p>Usuário logado: {{ session.nome }}</p>
+    <p>Perfil: {{ session.perfil }}</p>
+
+    {% if session.perfil == 'SUPER_ADMIN' %}
+    <a href="/admin/empresas" class="btn">Gerenciar Empresas</a>
+    <a href="/admin/unidades" class="btn">Gerenciar Unidades</a>
+    <a href="/admin/setores" class="btn">Gerenciar Setores</a>
+    <a href="/admin/usuarios" class="btn">Gerenciar Usuários</a>
+    {% endif %}
+
+    {% if session.perfil == 'ADMIN_EMPRESA' %}
+    <a href="/empresa/centro-controle" class="btn">Centro de Controle</a>
+    <a href="/empresa/dashboard" class="btn">Dashboard</a>
+    <a href="/empresa/unidades" class="btn">Minhas Unidades</a>
+    <a href="/empresa/setores" class="btn">Meus Setores</a>
+    <a href="/empresa/usuarios" class="btn">Usuários da Empresa</a>
+    <a href="/empresa/denuncias" class="btn">Denúncias</a>
+    {% endif %}
+
+    {% if session.perfil == 'GESTOR' %}
+    <a href="/empresa/denuncias" class="btn">Denúncias</a>
+    {% endif %}
+
+    <a href="/logout" class="btn-secundario">Sair</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Empresa</th>
+                <th>Protocolo</th>
+                <th>Unidade</th>
+                <th>Setor</th>
+                <th>Tipo</th>
+                <th>Status</th>
+                <th>Data</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for denuncia in denuncias %}
+            <tr>
+                <td>{{ denuncia.empresa }}</td>
+                <td>{{ denuncia.protocolo }}</td>
+                <td>{{ denuncia.unidade }}</td>
+                <td>{{ denuncia.setor or 'Não informado' }}</td>
+                <td>{{ denuncia.tipo }}</td>
+                <td>{{ denuncia.status }}</td>
+                <td>{{ denuncia.criado_em }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

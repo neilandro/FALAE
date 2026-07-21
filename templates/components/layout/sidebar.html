@@ -1,0 +1,963 @@
+{# ==========================================================
+   FALAE Compliance Platform
+
+   Arquivo......: sidebar.html
+   Responsável..: Navegação lateral administrativa
+   Dependências.: sidebar.css e Lucide Icons
+
+   Regras de acesso, perfis e rotas preservadas.
+========================================================== #}
+
+{% set current_path = request.path %}
+
+<aside class="sidebar">
+
+    <div class="logo">
+
+        <div class="logo-icon" aria-hidden="true">
+            <i data-lucide="shield-check"></i>
+        </div>
+
+        <div class="logo-text">
+            <h2>FALAE</h2>
+            <span>Compliance Platform</span>
+        </div>
+
+    </div>
+
+
+    {# ======================================================
+       SUPER ADMIN
+    ====================================================== #}
+
+    {% if session.perfil == "SUPER_ADMIN" %}
+
+        <nav aria-label="Navegação principal">
+
+            <div class="menu-group">
+
+                <span class="menu-title">
+                    Plataforma
+                </span>
+
+                <a
+                    href="/admin/dashboard"
+                    class="{% if current_path == '/admin/dashboard' %}active{% endif %}"
+                    {% if current_path == "/admin/dashboard" %}
+                        aria-current="page"
+                    {% endif %}
+                >
+                    <span class="menu-icon" aria-hidden="true">
+                        <i data-lucide="layout-dashboard"></i>
+                    </span>
+
+                    <span class="menu-text">
+                        Dashboard
+                    </span>
+                </a>
+
+                <a
+                    href="/admin/assessorias"
+                    class="{% if current_path.startswith('/admin/assessorias') %}active{% endif %}"
+                    {% if current_path.startswith("/admin/assessorias") %}
+                        aria-current="page"
+                    {% endif %}
+                >
+                    <span class="menu-icon" aria-hidden="true">
+                        <i data-lucide="briefcase-business"></i>
+                    </span>
+
+                    <span class="menu-text">
+                        Assessorias
+                    </span>
+                </a>
+
+                <a
+                    href="/admin/empresas"
+                    class="{% if current_path.startswith('/admin/empresas') %}active{% endif %}"
+                    {% if current_path.startswith("/admin/empresas") %}
+                        aria-current="page"
+                    {% endif %}
+                >
+                    <span class="menu-icon" aria-hidden="true">
+                        <i data-lucide="building-2"></i>
+                    </span>
+
+                    <span class="menu-text">
+                        Empresas
+                    </span>
+                </a>
+
+                <a
+                    href="/admin/usuarios"
+                    class="{% if current_path.startswith('/admin/usuarios') %}active{% endif %}"
+                    {% if current_path.startswith("/admin/usuarios") %}
+                        aria-current="page"
+                    {% endif %}
+                >
+                    <span class="menu-icon" aria-hidden="true">
+                        <i data-lucide="users"></i>
+                    </span>
+
+                    <span class="menu-text">
+                        Usuários
+                    </span>
+                </a>
+
+            </div>
+
+
+            {% if session.empresa_ativa %}
+
+                <div class="menu-group">
+
+                    <span class="menu-title">
+                        Empresa ativa
+                    </span>
+
+                    <a
+                        href="/empresa/centro-controle"
+                        class="{% if current_path == '/empresa/centro-controle' %}active{% endif %}"
+                        {% if current_path == "/empresa/centro-controle" %}
+                            aria-current="page"
+                        {% endif %}
+                    >
+                        <span class="menu-icon" aria-hidden="true">
+                            <i data-lucide="gauge"></i>
+                        </span>
+
+                        <span class="menu-text">
+                            Centro de Controle
+                        </span>
+                    </a>
+
+                    <a
+                        href="/empresa/painel-operacional"
+                        class="{% if current_path == '/empresa/painel-operacional' %}active{% endif %}"
+                        {% if current_path == "/empresa/painel-operacional" %}
+                            aria-current="page"
+                        {% endif %}
+                    >
+                        <span class="menu-icon" aria-hidden="true">
+                            <i data-lucide="panels-top-left"></i>
+                        </span>
+
+                        <span class="menu-text">
+                            Painel Operacional
+                        </span>
+                    </a>
+
+                    <a
+                        href="/empresa/dashboard"
+                        class="{% if current_path == '/empresa/dashboard' %}active{% endif %}"
+                        {% if current_path == "/empresa/dashboard" %}
+                            aria-current="page"
+                        {% endif %}
+                    >
+                        <span class="menu-icon" aria-hidden="true">
+                            <i data-lucide="chart-no-axes-combined"></i>
+                        </span>
+
+                        <span class="menu-text">
+                            Indicadores
+                        </span>
+                    </a>
+
+                    <a
+                        href="/empresa/denuncias"
+                        class="{% if current_path.startswith('/empresa/denuncias') %}active{% endif %}"
+                        {% if current_path.startswith("/empresa/denuncias") %}
+                            aria-current="page"
+                        {% endif %}
+                    >
+                        <span class="menu-icon" aria-hidden="true">
+                            <i data-lucide="search-check"></i>
+                        </span>
+
+                        <span class="menu-text">
+                            Investigações
+                        </span>
+                    </a>
+
+                </div>
+
+
+                <div class="menu-group">
+
+                    <span class="menu-title">
+                        Gestão
+                    </span>
+
+                    <a
+                        href="{{ url_for('relatorios.relatorio_psicossocial') }}"
+                        class="{% if current_path.startswith('/empresa/relatorios') or current_path.startswith('/relatorios') %}active{% endif %}"
+                        {% if current_path.startswith("/empresa/relatorios") or current_path.startswith("/relatorios") %}
+                            aria-current="page"
+                        {% endif %}
+                    >
+                        <span class="menu-icon" aria-hidden="true">
+                            <i data-lucide="file-chart-column"></i>
+                        </span>
+
+                        <span class="menu-text">
+                            Relatório Técnico
+                        </span>
+                    </a>
+
+                </div>
+
+
+                <div class="menu-group">
+
+                    <span class="menu-title">
+                        Cadastros
+                    </span>
+
+                    <a
+                        href="/empresa/unidades"
+                        class="{% if current_path.startswith('/empresa/unidades') %}active{% endif %}"
+                        {% if current_path.startswith("/empresa/unidades") %}
+                            aria-current="page"
+                        {% endif %}
+                    >
+                        <span class="menu-icon" aria-hidden="true">
+                            <i data-lucide="factory"></i>
+                        </span>
+
+                        <span class="menu-text">
+                            Unidades
+                        </span>
+                    </a>
+
+                    <a
+                        href="/empresa/setores"
+                        class="{% if current_path.startswith('/empresa/setores') %}active{% endif %}"
+                        {% if current_path.startswith("/empresa/setores") %}
+                            aria-current="page"
+                        {% endif %}
+                    >
+                        <span class="menu-icon" aria-hidden="true">
+                            <i data-lucide="network"></i>
+                        </span>
+
+                        <span class="menu-text">
+                            Setores
+                        </span>
+                    </a>
+
+                    <a
+                        href="/empresa/turnos"
+                        class="{% if current_path.startswith('/empresa/turnos') %}active{% endif %}"
+                        {% if current_path.startswith("/empresa/turnos") %}
+                            aria-current="page"
+                        {% endif %}
+                    >
+                        <span class="menu-icon" aria-hidden="true">
+                            <i data-lucide="clock-3"></i>
+                        </span>
+
+                        <span class="menu-text">
+                            Turnos
+                        </span>
+                    </a>
+
+                    <a
+                        href="/empresa/personalizacao"
+                        class="{% if current_path.startswith('/empresa/personalizacao') %}active{% endif %}"
+                        {% if current_path.startswith("/empresa/personalizacao") %}
+                            aria-current="page"
+                        {% endif %}
+                    >
+                        <span class="menu-icon" aria-hidden="true">
+                            <i data-lucide="palette"></i>
+                        </span>
+
+                        <span class="menu-text">
+                            Personalização
+                        </span>
+                    </a>
+
+                    <a
+                        href="/empresa/usuarios"
+                        class="{% if current_path.startswith('/empresa/usuarios') %}active{% endif %}"
+                        {% if current_path.startswith("/empresa/usuarios") %}
+                            aria-current="page"
+                        {% endif %}
+                    >
+                        <span class="menu-icon" aria-hidden="true">
+                            <i data-lucide="users-round"></i>
+                        </span>
+
+                        <span class="menu-text">
+                            Usuários
+                        </span>
+                    </a>
+
+                </div>
+
+
+                <div class="menu-group">
+
+                    <span class="menu-title">
+                        Sistema
+                    </span>
+
+                    <a
+                        href="/assessoria/sair-empresa"
+                        class="sidebar-exit"
+                    >
+                        <span class="menu-icon" aria-hidden="true">
+                            <i data-lucide="arrow-left-from-line"></i>
+                        </span>
+
+                        <span class="menu-text">
+                            Sair da Empresa
+                        </span>
+                    </a>
+
+                    <a
+                        href="/logout"
+                        class="sidebar-exit"
+                    >
+                        <span class="menu-icon" aria-hidden="true">
+                            <i data-lucide="log-out"></i>
+                        </span>
+
+                        <span class="menu-text">
+                            Encerrar Sessão
+                        </span>
+                    </a>
+
+                </div>
+
+            {% else %}
+
+                <div class="menu-group">
+
+                    <span class="menu-title">
+                        Sistema
+                    </span>
+
+                    <a
+                        href="/logout"
+                        class="sidebar-exit"
+                    >
+                        <span class="menu-icon" aria-hidden="true">
+                            <i data-lucide="log-out"></i>
+                        </span>
+
+                        <span class="menu-text">
+                            Encerrar Sessão
+                        </span>
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </nav>
+
+
+    {# ======================================================
+       ADMINISTRADOR DA ASSESSORIA
+    ====================================================== #}
+
+    {% elif session.perfil == "ADM_ASSESSORIA" %}
+
+        <nav aria-label="Navegação principal">
+
+            <div class="menu-group">
+
+                <span class="menu-title">
+                    Assessoria
+                </span>
+
+                <a
+                    href="/assessoria/dashboard"
+                    class="{% if current_path == '/assessoria/dashboard' %}active{% endif %}"
+                    {% if current_path == "/assessoria/dashboard" %}
+                        aria-current="page"
+                    {% endif %}
+                >
+                    <span class="menu-icon" aria-hidden="true">
+                        <i data-lucide="layout-dashboard"></i>
+                    </span>
+
+                    <span class="menu-text">
+                        Dashboard
+                    </span>
+                </a>
+
+                <a
+                    href="/assessoria/empresas"
+                    class="{% if current_path.startswith('/assessoria/empresas') %}active{% endif %}"
+                    {% if current_path.startswith("/assessoria/empresas") %}
+                        aria-current="page"
+                    {% endif %}
+                >
+                    <span class="menu-icon" aria-hidden="true">
+                        <i data-lucide="building-2"></i>
+                    </span>
+
+                    <span class="menu-text">
+                        Empresas Clientes
+                    </span>
+                </a>
+
+                <a
+                    href="{{ url_for('admin.usuarios') }}"
+                    class="{% if current_path.startswith('/admin/usuarios') %}active{% endif %}"
+                    {% if current_path.startswith("/admin/usuarios") %}
+                        aria-current="page"
+                    {% endif %}
+                >
+                    <span class="menu-icon" aria-hidden="true">
+                        <i data-lucide="user-cog"></i>
+                    </span>
+
+                    <span class="menu-text">
+                        Usuários da Assessoria
+                    </span>
+                </a>
+
+            </div>
+
+
+            {% if session.empresa_ativa %}
+
+                <div class="menu-group">
+
+                    <span class="menu-title">
+                        Empresa ativa
+                    </span>
+
+                    <a
+                        href="/empresa/centro-controle"
+                        class="{% if current_path == '/empresa/centro-controle' %}active{% endif %}"
+                        {% if current_path == "/empresa/centro-controle" %}
+                            aria-current="page"
+                        {% endif %}
+                    >
+                        <span class="menu-icon" aria-hidden="true">
+                            <i data-lucide="gauge"></i>
+                        </span>
+
+                        <span class="menu-text">
+                            Centro de Controle
+                        </span>
+                    </a>
+
+                    <a
+                        href="/empresa/painel-operacional"
+                        class="{% if current_path == '/empresa/painel-operacional' %}active{% endif %}"
+                        {% if current_path == "/empresa/painel-operacional" %}
+                            aria-current="page"
+                        {% endif %}
+                    >
+                        <span class="menu-icon" aria-hidden="true">
+                            <i data-lucide="panels-top-left"></i>
+                        </span>
+
+                        <span class="menu-text">
+                            Painel Operacional
+                        </span>
+                    </a>
+
+                    <a
+                        href="/empresa/dashboard"
+                        class="{% if current_path == '/empresa/dashboard' %}active{% endif %}"
+                        {% if current_path == "/empresa/dashboard" %}
+                            aria-current="page"
+                        {% endif %}
+                    >
+                        <span class="menu-icon" aria-hidden="true">
+                            <i data-lucide="chart-no-axes-combined"></i>
+                        </span>
+
+                        <span class="menu-text">
+                            Indicadores
+                        </span>
+                    </a>
+
+                </div>
+
+
+                <div class="menu-group">
+
+                    <span class="menu-title">
+                        Gestão
+                    </span>
+
+                    <a
+                        href="{{ url_for('relatorios.relatorio_psicossocial') }}"
+                        class="{% if current_path.startswith('/empresa/relatorios') or current_path.startswith('/relatorios') %}active{% endif %}"
+                        {% if current_path.startswith("/empresa/relatorios") or current_path.startswith("/relatorios") %}
+                            aria-current="page"
+                        {% endif %}
+                    >
+                        <span class="menu-icon" aria-hidden="true">
+                            <i data-lucide="file-chart-column"></i>
+                        </span>
+
+                        <span class="menu-text">
+                            Relatório Técnico
+                        </span>
+                    </a>
+
+                </div>
+
+
+                <div class="menu-group">
+
+                    <span class="menu-title">
+                        Cadastros
+                    </span>
+
+                    <a
+                        href="/empresa/unidades"
+                        class="{% if current_path.startswith('/empresa/unidades') %}active{% endif %}"
+                        {% if current_path.startswith("/empresa/unidades") %}
+                            aria-current="page"
+                        {% endif %}
+                    >
+                        <span class="menu-icon" aria-hidden="true">
+                            <i data-lucide="factory"></i>
+                        </span>
+
+                        <span class="menu-text">
+                            Unidades
+                        </span>
+                    </a>
+
+                    <a
+                        href="/empresa/setores"
+                        class="{% if current_path.startswith('/empresa/setores') %}active{% endif %}"
+                        {% if current_path.startswith("/empresa/setores") %}
+                            aria-current="page"
+                        {% endif %}
+                    >
+                        <span class="menu-icon" aria-hidden="true">
+                            <i data-lucide="network"></i>
+                        </span>
+
+                        <span class="menu-text">
+                            Setores
+                        </span>
+                    </a>
+
+                    <a
+                        href="/empresa/turnos"
+                        class="{% if current_path.startswith('/empresa/turnos') %}active{% endif %}"
+                        {% if current_path.startswith("/empresa/turnos") %}
+                            aria-current="page"
+                        {% endif %}
+                    >
+                        <span class="menu-icon" aria-hidden="true">
+                            <i data-lucide="clock-3"></i>
+                        </span>
+
+                        <span class="menu-text">
+                            Turnos
+                        </span>
+                    </a>
+
+                    <a
+                        href="/empresa/personalizacao"
+                        class="{% if current_path.startswith('/empresa/personalizacao') %}active{% endif %}"
+                        {% if current_path.startswith("/empresa/personalizacao") %}
+                            aria-current="page"
+                        {% endif %}
+                    >
+                        <span class="menu-icon" aria-hidden="true">
+                            <i data-lucide="palette"></i>
+                        </span>
+
+                        <span class="menu-text">
+                            Personalização
+                        </span>
+                    </a>
+
+                    <a
+                        href="/empresa/usuarios"
+                        class="{% if current_path.startswith('/empresa/usuarios') %}active{% endif %}"
+                        {% if current_path.startswith("/empresa/usuarios") %}
+                            aria-current="page"
+                        {% endif %}
+                    >
+                        <span class="menu-icon" aria-hidden="true">
+                            <i data-lucide="users-round"></i>
+                        </span>
+
+                        <span class="menu-text">
+                            Usuários
+                        </span>
+                    </a>
+
+                </div>
+
+
+                <div class="menu-group">
+
+                    <span class="menu-title">
+                        Sistema
+                    </span>
+
+                    <a
+                        href="/assessoria/sair-empresa"
+                        class="sidebar-exit"
+                    >
+                        <span class="menu-icon" aria-hidden="true">
+                            <i data-lucide="arrow-left-from-line"></i>
+                        </span>
+
+                        <span class="menu-text">
+                            Sair da Empresa
+                        </span>
+                    </a>
+
+                    <a
+                        href="/logout"
+                        class="sidebar-exit"
+                    >
+                        <span class="menu-icon" aria-hidden="true">
+                            <i data-lucide="log-out"></i>
+                        </span>
+
+                        <span class="menu-text">
+                            Encerrar Sessão
+                        </span>
+                    </a>
+
+                </div>
+
+            {% else %}
+
+                <div class="menu-group">
+
+                    <span class="menu-title">
+                        Sistema
+                    </span>
+
+                    <a
+                        href="/logout"
+                        class="sidebar-exit"
+                    >
+                        <span class="menu-icon" aria-hidden="true">
+                            <i data-lucide="log-out"></i>
+                        </span>
+
+                        <span class="menu-text">
+                            Encerrar Sessão
+                        </span>
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </nav>
+
+
+    {# ======================================================
+       INVESTIGADOR
+    ====================================================== #}
+
+    {% elif session.perfil == "INVESTIGADOR" %}
+
+        <nav aria-label="Navegação principal">
+
+            <div class="menu-group">
+
+                <span class="menu-title">
+                    Agenda
+                </span>
+
+                <a
+                    href="/empresa/minha-agenda"
+                    class="{% if current_path.startswith('/empresa/minha-agenda') %}active{% endif %}"
+                    {% if current_path.startswith("/empresa/minha-agenda") %}
+                        aria-current="page"
+                    {% endif %}
+                >
+                    <span class="menu-icon" aria-hidden="true">
+                        <i data-lucide="calendar-check-2"></i>
+                    </span>
+
+                    <span class="menu-text">
+                        Minha Agenda
+                    </span>
+                </a>
+
+            </div>
+
+
+            <div class="menu-group">
+
+                <span class="menu-title">
+                    Sistema
+                </span>
+
+                <a
+                    href="/logout"
+                    class="sidebar-exit"
+                >
+                    <span class="menu-icon" aria-hidden="true">
+                        <i data-lucide="log-out"></i>
+                    </span>
+
+                    <span class="menu-text">
+                        Encerrar Sessão
+                    </span>
+                </a>
+
+            </div>
+
+        </nav>
+
+
+    {# ======================================================
+       PERFIS DA EMPRESA
+    ====================================================== #}
+
+    {% else %}
+
+        <nav aria-label="Navegação principal">
+
+            <div class="menu-group">
+
+                <span class="menu-title">
+                    Visão geral
+                </span>
+
+                <a
+                    href="/empresa/centro-controle"
+                    class="{% if current_path == '/empresa/centro-controle' %}active{% endif %}"
+                    {% if current_path == "/empresa/centro-controle" %}
+                        aria-current="page"
+                    {% endif %}
+                >
+                    <span class="menu-icon" aria-hidden="true">
+                        <i data-lucide="gauge"></i>
+                    </span>
+
+                    <span class="menu-text">
+                        Centro de Controle
+                    </span>
+                </a>
+
+                <a
+                    href="/empresa/painel-operacional"
+                    class="{% if current_path == '/empresa/painel-operacional' %}active{% endif %}"
+                    {% if current_path == "/empresa/painel-operacional" %}
+                        aria-current="page"
+                    {% endif %}
+                >
+                    <span class="menu-icon" aria-hidden="true">
+                        <i data-lucide="panels-top-left"></i>
+                    </span>
+
+                    <span class="menu-text">
+                        Painel Operacional
+                    </span>
+                </a>
+
+                <a
+                    href="/empresa/dashboard"
+                    class="{% if current_path == '/empresa/dashboard' %}active{% endif %}"
+                    {% if current_path == "/empresa/dashboard" %}
+                        aria-current="page"
+                    {% endif %}
+                >
+                    <span class="menu-icon" aria-hidden="true">
+                        <i data-lucide="chart-no-axes-combined"></i>
+                    </span>
+
+                    <span class="menu-text">
+                        Indicadores
+                    </span>
+                </a>
+
+            </div>
+
+
+            <div class="menu-group">
+
+                <span class="menu-title">
+                    Operação
+                </span>
+
+                <a
+                    href="/empresa/denuncias"
+                    class="{% if current_path.startswith('/empresa/denuncias') %}active{% endif %}"
+                    {% if current_path.startswith("/empresa/denuncias") %}
+                        aria-current="page"
+                    {% endif %}
+                >
+                    <span class="menu-icon" aria-hidden="true">
+                        <i data-lucide="search-check"></i>
+                    </span>
+
+                    <span class="menu-text">
+                        Investigações
+                    </span>
+                </a>
+
+            </div>
+
+
+            {% if session.perfil in [
+                "ADMIN_EMPRESA",
+                "GESTOR",
+                "AUDITOR",
+                "VISUALIZADOR"
+            ] %}
+
+                <div class="menu-group">
+
+                    <span class="menu-title">
+                        Gestão
+                    </span>
+
+                    <a
+                        href="{{ url_for('relatorios.relatorio_psicossocial') }}"
+                        class="{% if current_path.startswith('/empresa/relatorios') or current_path.startswith('/relatorios') %}active{% endif %}"
+                        {% if current_path.startswith("/empresa/relatorios") or current_path.startswith("/relatorios") %}
+                            aria-current="page"
+                        {% endif %}
+                    >
+                        <span class="menu-icon" aria-hidden="true">
+                            <i data-lucide="file-chart-column"></i>
+                        </span>
+
+                        <span class="menu-text">
+                            Relatório Técnico
+                        </span>
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+
+            {% if session.perfil in [
+                "ADMIN_EMPRESA",
+                "GESTOR"
+            ] %}
+
+                <div class="menu-group">
+
+                    <span class="menu-title">
+                        Cadastros
+                    </span>
+
+                    <a
+                        href="/empresa/unidades"
+                        class="{% if current_path.startswith('/empresa/unidades') %}active{% endif %}"
+                        {% if current_path.startswith("/empresa/unidades") %}
+                            aria-current="page"
+                        {% endif %}
+                    >
+                        <span class="menu-icon" aria-hidden="true">
+                            <i data-lucide="factory"></i>
+                        </span>
+
+                        <span class="menu-text">
+                            Unidades
+                        </span>
+                    </a>
+
+                    <a
+                        href="/empresa/setores"
+                        class="{% if current_path.startswith('/empresa/setores') %}active{% endif %}"
+                        {% if current_path.startswith("/empresa/setores") %}
+                            aria-current="page"
+                        {% endif %}
+                    >
+                        <span class="menu-icon" aria-hidden="true">
+                            <i data-lucide="network"></i>
+                        </span>
+
+                        <span class="menu-text">
+                            Setores
+                        </span>
+                    </a>
+
+                    <a
+                        href="/empresa/turnos"
+                        class="{% if current_path.startswith('/empresa/turnos') %}active{% endif %}"
+                        {% if current_path.startswith("/empresa/turnos") %}
+                            aria-current="page"
+                        {% endif %}
+                    >
+                        <span class="menu-icon" aria-hidden="true">
+                            <i data-lucide="clock-3"></i>
+                        </span>
+
+                        <span class="menu-text">
+                            Turnos
+                        </span>
+                    </a>
+
+                    <a
+                        href="/empresa/personalizacao"
+                        class="{% if current_path.startswith('/empresa/personalizacao') %}active{% endif %}"
+                        {% if current_path.startswith("/empresa/personalizacao") %}
+                            aria-current="page"
+                        {% endif %}
+                    >
+                        <span class="menu-icon" aria-hidden="true">
+                            <i data-lucide="palette"></i>
+                        </span>
+
+                        <span class="menu-text">
+                            Personalização
+                        </span>
+                    </a>
+
+                    <a
+                        href="/empresa/usuarios"
+                        class="{% if current_path.startswith('/empresa/usuarios') %}active{% endif %}"
+                        {% if current_path.startswith("/empresa/usuarios") %}
+                            aria-current="page"
+                        {% endif %}
+                    >
+                        <span class="menu-icon" aria-hidden="true">
+                            <i data-lucide="users-round"></i>
+                        </span>
+
+                        <span class="menu-text">
+                            Usuários
+                        </span>
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+
+            <div class="menu-group">
+
+                <span class="menu-title">
+                    Sistema
+                </span>
+
+                <a
+                    href="/logout"
+                    class="sidebar-exit"
+                >
+                    <span class="menu-icon" aria-hidden="true">
+                        <i data-lucide="log-out"></i>
+                    </span>
+
+                    <span class="menu-text">
+                        Encerrar Sessão
+                    </span>
+                </a>
+
+            </div>
+
+        </nav>
+
+    {% endif %}
+
+</aside>

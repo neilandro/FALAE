@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}FALAE Enterprise{% endblock %}</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/core/variables.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cards.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/buttons.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tables.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/badges.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+    {% block extra_css %}{% endblock %}
+
+    <!-- ========================================================
+     LUCIDE ICONS
+========================================================= -->
+<script src="https://unpkg.com/lucide@latest"></script>
+
+</head>
+<body>
+
+<div class="app-layout">
+    {% include "components/layout/sidebar.html" %}
+
+    <main class="content">
+
+        {% include "components/context_bar.html" %}
+
+        {% block content %}{% endblock %}
+
+    </main>
+</div>
+
+{% block extra_js %}{% endblock %}
+
+<!-- ========================================================
+     INICIALIZAÇÃO DOS ÍCONES LUCIDE
+========================================================= -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        if (typeof lucide !== "undefined") {
+            lucide.createIcons({
+                attrs: {
+                    "aria-hidden": "true",
+                    "focusable": "false"
+                }
+            });
+        } else {
+            console.error("Não foi possível carregar a biblioteca Lucide Icons.");
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}
+    {% if modo == "novo" %}
+        Nova Empresa | FALAE
+    {% else %}
+        Editar Empresa | FALAE
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    {% if modo == "novo" %}
+        <h1>🏢 Nova Empresa</h1>
+        <p>Cadastre uma empresa na plataforma.</p>
+    {% else %}
+        <h1>🏢 Editar Empresa</h1>
+        <p>Atualize os dados cadastrais da empresa.</p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <form method="POST" class="form-card">
+
+        <h2>Dados principais</h2>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Nome *</label>
+                <input type="text" name="nome" required value="{{ empresa.nome if empresa else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>CNPJ</label>
+                <input type="text" name="cnpj" value="{{ empresa.cnpj if empresa else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>Plano</label>
+                <select name="plano">
+                    {% for plano in ["BASICO", "PROFISSIONAL", "ENTERPRISE"] %}
+                        <option value="{{ plano }}" {% if empresa and empresa.plano == plano %}selected{% endif %}>
+                            {{ plano }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Assessoria</label>
+                <select name="assessoria_id">
+                    <option value="">Nenhuma</option>
+                    {% for assessoria in assessorias %}
+                        <option value="{{ assessoria.id }}"
+                            {% if empresa and empresa.assessoria_id == assessoria.id %}selected{% endif %}>
+                            {{ assessoria.nome }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            {% if modo == "editar" %}
+                <div class="form-group">
+                    <label>Status</label>
+                    <select name="ativa">
+                        <option value="1" {% if empresa and empresa.ativa %}selected{% endif %}>Ativa</option>
+                        <option value="0" {% if empresa and not empresa.ativa %}selected{% endif %}>Inativa</option>
+                    </select>
+                </div>
+            {% endif %}
+        </div>
+
+        <h2>Endereço</h2>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label>CEP</label>
+                <input type="text" name="cep" value="{{ empresa.cep if empresa else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>Endereço</label>
+                <input type="text" name="endereco" value="{{ empresa.endereco if empresa else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>Número</label>
+                <input type="text" name="numero" value="{{ empresa.numero if empresa else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>Complemento</label>
+                <input type="text" name="complemento" value="{{ empresa.complemento if empresa else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>Bairro</label>
+                <input type="text" name="bairro" value="{{ empresa.bairro if empresa else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>Cidade</label>
+                <input type="text" name="cidade" value="{{ empresa.cidade if empresa else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>Estado</label>
+                <input type="text" name="estado" maxlength="2" value="{{ empresa.estado if empresa else '' }}">
+            </div>
+        </div>
+
+        <h2>Contato Principal</h2>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Nome do contato</label>
+                <input type="text" name="contato_nome" value="{{ empresa.contato_nome if empresa else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>Cargo</label>
+                <input type="text" name="contato_cargo" value="{{ empresa.contato_cargo if empresa else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>E-mail</label>
+                <input type="email" name="contato_email" value="{{ empresa.contato_email if empresa else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>Telefone</label>
+                <input type="text" name="contato_telefone" value="{{ empresa.contato_telefone if empresa else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>WhatsApp</label>
+                <input type="text" name="contato_whatsapp" value="{{ empresa.contato_whatsapp if empresa else '' }}">
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn">
+                💾 Salvar Empresa
+            </button>
+
+            <a href="/admin/empresas" class="btn-secundario">
+                ← Voltar
+            </a>
+        </div>
+
+    </form>
+</div>
+
+{% endblock %}

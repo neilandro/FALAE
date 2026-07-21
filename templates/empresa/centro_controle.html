@@ -1,0 +1,458 @@
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}
+Centro de Controle | FALAE
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/centro_controle.css') }}">
+{% endblock %}
+
+{% block content %}
+
+
+
+<div class="controle-page">
+
+    <div class="controle-header">
+
+        <div>
+            <h1>🎯 Centro de Controle</h1>
+
+            <p>
+                Resumo executivo para apoiar a priorização
+                das ações e decisões do dia.
+            </p>
+        </div>
+
+    </div>
+
+    <section class="controle-summary">
+
+        <h2>👋 Olá!</h2>
+
+        <p>
+            Hoje identificamos os seguintes pontos
+            para sua atenção.
+        </p>
+
+        <div class="controle-insights">
+
+            {% for insight in insights %}
+
+                <div class="controle-insight">
+                    {{ insight }}
+                </div>
+
+            {% else %}
+
+                <div class="controle-insight">
+                    Nenhum alerta estratégico identificado no momento.
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+    {% include "components/dashboard/alert_center.html" %}
+
+    {% if health_score %}
+
+        <section
+            class="
+                controle-health
+                health-score-{{ health_score.classe }}
+            "
+        >
+
+            <div>
+
+                <span class="controle-health-label">
+                    Saúde da Gestão
+                </span>
+
+                <h2>
+                    {{ health_score.icone }}
+                    {{ health_score.status }}
+                </h2>
+
+                <p>
+                    {{ health_score.descricao }}
+                </p>
+
+            </div>
+
+            <div class="controle-health-score">
+                {{ health_score.score }}
+                <span>/100</span>
+            </div>
+
+        </section>
+
+    {% endif %}
+
+    {% include "components/dashboard/risk_radar.html" %}
+
+    <div class="controle-metrics">
+
+        <div
+            class="
+                controle-metric
+                controle-metric-primary
+            "
+        >
+
+            <span class="controle-metric-label">
+                Total de denúncias
+            </span>
+
+            <div class="controle-metric-value">
+                {{ total_denuncias }}
+            </div>
+
+            <p class="controle-metric-subtitle">
+                Registros acumulados
+            </p>
+
+        </div>
+
+        <div
+            class="
+                controle-metric
+                controle-metric-info
+            "
+        >
+
+            <span class="controle-metric-label">
+                Novas
+            </span>
+
+            <div class="controle-metric-value">
+                {{ denuncias_novas }}
+            </div>
+
+            <p class="controle-metric-subtitle">
+                Aguardando triagem
+            </p>
+
+        </div>
+
+        <div
+            class="
+                controle-metric
+                controle-metric-danger
+            "
+        >
+
+            <span class="controle-metric-label">
+                Críticas
+            </span>
+
+            <div class="controle-metric-value">
+                {{ denuncias_criticas }}
+            </div>
+
+            <p class="controle-metric-subtitle">
+                Prioridade de análise
+            </p>
+
+        </div>
+
+    </div>
+
+    <section class="controle-section">
+
+        <div class="controle-section-header">
+
+            <h2>✅ Ações recomendadas para hoje</h2>
+
+            <p>
+                Atividades priorizadas conforme criticidade,
+                prazo e situação operacional.
+            </p>
+
+        </div>
+
+        <div class="controle-section-body">
+
+            {% if acoes_recomendadas %}
+
+                <div class="controle-actions-list">
+
+                    {% for acao in acoes_recomendadas %}
+
+                        <div
+                            class="
+                                controle-action
+                                controle-action-{{ acao.prioridade }}
+                            "
+                        >
+
+                            <div>
+
+                                <strong>
+                                    {{ acao.icone }}
+                                    {{ acao.titulo }}
+                                </strong>
+
+                                <p>
+                                    {{ acao.descricao }}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="controle-empty">
+                    Nenhuma ação recomendada no momento.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </section>
+
+    <section class="controle-section">
+
+        <div class="controle-section-header">
+
+            <h2>📋 Pendências que exigem atenção</h2>
+
+            <p>
+                Pontos em aberto que podem demandar
+                acompanhamento da gestão.
+            </p>
+
+        </div>
+
+        <div class="controle-section-body">
+
+            {% if pendencias %}
+
+                <div class="controle-pending-list">
+
+                    {% for item in pendencias %}
+
+                        <div class="controle-pending">
+
+                            <div>
+
+                                <strong>
+                                    {{ item.icone }}
+                                    {{ item.titulo }}
+                                </strong>
+
+                                <p>
+                                    {{ item.descricao }}
+                                </p>
+
+                            </div>
+
+                            <span class="controle-badge">
+                                {{ item.total }}
+                            </span>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="controle-empty">
+                    Nenhuma pendência crítica encontrada.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </section>
+
+    <div class="controle-dashboard-grid">
+
+        <section class="controle-section">
+
+            <div class="controle-section-header">
+
+                <h2>🏢 Unidades com mais denúncias</h2>
+
+                <p>
+                    Ranking das unidades com maior
+                    volume de registros.
+                </p>
+
+            </div>
+
+            <div class="controle-section-body">
+
+                {% if ranking_unidades %}
+
+                    <div class="controle-ranking-list">
+
+                        {% for unidade in ranking_unidades %}
+
+                            <div class="controle-ranking-item">
+
+                                <span>
+
+                                    <span class="controle-ranking-position">
+                                        {{ loop.index }}
+                                    </span>
+
+                                    {{ unidade.nome }}
+
+                                </span>
+
+                                <span class="controle-badge">
+                                    {{ unidade.total }}
+                                </span>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="controle-empty">
+                        Nenhuma denúncia encontrada.
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+        <section class="controle-section">
+
+            <div class="controle-section-header">
+
+                <h2>⚠️ Categorias mais frequentes</h2>
+
+                <p>
+                    Temas com maior recorrência nos
+                    registros recebidos.
+                </p>
+
+            </div>
+
+            <div class="controle-section-body">
+
+                {% if ranking_categorias %}
+
+                    <div class="controle-ranking-list">
+
+                        {% for categoria in ranking_categorias %}
+
+                            <div class="controle-ranking-item">
+
+                                <span>
+
+                                    <span class="controle-ranking-position">
+                                        {{ loop.index }}
+                                    </span>
+
+                                    {{ categoria.categoria }}
+
+                                </span>
+
+                                <span class="controle-badge">
+                                    {{ categoria.total }}
+                                </span>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="controle-empty">
+                        Nenhum registro encontrado.
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+    </div>
+
+    <section class="controle-section">
+
+        <div class="controle-section-header">
+
+            <h2>🕒 Últimas movimentações</h2>
+
+            <p>
+                Registro das atividades recentes realizadas
+                na plataforma.
+            </p>
+
+        </div>
+
+        <div class="controle-section-body">
+
+            {% if ultimos_eventos %}
+
+                <div class="controle-timeline-list">
+
+                    {% for evento in ultimos_eventos %}
+
+                        <div class="controle-timeline-item">
+
+                            <div class="controle-timeline-date">
+                                {{ evento.criado_em }}
+                            </div>
+
+                            <div class="controle-timeline-content">
+
+                                <strong>
+                                    {{ evento.acao }}
+                                </strong>
+
+                                <p>
+                                    Módulo: {{ evento.modulo }}
+                                    |
+                                    Usuário:
+                                    {{ evento.usuario or "Sistema" }}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="controle-empty">
+                    Nenhuma movimentação recente encontrada.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,587 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+
+<style>
+    .login-page {
+        display: grid;
+        grid-template-columns:
+            minmax(0, 1.15fr)
+            minmax(380px, 0.85fr);
+        min-height: 100vh;
+        background:
+            linear-gradient(
+                135deg,
+                #eef4f8 0%,
+                #f8fafc 55%,
+                #e8f0f7 100%
+            );
+    }
+
+    .login-hero {
+        position: relative;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        padding: 64px;
+        color: #ffffff;
+        background:
+            linear-gradient(
+                145deg,
+                #163a5c 0%,
+                #1f4e78 55%,
+                #2563a8 100%
+            );
+    }
+
+    .login-hero::before,
+    .login-hero::after {
+        position: absolute;
+        border-radius: 50%;
+        content: "";
+        background: rgba(255, 255, 255, 0.07);
+    }
+
+    .login-hero::before {
+        top: -120px;
+        right: -90px;
+        width: 320px;
+        height: 320px;
+    }
+
+    .login-hero::after {
+        bottom: -150px;
+        left: -110px;
+        width: 380px;
+        height: 380px;
+    }
+
+    .login-hero-content {
+        position: relative;
+        z-index: 1;
+        max-width: 620px;
+    }
+
+    .login-brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 44px;
+    }
+
+    .login-brand-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 56px;
+        height: 56px;
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        border-radius: 15px;
+        font-size: 27px;
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(8px);
+    }
+
+    .login-brand-text h1 {
+        margin: 0;
+        color: #ffffff;
+        font-size: 27px;
+        letter-spacing: 0.06em;
+    }
+
+    .login-brand-text span {
+        display: block;
+        margin-top: 3px;
+        color: rgba(255, 255, 255, 0.78);
+        font-size: 13px;
+    }
+
+    .login-hero h2 {
+        max-width: 560px;
+        margin: 0 0 18px;
+        color: #ffffff;
+        font-size: clamp(32px, 4vw, 52px);
+        line-height: 1.08;
+    }
+
+    .login-hero-description {
+        max-width: 570px;
+        margin: 0;
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 16px;
+        line-height: 1.7;
+    }
+
+    .login-benefits {
+        display: grid;
+        gap: 13px;
+        margin-top: 34px;
+    }
+
+    .login-benefit {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 14px;
+    }
+
+    .login-benefit-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        width: 31px;
+        height: 31px;
+        border-radius: 9px;
+        background: rgba(255, 255, 255, 0.12);
+    }
+
+    .login-panel {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 42px;
+    }
+
+    .login-card {
+        width: 100%;
+        max-width: 460px;
+        padding: 34px;
+        border: 1px solid #dce3ec;
+        border-radius: 20px;
+        background: #ffffff;
+        box-shadow:
+            0 24px 60px
+            rgba(15, 23, 42, 0.13);
+    }
+
+    .login-card-header {
+        margin-bottom: 26px;
+    }
+
+    .login-card-header h2 {
+        margin: 0 0 8px;
+        color: #0f172a;
+        font-size: 26px;
+    }
+
+    .login-card-header p {
+        margin: 0;
+        color: #64748b;
+        font-size: 14px;
+        line-height: 1.55;
+    }
+
+    .login-alert {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 20px;
+        padding: 13px 14px;
+        border: 1px solid #fecaca;
+        border-radius: 10px;
+        color: #991b1b;
+        font-size: 13px;
+        line-height: 1.5;
+        background: #fef2f2;
+    }
+
+    .login-field {
+        margin-bottom: 18px;
+    }
+
+    .login-field label {
+        display: block;
+        margin-bottom: 7px;
+        color: #334155;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .login-input-wrapper {
+        position: relative;
+    }
+
+    .login-field input {
+        width: 100%;
+        min-height: 49px;
+        padding: 12px 14px;
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        color: #0f172a;
+        font-size: 14px;
+        background: #ffffff;
+        outline: none;
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .login-field input:focus {
+        border-color: #1f4e78;
+        box-shadow:
+            0 0 0 3px
+            rgba(31, 78, 120, 0.12);
+    }
+
+    .login-field input::placeholder {
+        color: #94a3b8;
+    }
+
+    .login-password input {
+        padding-right: 50px;
+    }
+
+    .login-toggle-password {
+        position: absolute;
+        top: 50%;
+        right: 9px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        border: 0;
+        border-radius: 8px;
+        color: #475569;
+        font-size: 16px;
+        background: transparent;
+        cursor: pointer;
+        transform: translateY(-50%);
+    }
+
+    .login-toggle-password:hover {
+        background: #f1f5f9;
+    }
+
+    .login-submit {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        min-height: 49px;
+        margin-top: 4px;
+        padding: 11px 17px;
+        border: 0;
+        border-radius: 10px;
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 800;
+        background:
+            linear-gradient(
+                135deg,
+                #1f4e78,
+                #2563a8
+            );
+        cursor: pointer;
+        transition:
+            transform 0.16s ease,
+            box-shadow 0.16s ease;
+    }
+
+    .login-submit:hover {
+        box-shadow:
+            0 12px 24px
+            rgba(31, 78, 120, 0.24);
+        transform: translateY(-1px);
+    }
+
+    .login-submit:active {
+        transform: translateY(0);
+    }
+
+    .login-security-note {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        margin-top: 19px;
+        padding: 12px 13px;
+        border-radius: 10px;
+        color: #475569;
+        font-size: 11px;
+        line-height: 1.5;
+        background: #f8fafc;
+    }
+
+    .login-footer {
+        margin-top: 21px;
+        color: #94a3b8;
+        font-size: 11px;
+        line-height: 1.5;
+        text-align: center;
+    }
+
+    @media (max-width: 960px) {
+        .login-page {
+            grid-template-columns: 1fr;
+        }
+
+        .login-hero {
+            min-height: auto;
+            padding: 42px 28px;
+        }
+
+        .login-brand {
+            margin-bottom: 28px;
+        }
+
+        .login-hero h2 {
+            font-size: 34px;
+        }
+
+        .login-panel {
+            padding: 28px 18px 38px;
+        }
+    }
+
+    @media (max-width: 560px) {
+        .login-hero {
+            padding: 30px 20px;
+        }
+
+        .login-hero-description,
+        .login-benefits {
+            display: none;
+        }
+
+        .login-brand {
+            margin-bottom: 18px;
+        }
+
+        .login-hero h2 {
+            margin-bottom: 0;
+            font-size: 26px;
+        }
+
+        .login-panel {
+            padding: 18px 14px 28px;
+        }
+
+        .login-card {
+            padding: 25px 20px;
+            border-radius: 16px;
+        }
+    }
+</style>
+
+<div class="login-page">
+
+    <section class="login-hero">
+
+        <div class="login-hero-content">
+
+            <div class="login-brand">
+
+                <div class="login-brand-icon">
+                    🛡
+                </div>
+
+                <div class="login-brand-text">
+                    <h1>FALAE</h1>
+                    <span>Compliance & SST</span>
+                </div>
+
+            </div>
+
+            <h2>
+                Gestão segura, confidencial e inteligente.
+            </h2>
+
+            <p class="login-hero-description">
+                Acesse a plataforma para acompanhar denúncias,
+                investigações, indicadores, planos de ação e
+                informações estratégicas da organização.
+            </p>
+
+            <div class="login-benefits">
+
+                <div class="login-benefit">
+                    <span class="login-benefit-icon">🔒</span>
+                    <span>Acesso protegido e controle por perfil</span>
+                </div>
+
+                <div class="login-benefit">
+                    <span class="login-benefit-icon">📊</span>
+                    <span>Indicadores e visão gerencial em tempo real</span>
+                </div>
+
+                <div class="login-benefit">
+                    <span class="login-benefit-icon">🧭</span>
+                    <span>Fluxos claros para gestão e investigação</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <section class="login-panel">
+
+        <div class="login-card">
+
+            <div class="login-card-header">
+
+                <h2>
+                    Acesso ao painel
+                </h2>
+
+                <p>
+                    Informe suas credenciais para continuar.
+                </p>
+
+            </div>
+
+            {% if erro %}
+
+                <div class="login-alert">
+                    <span>⚠️</span>
+
+                    <span>
+                        {{ erro }}
+                    </span>
+                </div>
+
+            {% endif %}
+
+            <form
+                method="POST"
+                action="/login"
+                autocomplete="off"
+            >
+
+                <div class="login-field">
+
+                    <label for="email">
+                        E-mail
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        required
+                        maxlength="180"
+                        autocomplete="username"
+                        placeholder="seuemail@empresa.com"
+                        autofocus
+                    >
+
+                </div>
+
+                <div class="login-field">
+
+                    <label for="senha">
+                        Senha
+                    </label>
+
+                    <div class="login-input-wrapper login-password">
+
+                        <input
+                            type="password"
+                            id="senha"
+                            name="senha"
+                            required
+                            maxlength="128"
+                            autocomplete="current-password"
+                            placeholder="Digite sua senha"
+                        >
+
+                        <button
+                            type="button"
+                            class="login-toggle-password"
+                            id="alternar-senha"
+                            aria-label="Exibir ou ocultar senha"
+                            title="Exibir ou ocultar senha"
+                        >
+                            👁
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="login-submit"
+                >
+                    🔐 Entrar
+                </button>
+
+            </form>
+
+            <div class="login-security-note">
+                <span>🛡️</span>
+
+                <span>
+                    O acesso é monitorado por segurança.
+                    Após tentativas inválidas consecutivas,
+                    a conta poderá ser bloqueada temporariamente.
+                </span>
+            </div>
+
+            <div class="login-footer">
+                FALAE — Plataforma de Compliance e Segurança
+                Organizacional.
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+<script>
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+        const campoSenha = document.getElementById(
+            "senha"
+        );
+
+        const botaoAlternarSenha = document.getElementById(
+            "alternar-senha"
+        );
+
+        if (
+            !campoSenha
+            || !botaoAlternarSenha
+        ) {
+            return;
+        }
+
+        botaoAlternarSenha.addEventListener(
+            "click",
+            function () {
+                const exibindoSenha = (
+                    campoSenha.type === "text"
+                );
+
+                campoSenha.type = (
+                    exibindoSenha
+                    ? "password"
+                    : "text"
+                );
+
+                botaoAlternarSenha.textContent = (
+                    exibindoSenha
+                    ? "👁"
+                    : "🙈"
+                );
+
+                botaoAlternarSenha.setAttribute(
+                    "aria-label",
+                    exibindoSenha
+                        ? "Exibir senha"
+                        : "Ocultar senha"
+                );
+            }
+        );
+    }
+);
+</script>
+
+{% endblock %}

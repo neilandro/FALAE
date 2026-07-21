@@ -1,0 +1,488 @@
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}
+Usuários | FALAE
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .usuarios-page {
+        --usuarios-primary: #1f4e78;
+        --usuarios-border: #e2e8f0;
+        --usuarios-muted: #64748b;
+        --usuarios-background: #f8fafc;
+    }
+
+    .usuarios-page *,
+    .usuarios-page *::before,
+    .usuarios-page *::after {
+        box-sizing: border-box;
+    }
+
+    .usuarios-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 22px;
+    }
+
+    .usuarios-header-texto h1 {
+        margin: 0 0 7px;
+        color: #0f172a;
+    }
+
+    .usuarios-header-texto p {
+        margin: 0;
+        color: var(--usuarios-muted);
+        line-height: 1.55;
+    }
+
+    .usuarios-header-acoes {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .usuarios-resumo {
+        display: grid;
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        margin-bottom: 22px;
+    }
+
+    .usuarios-resumo-card {
+        padding: 17px 18px;
+        border: 1px solid var(--usuarios-border);
+        border-radius: 13px;
+        background: #ffffff;
+        box-shadow:
+            0 7px 20px
+            rgba(15, 23, 42, 0.045);
+    }
+
+    .usuarios-resumo-label {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--usuarios-muted);
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .usuarios-resumo-valor {
+        color: #0f172a;
+        font-size: 25px;
+        font-weight: 800;
+    }
+
+    .usuarios-container {
+        padding: 20px;
+        border: 1px solid var(--usuarios-border);
+        border-radius: 16px;
+        background: #ffffff;
+        box-shadow:
+            0 9px 26px
+            rgba(15, 23, 42, 0.045);
+    }
+
+    .usuarios-lista {
+        display: grid;
+        gap: 15px;
+    }
+
+    .usuario-card {
+        display: grid;
+        grid-template-columns:
+            minmax(0, 1fr)
+            auto;
+        gap: 20px;
+        align-items: center;
+        padding: 18px;
+        border: 1px solid var(--usuarios-border);
+        border-radius: 14px;
+        background:
+            linear-gradient(
+                180deg,
+                #ffffff,
+                #fbfdff
+            );
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease,
+            transform 0.2s ease;
+    }
+
+    .usuario-card:hover {
+        border-color: #bfdbfe;
+        box-shadow:
+            0 10px 24px
+            rgba(15, 23, 42, 0.07);
+        transform: translateY(-1px);
+    }
+
+    .usuario-identidade {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        min-width: 0;
+    }
+
+    .usuario-avatar {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        width: 48px;
+        height: 48px;
+        border-radius: 13px;
+        color: #ffffff;
+        font-size: 21px;
+        font-weight: 800;
+        background:
+            linear-gradient(
+                135deg,
+                #1f4e78,
+                #2563a8
+            );
+    }
+
+    .usuario-conteudo {
+        min-width: 0;
+    }
+
+    .usuario-titulo {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 9px;
+    }
+
+    .usuario-titulo h3 {
+        margin: 0;
+        color: #0f172a;
+        font-size: 16px;
+    }
+
+    .usuario-perfil {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 8px;
+        border-radius: 999px;
+        color: #1e3a5f;
+        font-size: 10px;
+        font-weight: 800;
+        background: #dbeafe;
+    }
+
+    .usuario-dados {
+        display: grid;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+        gap: 7px 18px;
+    }
+
+    .usuario-dado {
+        min-width: 0;
+        color: #64748b;
+        font-size: 12px;
+        line-height: 1.45;
+    }
+
+    .usuario-dado strong {
+        color: #334155;
+    }
+
+    .usuario-email {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .usuario-acoes {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 9px;
+    }
+
+    .usuario-acoes form {
+        margin: 0;
+    }
+
+    .usuario-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-right: 4px;
+        padding: 6px 9px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .usuario-status::before {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        content: "";
+    }
+
+    .usuario-status-ativo {
+        color: #166534;
+        background: #dcfce7;
+    }
+
+    .usuario-status-ativo::before {
+        background: #16a34a;
+    }
+
+    .usuario-status-inativo {
+        color: #991b1b;
+        background: #fee2e2;
+    }
+
+    .usuario-status-inativo::before {
+        background: #dc2626;
+    }
+
+    .usuario-btn-editar,
+    .usuario-btn-senha {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 38px;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 750;
+        text-decoration: none;
+        cursor: pointer;
+        transition:
+            background 0.2s ease,
+            border-color 0.2s ease;
+    }
+
+    .usuario-btn-editar {
+        border: 1px solid #bfdbfe;
+        color: #1d4ed8;
+        background: #eff6ff;
+    }
+
+    .usuario-btn-editar:hover {
+        border-color: #93c5fd;
+        background: #dbeafe;
+    }
+
+    .usuario-btn-senha {
+        border: 1px solid #fed7aa;
+        color: #9a3412;
+        background: #fff7ed;
+    }
+
+    .usuario-btn-senha:hover {
+        border-color: #fdba74;
+        background: #ffedd5;
+    }
+
+    .usuarios-empty {
+        padding: 50px 20px;
+        text-align: center;
+    }
+
+    .usuarios-empty-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 62px;
+        height: 62px;
+        margin-bottom: 14px;
+        border-radius: 17px;
+        font-size: 27px;
+        background: #eff6ff;
+    }
+
+    .usuarios-empty h3 {
+        margin: 0 0 7px;
+        color: #334155;
+    }
+
+    .usuarios-empty p {
+        margin: 0;
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    @media (max-width: 900px) {
+        .usuario-card {
+            grid-template-columns: 1fr;
+        }
+
+        .usuario-acoes {
+            justify-content: flex-start;
+        }
+    }
+
+    @media (max-width: 680px) {
+        .usuarios-header {
+            flex-direction: column;
+        }
+
+        .usuarios-header-acoes,
+        .usuarios-header-acoes .btn {
+            width: 100%;
+        }
+
+        .usuarios-resumo {
+            grid-template-columns: 1fr;
+        }
+
+        .usuario-dados {
+            grid-template-columns: 1fr;
+        }
+
+        .usuario-identidade {
+            flex-direction: column;
+        }
+
+        .usuario-acoes {
+            width: 100%;
+        }
+
+        .usuario-acoes a,
+        .usuario-acoes form,
+        .usuario-acoes button {
+            width: 100%;
+        }
+
+        .usuario-status {
+            width: 100%;
+            justify-content: center;
+            margin: 0;
+        }
+    }
+</style>
+
+{% set total_usuarios = usuarios | length if usuarios else 0 %}
+{% set total_ativos = usuarios | selectattr("ativo") | list | length if usuarios else 0 %}
+{% set total_inativos = total_usuarios - total_ativos %}
+
+<div class="usuarios-page">
+
+<div class="usuarios-header">
+
+    <div class="usuarios-header-texto">
+
+        <h1>
+            👥 Usuários da Plataforma
+        </h1>
+
+        <p>
+            Gerencie acessos, perfis, vínculos e suporte
+            de senha dos usuários cadastrados.
+        </p>
+
+    </div>
+
+    <div class="usuarios-header-acoes">
+
+        <a
+            href="{{ url_for(
+                'admin.usuario_novo'
+            ) }}"
+            class="btn"
+        >
+            ➕ Novo Usuário
+        </a>
+
+    </div>
+
+</div>
+
+<div class="usuarios-resumo">
+
+    <div class="usuarios-resumo-card">
+
+        <span class="usuarios-resumo-label">
+            Total de usuários
+        </span>
+
+        <span class="usuarios-resumo-valor">
+            {{ total_usuarios }}
+        </span>
+
+    </div>
+
+    <div class="usuarios-resumo-card">
+
+        <span class="usuarios-resumo-label">
+            Usuários ativos
+        </span>
+
+        <span class="usuarios-resumo-valor">
+            {{ total_ativos }}
+        </span>
+
+    </div>
+
+    <div class="usuarios-resumo-card">
+
+        <span class="usuarios-resumo-label">
+            Usuários inativos
+        </span>
+
+        <span class="usuarios-resumo-valor">
+            {{ total_inativos }}
+        </span>
+
+    </div>
+
+</div>
+
+<div class="usuarios-container">
+
+    {% if usuarios %}
+
+        <div class="usuarios-lista">
+
+            {% for usuario in usuarios %}
+
+                {% include
+                    "components/cards/card_usuario.html"
+                %}
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="usuarios-empty">
+
+            <div class="usuarios-empty-icon">
+                👥
+            </div>
+
+            <h3>
+                Nenhum usuário cadastrado
+            </h3>
+
+            <p>
+                Utilize o botão “Novo Usuário” para
+                realizar o primeiro cadastro.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+</div>
+
+{% endblock %}

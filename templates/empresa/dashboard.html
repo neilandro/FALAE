@@ -1,0 +1,20 @@
+{% extends "layouts/admin_base.html" %}
+{% from "components/cards/metric_card.html" import metric_card %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_executivo.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="falae-dashboard">
+    {% include "empresa/dashboard/_header.html" %}
+    {% include "empresa/dashboard/_filters.html" %}
+    {% include "empresa/dashboard/_kpis_insights.html" %}
+    {% include "empresa/dashboard/_charts.html" %}
+    {% include "empresa/dashboard/_tables.html" %}
+</div>
+
+{% include "empresa/dashboard/_scripts.html" %}
+
+{% endblock %}

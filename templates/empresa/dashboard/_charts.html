@@ -1,0 +1,60 @@
+<section>
+    <div class="dashboard-section-header" style="padding: 0 0 14px;">
+        <div>
+            <h2>Indicadores visuais</h2>
+            <p>Distribuição das denúncias por dimensões relevantes da operação.</p>
+        </div>
+    </div>
+
+    <div class="dashboard-graficos">
+        <article class="dashboard-section card-chart">
+            <div class="dashboard-section-header" style="padding-left: 0; padding-right: 0;">
+                <div><h3 class="chart-title">Por categoria</h3><p class="chart-subtitle">Temas mais recorrentes entre os registros.</p></div>
+            </div>
+            <div class="chart-container chart-container-pizza">
+                <canvas id="graficoCategoria"></canvas>
+                <div id="semDadosCategoria" class="grafico-sem-dados" hidden>Nenhum dado disponível.</div>
+            </div>
+        </article>
+
+        <article class="dashboard-section card-chart">
+            <div class="dashboard-section-header" style="padding-left: 0; padding-right: 0;">
+                <div><h3 class="chart-title">Por criticidade</h3><p class="chart-subtitle">Composição dos casos por nível de risco.</p></div>
+            </div>
+            <div class="chart-container chart-container-pizza">
+                <canvas id="graficoCriticidade"></canvas>
+                <div id="semDadosCriticidade" class="grafico-sem-dados" hidden>Nenhum dado disponível.</div>
+            </div>
+        </article>
+
+        <article class="dashboard-section card-chart">
+            <div class="dashboard-section-header" style="padding-left: 0; padding-right: 0;">
+                <div><h3 class="chart-title">Por unidade</h3><p class="chart-subtitle">Concentração dos registros nas unidades.</p></div>
+            </div>
+            <div class="chart-container">
+                <canvas id="graficoUnidade"></canvas>
+                <div id="semDadosUnidade" class="grafico-sem-dados" hidden>Nenhum dado disponível.</div>
+            </div>
+        </article>
+
+        <article class="dashboard-section card-chart">
+            <div class="dashboard-section-header" style="padding-left: 0; padding-right: 0;">
+                <div><h3 class="chart-title">Por setor</h3><p class="chart-subtitle">Distribuição dos relatos por área organizacional.</p></div>
+            </div>
+            <div class="chart-container">
+                <canvas id="graficoSetor"></canvas>
+                <div id="semDadosSetor" class="grafico-sem-dados" hidden>Nenhum dado disponível.</div>
+            </div>
+        </article>
+
+        <article class="dashboard-section card-chart card-chart-full">
+            <div class="dashboard-section-header" style="padding-left: 0; padding-right: 0;">
+                <div><h3 class="chart-title">Por turno</h3><p class="chart-subtitle">Comparativo de ocorrências segundo o turno informado.</p></div>
+            </div>
+            <div class="chart-container">
+                <canvas id="graficoTurno"></canvas>
+                <div id="semDadosTurno" class="grafico-sem-dados" hidden>Nenhuma denúncia vinculada a turno.</div>
+            </div>
+        </article>
+    </div>
+</section>

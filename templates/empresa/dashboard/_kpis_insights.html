@@ -1,0 +1,36 @@
+<section class="dashboard-kpi-wrap">
+    <div class="metric-grid">
+        {{ metric_card("Total", total, "Denúncias registradas", "📢") }}
+        {{ metric_card("Novas", novas, "Aguardando análise", "🟦") }}
+        {{ metric_card("Em análise", em_analise, "Em tratamento", "🟨") }}
+        {{ metric_card("Encerradas", encerradas, "Concluídas ou arquivadas", "🟩") }}
+    </div>
+</section>
+
+<section>
+    <div class="dashboard-section-header" style="padding: 0 0 14px;">
+        <div>
+            <h2>Insights da operação</h2>
+            <p>Leitura rápida dos principais movimentos no recorte selecionado.</p>
+        </div>
+    </div>
+
+    <div class="dashboard-insights">
+        <article class="dashboard-insight">
+            <div class="dashboard-insight-icon">📢</div>
+            <div><strong>{{ total }} registros</strong><span>Volume total encontrado nos filtros atuais.</span></div>
+        </article>
+        <article class="dashboard-insight">
+            <div class="dashboard-insight-icon">⏳</div>
+            <div><strong>{{ novas }} aguardando análise</strong><span>Casos novos que ainda precisam de triagem.</span></div>
+        </article>
+        <article class="dashboard-insight">
+            <div class="dashboard-insight-icon">🔎</div>
+            <div><strong>{{ em_analise }} em tratamento</strong><span>Ocorrências atualmente sob avaliação.</span></div>
+        </article>
+        <article class="dashboard-insight">
+            <div class="dashboard-insight-icon">✅</div>
+            <div><strong>{{ encerradas }} encerradas</strong><span>Casos concluídos ou arquivados no período.</span></div>
+        </article>
+    </div>
+</section>

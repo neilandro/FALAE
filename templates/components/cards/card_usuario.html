@@ -1,0 +1,130 @@
+<div class="usuario-card">
+
+<div class="usuario-identidade">
+
+    <div class="usuario-avatar">
+        {{
+            usuario.nome[0] | upper
+            if usuario.nome
+            else "U"
+        }}
+    </div>
+
+    <div class="usuario-conteudo">
+
+        <div class="usuario-titulo">
+
+            <h3>
+                {{ usuario.nome }}
+            </h3>
+
+            <span class="usuario-perfil">
+                {{ usuario.perfil }}
+            </span>
+
+        </div>
+
+        <div class="usuario-dados">
+
+            <div class="usuario-dado usuario-email">
+
+                <strong>E-mail:</strong>
+                {{ usuario.email }}
+
+            </div>
+
+            <div class="usuario-dado">
+
+                <strong>Empresa:</strong>
+                {{ usuario.empresa or "Não vinculada" }}
+
+            </div>
+
+            <div class="usuario-dado">
+
+                <strong>Assessoria:</strong>
+                {{ usuario.assessoria or "Não vinculada" }}
+
+            </div>
+
+            <div class="usuario-dado">
+
+                <strong>Criado em:</strong>
+
+                {% if usuario.criado_em %}
+
+                    {{
+                        usuario.criado_em.strftime(
+                            "%d/%m/%Y %H:%M"
+                        )
+                    }}
+
+                {% else %}
+
+                    Não informado
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="usuario-acoes">
+
+    {% if usuario.ativo %}
+
+        <span
+            class="
+                usuario-status
+                usuario-status-ativo
+            "
+        >
+            Ativo
+        </span>
+
+    {% else %}
+
+        <span
+            class="
+                usuario-status
+                usuario-status-inativo
+            "
+        >
+            Inativo
+        </span>
+
+    {% endif %}
+
+    <a
+        href="/admin/usuarios/{{ usuario.id }}/editar"
+        class="usuario-btn-editar"
+    >
+        ✏️ Editar
+    </a>
+
+    <form
+        method="POST"
+        action="/admin/usuarios/{{ usuario.id }}/resetar-senha"
+        onsubmit="
+            return confirm(
+                'Deseja realmente redefinir a senha de {{ usuario.nome | e }}? Uma senha temporária será gerada.'
+            );
+        "
+    >
+
+        <button
+            type="submit"
+            class="usuario-btn-senha"
+        >
+            🔑 Redefinir senha
+        </button>
+
+    </form>
+
+</div>
+
+</div>

@@ -1,0 +1,162 @@
+<div class="assessoria-card">
+
+    <div class="assessoria-card-topo">
+
+        <div class="assessoria-identidade">
+
+            <div class="assessoria-icone">
+                🏥
+            </div>
+
+            <div class="assessoria-identidade-conteudo">
+
+                <div class="assessoria-titulo">
+
+                    <h3>
+                        {{ assessoria.nome }}
+                    </h3>
+
+                    <span class="assessoria-tipo">
+                        Assessoria parceira
+                    </span>
+
+                </div>
+
+                <div class="assessoria-dados">
+
+                    <div class="assessoria-dado">
+
+                        <strong>CNPJ:</strong>
+                        {{ assessoria.cnpj or "Não informado" }}
+
+                    </div>
+
+                    <div class="assessoria-dado">
+
+                        <strong>Responsável:</strong>
+                        {{ assessoria.responsavel or "Não informado" }}
+
+                    </div>
+
+                    <div class="assessoria-dado assessoria-email">
+
+                        <strong>E-mail:</strong>
+                        {{ assessoria.email or "Não informado" }}
+
+                    </div>
+
+                    <div class="assessoria-dado">
+
+                        <strong>Telefone:</strong>
+                        {{ assessoria.telefone or "Não informado" }}
+
+                    </div>
+
+                    <div class="assessoria-dado">
+
+                        <strong>Local:</strong>
+
+                        {% if assessoria.cidade or assessoria.estado %}
+
+                            {{ assessoria.cidade or "—" }}
+                            /
+                            {{ assessoria.estado or "—" }}
+
+                        {% else %}
+
+                            Não informado
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class="assessoria-dado">
+
+                        <strong>ID:</strong>
+                        {{ assessoria.id }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% if assessoria.ativa %}
+
+            <span
+                class="
+                    assessoria-status
+                    assessoria-status-ativa
+                "
+            >
+                Ativa
+            </span>
+
+        {% else %}
+
+            <span
+                class="
+                    assessoria-status
+                    assessoria-status-inativa
+                "
+            >
+                Inativa
+            </span>
+
+        {% endif %}
+
+    </div>
+
+    <div class="assessoria-indicadores">
+
+        <div class="assessoria-indicador">
+
+            <span class="assessoria-indicador-label">
+                Empresas vinculadas
+            </span>
+
+            <span class="assessoria-indicador-valor">
+                {{ assessoria.total_empresas or 0 }}
+            </span>
+
+        </div>
+
+        <div class="assessoria-indicador">
+
+            <span class="assessoria-indicador-label">
+                Situação
+            </span>
+
+            <span class="assessoria-indicador-valor">
+                {% if assessoria.ativa %}
+                    Operacional
+                {% else %}
+                    Suspensa
+                {% endif %}
+            </span>
+
+        </div>
+
+    </div>
+
+    <div class="assessoria-acoes">
+
+        <a
+            href="/admin/assessorias/{{ assessoria.id }}/editar"
+            class="assessoria-btn-alterar"
+        >
+            ✏️ Alterar
+        </a>
+
+        <a
+            href="/admin/assessorias/{{ assessoria.id }}"
+            class="assessoria-btn-dashboard"
+        >
+            📊 Dashboard
+        </a>
+
+    </div>
+
+</div>

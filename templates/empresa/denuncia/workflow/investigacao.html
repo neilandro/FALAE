@@ -1,0 +1,114 @@
+<section class="denuncia-tab-panel {% if denuncia.etapa_atual == 'INVESTIGACAO' %}ativo{% endif %}"
+         data-denuncia-panel="investigacao">
+            <div class="card">
+                <div class="triagem-header">
+                    <div>
+                        <h2>👤 Responsável pela Denúncia</h2>
+                        <p>Responsável definido durante a triagem.</p>
+                    </div>
+                    {% if denuncia.responsavel %}
+                        <span class="triagem-status concluida">{{ denuncia.responsavel }}</span>
+                    {% else %}
+                        <span class="triagem-status pendente">Não atribuído</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="triagem-header">
+                    <div>
+                        <h2>🚦 Workflow da Investigação</h2>
+                        <p>Acompanhe e movimente o fluxo de tratamento.</p>
+                    </div>
+                    {% if resumo_etapa %}
+                        <span class="triagem-status concluida">{{ resumo_etapa.percentual_conclusao }}%</span>
+                    {% endif %}
+                </div>
+
+                {% if resumo_etapa %}
+                    <div class="workflow-summary">
+                        <h3>{{ resumo_etapa.nome }}</h3>
+                        <p>Progresso da investigação: {{ resumo_etapa.percentual_conclusao }}%</p>
+                        {% if resumo_etapa.proxima_etapa %}
+                            <p><strong>Próxima etapa:</strong> {{ resumo_etapa.proxima_etapa }}</p>
+                        {% else %}
+                            <p><strong>Fluxo concluído.</strong></p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                {% if linha_do_tempo %}
+                    <div class="workflow-steps">
+                        {% for etapa in linha_do_tempo %}
+                            <div class="workflow-step workflow-step-{{ etapa.status_visual }}">
+                                <span class="workflow-step-number">{{ etapa.ordem }}</span>
+                                <div>
+                                    <strong>{{ etapa.nome }}</strong>
+                                    <p>SLA: {{ etapa.sla_dias }} dia(s)</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% if denuncia.status not in ['CONCLUIDA', 'ARQUIVADA'] %}
+                    <div class="workflow-action">
+                        <h3>🚀 Avançar Workflow</h3>
+                        <p>Registre uma observação antes de movimentar esta denúncia para a próxima etapa.</p>
+
+                        <form method="POST" action="/empresa/denuncia/{{ denuncia.id }}/avancar-etapa" class="form-card">
+                            <div class="form-group">
+                                <label>Observação</label>
+                                <textarea name="observacao_workflow" rows="5" placeholder="Ex.: evidências coletadas, testemunhas entrevistadas, diligências realizadas..."></textarea>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit">➜ Avançar Workflow</button>
+                            </div>
+                        </form>
+                    </div>
+                {% else %}
+                    <div class="empty-state">Esta denúncia está encerrada ou arquivada.</div>
+                {% endif %}
+            </div>
+
+            <div class="card">
+                <div class="triagem-header">
+                    <div>
+                        <h2>📌 Histórico do Workflow</h2>
+                        <p>Etapas, responsáveis e prazos do processo.</p>
+                    </div>
+                </div>
+
+                {% if workflow %}
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Etapa</th>
+                                    <th>Status</th>
+                                    <th>Responsável</th>
+                                    <th>Prazo</th>
+                                    <th>Início</th>
+                                    <th>Conclusão</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in workflow %}
+                                    <tr>
+                                        <td>{{ item.etapa }}</td>
+                                        <td>{{ item.status_etapa }}</td>
+                                        <td>{{ item.responsavel or 'Não informado' }}</td>
+                                        <td>{{ item.prazo_limite or 'Sem prazo' }}</td>
+                                        <td>{{ item.iniciado_em or 'Não iniciado' }}</td>
+                                        <td>{{ item.concluido_em or 'Em aberto' }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="empty-state">Nenhuma movimentação de workflow registrada ainda.</div>
+                {% endif %}
+            </div>
+        </section>

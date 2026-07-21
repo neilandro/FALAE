@@ -1,0 +1,794 @@
+```html
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}
+Painel da Assessoria | FALAE
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .assessoria-resumo-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .assessoria-card-indicador {
+        position: relative;
+        overflow: hidden;
+        min-height: 122px;
+        padding: 20px;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        background: #ffffff;
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+    }
+
+    .assessoria-card-indicador::before {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 5px;
+        height: 100%;
+        background: var(--cor-indicador, #1f4e78);
+        content: "";
+    }
+
+    .assessoria-indicador-label {
+        display: block;
+        margin-bottom: 12px;
+        color: #64748b;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .assessoria-indicador-valor {
+        display: block;
+        margin-bottom: 7px;
+        color: #0f172a;
+        font-size: 31px;
+        font-weight: 800;
+        line-height: 1;
+    }
+
+    .assessoria-indicador-detalhe {
+        color: #64748b;
+        font-size: 12px;
+    }
+
+    .assessoria-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
+        gap: 24px;
+        align-items: start;
+    }
+
+    .assessoria-secao {
+        margin-bottom: 24px;
+        padding: 22px;
+        border: 1px solid #e2e8f0;
+        border-radius: 15px;
+        background: #ffffff;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+    }
+
+    .assessoria-secao-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 18px;
+    }
+
+    .assessoria-secao-header h2 {
+        margin: 0 0 5px;
+        color: #0f172a;
+        font-size: 20px;
+    }
+
+    .assessoria-secao-header p {
+        margin: 0;
+        color: #64748b;
+        line-height: 1.5;
+    }
+
+    .assessoria-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        min-height: 40px;
+        padding: 9px 14px;
+        border-radius: 8px;
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        background: #1f4e78;
+    }
+
+    .assessoria-btn:hover {
+        color: #ffffff;
+        background: #163a5c;
+    }
+
+    .assessoria-tabela-wrapper {
+        overflow-x: auto;
+        border: 1px solid #e2e8f0;
+        border-radius: 11px;
+    }
+
+    .assessoria-tabela {
+        width: 100%;
+        min-width: 760px;
+        border-collapse: collapse;
+    }
+
+    .assessoria-tabela th,
+    .assessoria-tabela td {
+        padding: 12px 13px;
+        border-bottom: 1px solid #e2e8f0;
+        color: #334155;
+        font-size: 13px;
+        text-align: left;
+        vertical-align: middle;
+    }
+
+    .assessoria-tabela th {
+        color: #ffffff;
+        font-size: 12px;
+        background: #1f4e78;
+    }
+
+    .assessoria-tabela tbody tr:nth-child(even) {
+        background: #f8fafc;
+    }
+
+    .assessoria-tabela tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .assessoria-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 8px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .assessoria-badge-ativo {
+        color: #166534;
+        background: #dcfce7;
+    }
+
+    .assessoria-badge-inativo {
+        color: #991b1b;
+        background: #fee2e2;
+    }
+
+    .assessoria-badge-alta {
+        color: #991b1b;
+        background: #fee2e2;
+    }
+
+    .assessoria-badge-media {
+        color: #9a3412;
+        background: #ffedd5;
+    }
+
+    .assessoria-badge-baixa {
+        color: #166534;
+        background: #dcfce7;
+    }
+
+    .assessoria-badge-neutro {
+        color: #475569;
+        background: #e2e8f0;
+    }
+
+    .assessoria-equipe-lista {
+        display: grid;
+        gap: 12px;
+    }
+
+    .assessoria-equipe-item {
+        padding: 14px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        background: #f8fafc;
+    }
+
+    .assessoria-equipe-item h3 {
+        margin: 0 0 5px;
+        color: #0f172a;
+        font-size: 14px;
+    }
+
+    .assessoria-equipe-item p {
+        margin: 3px 0;
+        color: #64748b;
+        font-size: 12px;
+        line-height: 1.4;
+    }
+
+    .assessoria-equipe-resumo {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin-top: 9px;
+    }
+
+    .assessoria-mini-indicador {
+        padding: 5px 8px;
+        border-radius: 7px;
+        color: #334155;
+        font-size: 11px;
+        font-weight: 700;
+        background: #e2e8f0;
+    }
+
+    .assessoria-vazio {
+        padding: 22px;
+        border: 1px dashed #cbd5e1;
+        border-radius: 10px;
+        color: #64748b;
+        text-align: center;
+        background: #f8fafc;
+    }
+
+    @media (max-width: 1180px) {
+        .assessoria-resumo-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 980px) {
+        .assessoria-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 620px) {
+        .assessoria-resumo-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .assessoria-secao-header {
+            flex-direction: column;
+        }
+
+        .assessoria-btn {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    }
+</style>
+
+<div class="page-header">
+
+    <h1>
+        🏢 Painel da Assessoria
+    </h1>
+
+    <p>
+        Visão consolidada das empresas clientes, denúncias
+        e equipe responsável.
+    </p>
+
+</div>
+
+<div class="assessoria-resumo-grid">
+
+    <div
+        class="assessoria-card-indicador"
+        style="--cor-indicador: #1f4e78;"
+    >
+        <span class="assessoria-indicador-label">
+            Empresas
+        </span>
+
+        <span class="assessoria-indicador-valor">
+            {{ total_empresas }}
+        </span>
+
+        <span class="assessoria-indicador-detalhe">
+            Empresas vinculadas à assessoria
+        </span>
+    </div>
+
+    <div
+        class="assessoria-card-indicador"
+        style="--cor-indicador: #d97706;"
+    >
+        <span class="assessoria-indicador-label">
+            Denúncias
+        </span>
+
+        <span class="assessoria-indicador-valor">
+            {{ total_denuncias }}
+        </span>
+
+        <span class="assessoria-indicador-detalhe">
+            {{ denuncias_abertas }} em aberto
+        </span>
+    </div>
+
+    <div
+        class="assessoria-card-indicador"
+        style="--cor-indicador: #15803d;"
+    >
+        <span class="assessoria-indicador-label">
+            Equipe responsável
+        </span>
+
+        <span class="assessoria-indicador-valor">
+            {{ investigadores | length }}
+        </span>
+
+        <span class="assessoria-indicador-detalhe">
+            Administradores, gestores e investigadores
+        </span>
+    </div>
+
+    <div
+        class="assessoria-card-indicador"
+        style="--cor-indicador: #b91c1c;"
+    >
+        <span class="assessoria-indicador-label">
+            Críticas em aberto
+        </span>
+
+        <span class="assessoria-indicador-valor">
+            {{ denuncias_criticas }}
+        </span>
+
+        <span class="assessoria-indicador-detalhe">
+            Registros que exigem prioridade
+        </span>
+    </div>
+
+</div>
+
+<div class="assessoria-resumo-grid">
+
+    <div
+        class="assessoria-card-indicador"
+        style="--cor-indicador: #0369a1;"
+    >
+        <span class="assessoria-indicador-label">
+            Usuários
+        </span>
+
+        <span class="assessoria-indicador-valor">
+            {{ total_usuarios }}
+        </span>
+
+        <span class="assessoria-indicador-detalhe">
+            Usuários ativos nas empresas
+        </span>
+    </div>
+
+    <div
+        class="assessoria-card-indicador"
+        style="--cor-indicador: #7c3aed;"
+    >
+        <span class="assessoria-indicador-label">
+            Investigadores
+        </span>
+
+        <span class="assessoria-indicador-valor">
+            {{ total_investigadores }}
+        </span>
+
+        <span class="assessoria-indicador-detalhe">
+            Usuários com perfil investigador
+        </span>
+    </div>
+
+    <div
+        class="assessoria-card-indicador"
+        style="--cor-indicador: #0f766e;"
+    >
+        <span class="assessoria-indicador-label">
+            Encerradas
+        </span>
+
+        <span class="assessoria-indicador-valor">
+            {{ denuncias_encerradas }}
+        </span>
+
+        <span class="assessoria-indicador-detalhe">
+            Denúncias concluídas ou arquivadas
+        </span>
+    </div>
+
+    <div
+        class="assessoria-card-indicador"
+        style="--cor-indicador: #c2410c;"
+    >
+        <span class="assessoria-indicador-label">
+            Em tratamento
+        </span>
+
+        <span class="assessoria-indicador-valor">
+            {{ denuncias_abertas }}
+        </span>
+
+        <span class="assessoria-indicador-detalhe">
+            Registros ainda não encerrados
+        </span>
+    </div>
+
+</div>
+
+<div class="assessoria-layout">
+
+    <main>
+
+        <section class="assessoria-secao">
+
+            <div class="assessoria-secao-header">
+
+                <div>
+                    <h2>Empresas clientes</h2>
+
+                    <p>
+                        Resumo das empresas vinculadas à assessoria.
+                    </p>
+                </div>
+
+                <a
+                    href="{{ url_for('assessoria.empresas') }}"
+                    class="assessoria-btn"
+                >
+                    Ver todas as empresas
+                </a>
+
+            </div>
+
+            {% if empresas %}
+
+                <div class="assessoria-tabela-wrapper">
+
+                    <table class="assessoria-tabela">
+
+                        <thead>
+                            <tr>
+                                <th>Empresa</th>
+                                <th>Plano</th>
+                                <th>Usuários</th>
+                                <th>Denúncias</th>
+                                <th>Em aberto</th>
+                                <th>Críticas</th>
+                                <th>Status</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for empresa in empresas %}
+
+                                <tr>
+
+                                    <td>
+                                        <strong>
+                                            {{ empresa.nome }}
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        {{ empresa.plano }}
+                                    </td>
+
+                                    <td>
+                                        {{ empresa.total_usuarios }}
+                                    </td>
+
+                                    <td>
+                                        {{ empresa.total_denuncias }}
+                                    </td>
+
+                                    <td>
+                                        {{ empresa.denuncias_abertas }}
+                                    </td>
+
+                                    <td>
+                                        {{ empresa.denuncias_criticas }}
+                                    </td>
+
+                                    <td>
+                                        {% if empresa.ativa %}
+                                            <span
+                                                class="
+                                                    assessoria-badge
+                                                    assessoria-badge-ativo
+                                                "
+                                            >
+                                                Ativa
+                                            </span>
+                                        {% else %}
+                                            <span
+                                                class="
+                                                    assessoria-badge
+                                                    assessoria-badge-inativo
+                                                "
+                                            >
+                                                Inativa
+                                            </span>
+                                        {% endif %}
+                                    </td>
+
+                                    <td>
+                                        <a
+                                            href="{{ url_for(
+                                                'assessoria.entrar_empresa',
+                                                empresa_id=empresa.id
+                                            ) }}"
+                                            class="assessoria-btn"
+                                        >
+                                            Entrar
+                                        </a>
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="assessoria-vazio">
+                    Nenhuma empresa vinculada à assessoria.
+                </div>
+
+            {% endif %}
+
+        </section>
+
+        <section class="assessoria-secao">
+
+            <div class="assessoria-secao-header">
+
+                <div>
+                    <h2>Denúncias recentes</h2>
+
+                    <p>
+                        Últimos registros das empresas clientes.
+                    </p>
+                </div>
+
+            </div>
+
+            {% if denuncias_recentes %}
+
+                <div class="assessoria-tabela-wrapper">
+
+                    <table class="assessoria-tabela">
+
+                        <thead>
+                            <tr>
+                                <th>Protocolo</th>
+                                <th>Empresa</th>
+                                <th>Categoria</th>
+                                <th>Criticidade</th>
+                                <th>Status</th>
+                                <th>Responsável</th>
+                                <th>Data</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for denuncia in denuncias_recentes %}
+
+                                <tr>
+
+                                    <td>
+                                        <strong>
+                                            {{ denuncia.protocolo }}
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        {{ denuncia.empresa_nome }}
+                                    </td>
+
+                                    <td>
+                                        {{ denuncia.categoria }}
+                                    </td>
+
+                                    <td>
+
+                                        {% set criticidade = (
+                                            denuncia.criticidade
+                                            | lower
+                                        ) %}
+
+                                        {% if criticidade == "alta" %}
+                                            <span
+                                                class="
+                                                    assessoria-badge
+                                                    assessoria-badge-alta
+                                                "
+                                            >
+                                                Alta
+                                            </span>
+
+                                        {% elif criticidade in [
+                                            "média",
+                                            "media"
+                                        ] %}
+                                            <span
+                                                class="
+                                                    assessoria-badge
+                                                    assessoria-badge-media
+                                                "
+                                            >
+                                                Média
+                                            </span>
+
+                                        {% elif criticidade == "baixa" %}
+                                            <span
+                                                class="
+                                                    assessoria-badge
+                                                    assessoria-badge-baixa
+                                                "
+                                            >
+                                                Baixa
+                                            </span>
+
+                                        {% else %}
+                                            <span
+                                                class="
+                                                    assessoria-badge
+                                                    assessoria-badge-neutro
+                                                "
+                                            >
+                                                Não informada
+                                            </span>
+                                        {% endif %}
+
+                                    </td>
+
+                                    <td>
+                                        {{ denuncia.status }}
+                                    </td>
+
+                                    <td>
+                                        {{
+                                            denuncia.responsavel_nome
+                                            or "Não atribuído"
+                                        }}
+                                    </td>
+
+                                    <td>
+                                        {% if denuncia.criado_em %}
+                                            {{
+                                                denuncia.criado_em
+                                                .strftime(
+                                                    "%d/%m/%Y"
+                                                )
+                                            }}
+                                        {% else %}
+                                            —
+                                        {% endif %}
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="assessoria-vazio">
+                    Nenhuma denúncia encontrada nas empresas
+                    da assessoria.
+                </div>
+
+            {% endif %}
+
+        </section>
+
+    </main>
+
+    <aside>
+
+        <section class="assessoria-secao">
+
+            <div class="assessoria-secao-header">
+
+                <div>
+                    <h2>Equipe responsável</h2>
+
+                    <p>
+                        Usuários ativos que podem apoiar a gestão
+                        e a investigação das denúncias.
+                    </p>
+                </div>
+
+            </div>
+
+            {% if investigadores %}
+
+                <div class="assessoria-equipe-lista">
+
+                    {% for responsavel in investigadores %}
+
+                        <div class="assessoria-equipe-item">
+
+                            <h3>
+                                {{ responsavel.nome }}
+                            </h3>
+
+                            <p>
+                                {{ responsavel.empresa_nome }}
+                            </p>
+
+                            <p>
+                                {{ responsavel.email }}
+                            </p>
+
+                            <p>
+                                Perfil:
+                                <strong>
+                                    {{ responsavel.perfil }}
+                                </strong>
+                            </p>
+
+                            <div class="assessoria-equipe-resumo">
+
+                                <span class="assessoria-mini-indicador">
+                                    {{
+                                        responsavel
+                                        .denuncias_em_aberto
+                                    }}
+                                    em aberto
+                                </span>
+
+                                <span class="assessoria-mini-indicador">
+                                    {{
+                                        responsavel
+                                        .denuncias_criticas
+                                    }}
+                                    críticas
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="assessoria-vazio">
+                    Nenhum integrante ativo localizado.
+                </div>
+
+            {% endif %}
+
+        </section>
+
+    </aside>
+
+</div>
+
+{% endblock %}
+```

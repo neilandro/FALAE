@@ -1,0 +1,43 @@
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}Editar Unidade | FALAE{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>🏢 Editar Unidade</h1>
+    <p>Atualize os dados da unidade selecionada.</p>
+</div>
+
+<div class="card">
+    <div class="triagem-header">
+        <div>
+            <h2>Dados da Unidade</h2>
+            <p>Altere o nome e o status da unidade.</p>
+        </div>
+    </div>
+
+    <form method="POST" class="form-card">
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Nome da Unidade *</label>
+                <input type="text" name="nome" value="{{ unidade.nome }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Status</label>
+                <select name="ativa">
+                    <option value="1" {% if unidade.ativa %}selected{% endif %}>Ativa</option>
+                    <option value="0" {% if not unidade.ativa %}selected{% endif %}>Inativa</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit">💾 Salvar Alterações</button>
+            <a href="/empresa/unidades" class="btn-secundario">← Voltar</a>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

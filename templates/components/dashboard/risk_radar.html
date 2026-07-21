@@ -1,0 +1,37 @@
+{% if radar_riscos %}
+<div class="risk-radar">
+    <div class="risk-radar-header">
+        <div>
+            <h2>📡 Radar de Riscos</h2>
+            <p>Categorias com maior exposição operacional no momento.</p>
+        </div>
+    </div>
+
+    <div class="risk-radar-list">
+        {% for risco in radar_riscos %}
+            <div class="risk-radar-item risk-radar-{{ risco.classe }}">
+                <div class="risk-radar-info">
+                    <strong>{{ risco.icone }} {{ risco.categoria }}</strong>
+
+                    <p>
+                        {{ risco.total }} registro(s) |
+                        {{ risco.criticas }} crítica(s) |
+                        {{ risco.em_aberto }} em aberto
+                    </p>
+                </div>
+
+                <div class="risk-radar-score">
+                    <progress
+                        class="risk-radar-progress"
+                        value="{{ risco.indice }}"
+                        max="100">
+                    </progress>
+
+                    <strong>{{ risco.indice }}</strong>
+                    <small>{{ risco.nivel }}</small>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}

@@ -1,0 +1,1548 @@
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}
+Personalização | FALAE
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/personalizacao.css') }}">
+{% endblock %}
+
+{% block content %}
+
+
+
+<div class="config-page">
+
+    <div class="config-topbar">
+
+        <div class="page-header">
+            <h1>🎨 Personalização</h1>
+
+            <p>
+                Configure a identidade visual, o conteúdo e os
+                recursos de divulgação do canal da empresa ativa.
+            </p>
+        </div>
+
+        <div class="config-topbar-actions">
+            <a
+                href="/empresa/centro-controle"
+                class="btn-secundario"
+            >
+                ← Voltar ao Centro de Controle
+            </a>
+        </div>
+
+    </div>
+
+    {% if erro %}
+
+        <div class="config-alert config-alert-error">
+            <span class="config-alert-icon">⚠️</span>
+
+            <div>
+                <strong>Não foi possível concluir a operação.</strong>
+                <br>
+                {{ erro }}
+            </div>
+        </div>
+
+    {% endif %}
+
+    {% if sucesso %}
+
+        <div class="config-alert config-alert-success">
+            <span class="config-alert-icon">✅</span>
+
+            <div>
+                {{ sucesso }}
+            </div>
+        </div>
+
+    {% endif %}
+
+    {% if personalizacao %}
+
+        <section class="config-public-card">
+
+            <div class="config-public-header">
+
+                <div class="config-section-heading">
+
+                    <span class="config-section-icon">
+                        🌐
+                    </span>
+
+                    <div>
+                        <h2>Endereço público e divulgação</h2>
+
+                        <p>
+                            Configure o endereço utilizado pelos
+                            denunciantes e gere o QR Code do canal.
+                        </p>
+                    </div>
+
+                </div>
+
+                {% if personalizacao.empresa_slug %}
+                    <span class="config-status">
+                        Canal ativo
+                    </span>
+                {% endif %}
+
+            </div>
+
+            <div class="config-public-body">
+
+                <form
+                    method="POST"
+                    action="/empresa/personalizacao/slug"
+                    id="form-slug"
+                >
+
+                    <div class="config-slug-layout">
+
+                        <div>
+                            <label
+                                for="slug"
+                                class="config-label"
+                            >
+                                Endereço personalizado do canal
+                            </label>
+
+                            <div class="config-slug-input">
+
+                                <span class="config-slug-prefix">
+                                    /canal/
+                                </span>
+
+                                <input
+                                    type="text"
+                                    id="slug"
+                                    name="slug"
+                                    maxlength="100"
+                                    required
+                                    autocomplete="off"
+                                    value="{{ personalizacao.empresa_slug or '' }}"
+                                    placeholder="nome-da-empresa"
+                                >
+
+                            </div>
+
+                            <small class="config-help">
+                                Use letras, números e hífens.
+                                Acentos e espaços serão normalizados.
+                            </small>
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="btn"
+                        >
+                            💾 Salvar endereço
+                        </button>
+
+                    </div>
+
+                </form>
+
+                <div class="config-public-secondary-actions">
+
+                    <form
+                        method="POST"
+                        action="/empresa/personalizacao/slug/gerar"
+                    >
+                        <button
+                            type="submit"
+                            class="btn-secundario"
+                        >
+                            ✨ Gerar automaticamente
+                        </button>
+                    </form>
+
+                </div>
+
+                {% if personalizacao.empresa_slug %}
+
+                    {% set link_publico =
+                        request.url_root.rstrip('/')
+                        ~ '/canal/'
+                        ~ personalizacao.empresa_slug
+                    %}
+
+                    <div class="config-public-result">
+
+                        <div>
+                            <span class="config-public-url-label">
+                                Link público do canal
+                            </span>
+
+                            <span
+                                class="config-public-url"
+                                id="link-publico"
+                            >
+                                {{ link_publico }}
+                            </span>
+                        </div>
+
+                        <div class="config-public-actions">
+
+                            <button
+                                type="button"
+                                class="btn-secundario"
+                                onclick="copiarLinkPublico();"
+                            >
+                                📋 Copiar
+                            </button>
+
+                            <a
+                                href="{{ link_publico }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="btn-secundario"
+                            >
+                                ↗ Abrir portal
+                            </a>
+
+                            <a
+                                href="{{ url_for(
+                                    'personalizacao.baixar_qrcode'
+                                ) }}"
+                                class="btn"
+                            >
+                                📱 Baixar QR Code
+                            </a>
+
+                        </div>
+
+                        <div class="config-public-tip">
+                            <span>💡</span>
+
+                            <span>
+                                Divulgue o QR Code em murais, portarias,
+                                refeitórios, áreas de descanso, RH, CIPA,
+                                SIPAT e outros locais acessíveis.
+                            </span>
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+        <div class="config-main-grid">
+
+            <div class="config-form-column">
+
+                <form
+                    method="POST"
+                    id="form-personalizacao"
+                    enctype="multipart/form-data"
+                    novalidate
+                >
+
+                    <section class="config-section-card">
+
+                        <div class="config-card-header">
+
+                            <div class="config-section-heading">
+
+                                <span class="config-section-icon">
+                                    🏢
+                                </span>
+
+                                <div>
+                                    <h2>Identidade do canal</h2>
+
+                                    <p>
+                                        Defina o nome apresentado aos
+                                        usuários no portal público.
+                                    </p>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="config-card-body">
+
+                            <div class="config-field">
+
+                                <label
+                                    for="nome_canal"
+                                    class="config-label"
+                                >
+                                    Nome do canal
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="nome_canal"
+                                    name="nome_canal"
+                                    maxlength="120"
+                                    required
+                                    value="{{ request.form.get(
+                                        'nome_canal',
+                                        personalizacao.nome_canal or ''
+                                    ) }}"
+                                    placeholder="Ex.: Canal de Ética"
+                                >
+
+                                <small class="config-help">
+                                    Exemplos: Canal de Ética, Canal de
+                                    Integridade ou Fale com a Empresa.
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <section class="config-section-card">
+
+                        <div class="config-card-header">
+
+                            <div class="config-section-heading">
+
+                                <span class="config-section-icon">
+                                    🎨
+                                </span>
+
+                                <div>
+                                    <h2>Cores e aparência</h2>
+
+                                    <p>
+                                        Selecione as cores que representam
+                                        a identidade visual da empresa.
+                                    </p>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="config-card-body">
+
+                            <div class="config-color-grid">
+
+                                <div class="config-color-card">
+
+                                    <label
+                                        for="cor_primaria"
+                                        class="config-label"
+                                    >
+                                        Cor primária
+                                    </label>
+
+                                    <div class="config-color-control">
+
+                                        <input
+                                            type="color"
+                                            id="cor_primaria"
+                                            name="cor_primaria"
+                                            value="{{ request.form.get(
+                                                'cor_primaria',
+                                                personalizacao.cor_primaria
+                                                or '#1F4E78'
+                                            ) }}"
+                                        >
+
+                                        <span
+                                            class="config-color-value"
+                                            id="valor-cor-primaria"
+                                        >
+                                            {{
+                                                request.form.get(
+                                                    'cor_primaria',
+                                                    personalizacao.cor_primaria
+                                                    or '#1F4E78'
+                                                )
+                                            }}
+                                        </span>
+
+                                    </div>
+
+                                    <small class="config-help">
+                                        Utilizada no cabeçalho e nos
+                                        principais elementos visuais.
+                                    </small>
+
+                                </div>
+
+                                <div class="config-color-card">
+
+                                    <label
+                                        for="cor_secundaria"
+                                        class="config-label"
+                                    >
+                                        Cor secundária
+                                    </label>
+
+                                    <div class="config-color-control">
+
+                                        <input
+                                            type="color"
+                                            id="cor_secundaria"
+                                            name="cor_secundaria"
+                                            value="{{ request.form.get(
+                                                'cor_secundaria',
+                                                personalizacao.cor_secundaria
+                                                or '#163A5C'
+                                            ) }}"
+                                        >
+
+                                        <span
+                                            class="config-color-value"
+                                            id="valor-cor-secundaria"
+                                        >
+                                            {{
+                                                request.form.get(
+                                                    'cor_secundaria',
+                                                    personalizacao.cor_secundaria
+                                                    or '#163A5C'
+                                                )
+                                            }}
+                                        </span>
+
+                                    </div>
+
+                                    <small class="config-help">
+                                        Utilizada em botões e elementos
+                                        complementares do portal.
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <section class="config-section-card">
+
+                        <div class="config-card-header">
+
+                            <div class="config-section-heading">
+
+                                <span class="config-section-icon">
+                                    🖼️
+                                </span>
+
+                                <div>
+                                    <h2>Logotipo e favicon</h2>
+
+                                    <p>
+                                        Envie os arquivos que representam
+                                        a empresa no canal público.
+                                    </p>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="config-card-body">
+
+                            <div class="config-file-grid">
+
+                                <div class="config-upload-box">
+
+                                    <div class="config-upload-title">
+                                        🖼️ Logotipo da empresa
+                                    </div>
+
+                                    <input
+                                        type="file"
+                                        id="logo"
+                                        name="logo"
+                                        accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp"
+                                    >
+
+                                    <small class="config-help">
+                                        PNG, JPG, JPEG ou WEBP.
+                                        Tamanho máximo de 3 MB.
+                                    </small>
+
+                                    {% if personalizacao.empresa_logo %}
+
+                                        <div class="config-current-file">
+
+                                            <img
+                                                src="{{ url_for(
+                                                    'static',
+                                                    filename=personalizacao.empresa_logo
+                                                ) }}"
+                                                alt="Logotipo atual da empresa"
+                                            >
+
+                                            <div class="config-current-file-info">
+
+                                                <strong>
+                                                    Logotipo atual
+                                                </strong>
+
+                                                <div class="config-file-path">
+                                                    {{
+                                                        personalizacao
+                                                        .empresa_logo
+                                                    }}
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                    {% endif %}
+
+                                </div>
+
+                                <div class="config-upload-box">
+
+                                    <div class="config-upload-title">
+                                        ⭐ Favicon
+                                    </div>
+
+                                    <input
+                                        type="file"
+                                        id="favicon"
+                                        name="favicon"
+                                        accept=".png,.ico,image/png,image/x-icon"
+                                    >
+
+                                    <small class="config-help">
+                                        PNG ou ICO.
+                                        Tamanho máximo de 1 MB.
+                                    </small>
+
+                                    {% if personalizacao.favicon %}
+
+                                        <div
+                                            class="
+                                                config-current-file
+                                                config-current-favicon
+                                            "
+                                        >
+
+                                            <img
+                                                src="{{ url_for(
+                                                    'static',
+                                                    filename=personalizacao.favicon
+                                                ) }}"
+                                                alt="Favicon atual"
+                                            >
+
+                                            <div class="config-current-file-info">
+
+                                                <strong>
+                                                    Favicon atual
+                                                </strong>
+
+                                                <div class="config-file-path">
+                                                    {{
+                                                        personalizacao
+                                                        .favicon
+                                                    }}
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <section class="config-section-card">
+
+                        <div class="config-card-header">
+
+                            <div class="config-section-heading">
+
+                                <span class="config-section-icon">
+                                    ✍️
+                                </span>
+
+                                <div>
+                                    <h2>Conteúdo do portal</h2>
+
+                                    <p>
+                                        Configure os textos apresentados
+                                        aos denunciantes.
+                                    </p>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="config-card-body">
+
+                            <div class="config-fields-grid">
+
+                                <div class="config-field config-field-full">
+
+                                    <label
+                                        for="mensagem_boas_vindas"
+                                        class="config-label"
+                                    >
+                                        Mensagem de boas-vindas
+                                    </label>
+
+                                    <textarea
+                                        id="mensagem_boas_vindas"
+                                        name="mensagem_boas_vindas"
+                                        maxlength="2000"
+                                        placeholder="Apresente o propósito e a confidencialidade do canal."
+                                    >{{ request.form.get(
+                                        'mensagem_boas_vindas',
+                                        personalizacao.mensagem_boas_vindas
+                                        or ''
+                                    ) }}</textarea>
+
+                                    <small class="config-help">
+                                        Essa mensagem aparece na abertura
+                                        do canal público.
+                                    </small>
+
+                                </div>
+
+                                <div class="config-field config-field-full">
+
+                                    <label
+                                        for="texto_lgpd"
+                                        class="config-label"
+                                    >
+                                        Texto sobre privacidade e LGPD
+                                    </label>
+
+                                    <textarea
+                                        id="texto_lgpd"
+                                        name="texto_lgpd"
+                                        maxlength="5000"
+                                        class="config-textarea-large"
+                                    >{{ request.form.get(
+                                        'texto_lgpd',
+                                        personalizacao.texto_lgpd or ''
+                                    ) }}</textarea>
+
+                                </div>
+
+                                <div class="config-field config-field-full">
+
+                                    <label
+                                        for="termo_uso"
+                                        class="config-label"
+                                    >
+                                        Termo de uso
+                                    </label>
+
+                                    <textarea
+                                        id="termo_uso"
+                                        name="termo_uso"
+                                        maxlength="5000"
+                                        class="config-textarea-large"
+                                    >{{ request.form.get(
+                                        'termo_uso',
+                                        personalizacao.termo_uso or ''
+                                    ) }}</textarea>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <section class="config-section-card">
+
+                        <div class="config-card-header">
+
+                            <div class="config-section-heading">
+
+                                <span class="config-section-icon">
+                                    👁️
+                                </span>
+
+                                <div>
+                                    <h2>Elementos exibidos</h2>
+
+                                    <p>
+                                        Escolha os elementos visuais que
+                                        aparecerão no portal.
+                                    </p>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="config-card-body">
+
+                            <div class="config-display-options">
+
+                                <label class="config-option">
+
+                                    <input
+                                        type="checkbox"
+                                        id="mostrar_logo"
+                                        name="mostrar_logo"
+                                        value="1"
+                                        {% if request.method == 'POST' %}
+                                            {% if request.form.get(
+                                                'mostrar_logo'
+                                            ) %}
+                                                checked
+                                            {% endif %}
+                                        {% elif personalizacao.mostrar_logo %}
+                                            checked
+                                        {% endif %}
+                                    >
+
+                                    <span>
+                                        <strong>
+                                            Exibir logotipo
+                                        </strong>
+
+                                        <span>
+                                            Mostra a marca da empresa
+                                            no cabeçalho do canal.
+                                        </span>
+                                    </span>
+
+                                </label>
+
+                                <label class="config-option">
+
+                                    <input
+                                        type="checkbox"
+                                        id="mostrar_nome_empresa"
+                                        name="mostrar_nome_empresa"
+                                        value="1"
+                                        {% if request.method == 'POST' %}
+                                            {% if request.form.get(
+                                                'mostrar_nome_empresa'
+                                            ) %}
+                                                checked
+                                            {% endif %}
+                                        {% elif personalizacao.mostrar_nome_empresa %}
+                                            checked
+                                        {% endif %}
+                                    >
+
+                                    <span>
+                                        <strong>
+                                            Exibir nome da empresa
+                                        </strong>
+
+                                        <span>
+                                            Apresenta o nome da empresa
+                                            abaixo do nome do canal.
+                                        </span>
+                                    </span>
+
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                        <div class="config-form-footer">
+
+                            <span class="config-form-footer-note">
+                                A pré-visualização é atualizada
+                                automaticamente durante a edição.
+                            </span>
+
+                            <div class="config-form-footer-actions">
+
+                                <a
+                                    href="/empresa/centro-controle"
+                                    class="btn-secundario"
+                                >
+                                    Cancelar
+                                </a>
+
+                                <button
+                                    type="submit"
+                                    class="btn"
+                                >
+                                    💾 Salvar personalização
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                </form>
+
+                {% if (
+                    personalizacao.empresa_logo
+                    or personalizacao.favicon
+                ) %}
+
+                    <section class="config-section-card">
+
+                        <div class="config-card-header">
+
+                            <div class="config-section-heading">
+
+                                <span class="config-section-icon">
+                                    🗑️
+                                </span>
+
+                                <div>
+                                    <h2>Remover arquivos</h2>
+
+                                    <p>
+                                        Remova arquivos visuais que não
+                                        devem mais ser utilizados.
+                                    </p>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="config-removal-area">
+
+                            {% if personalizacao.empresa_logo %}
+
+                                <form
+                                    method="POST"
+                                    action="/empresa/personalizacao/logo/remover"
+                                    onsubmit="return confirmarRemocaoLogo();"
+                                >
+                                    <button
+                                        type="submit"
+                                        class="config-danger-button"
+                                    >
+                                        🗑️ Remover logotipo
+                                    </button>
+                                </form>
+
+                            {% endif %}
+
+                            {% if personalizacao.favicon %}
+
+                                <form
+                                    method="POST"
+                                    action="/empresa/personalizacao/favicon/remover"
+                                    onsubmit="return confirmarRemocaoFavicon();"
+                                >
+                                    <button
+                                        type="submit"
+                                        class="config-danger-button"
+                                    >
+                                        🗑️ Remover favicon
+                                    </button>
+                                </form>
+
+                            {% endif %}
+
+                        </div>
+
+                    </section>
+
+                {% endif %}
+
+            </div>
+
+            <aside class="config-preview-column">
+
+                <div class="config-preview-card">
+
+                    <div class="config-preview-header">
+
+                        <h2>📱 Pré-visualização</h2>
+
+                        <p>
+                            Simulação aproximada da experiência
+                            no canal público.
+                        </p>
+
+                    </div>
+
+                    <div class="config-device-frame">
+
+                        <div class="config-device-speaker"></div>
+
+                        <div
+                            class="preview-canal"
+                            id="preview-canal"
+                            style="
+                                --preview-cor-primaria:
+                                    {{ personalizacao.cor_primaria
+                                        or '#1F4E78' }};
+                                --preview-cor-secundaria:
+                                    {{ personalizacao.cor_secundaria
+                                        or '#163A5C' }};
+                            "
+                        >
+
+                            <div class="preview-topo">
+
+                                <div
+                                    class="preview-logo"
+                                    id="preview-logo"
+                                    {% if not personalizacao.mostrar_logo %}
+                                        hidden
+                                    {% endif %}
+                                >
+
+                                    {% if personalizacao.empresa_logo %}
+
+                                        <img
+                                            id="preview-logo-imagem"
+                                            src="{{ url_for(
+                                                'static',
+                                                filename=personalizacao.empresa_logo
+                                            ) }}"
+                                            alt="Logotipo da empresa"
+                                        >
+
+                                    {% else %}
+
+                                        <img
+                                            id="preview-logo-imagem"
+                                            src=""
+                                            alt="Pré-visualização do logotipo"
+                                            hidden
+                                        >
+
+                                        <span
+                                            class="preview-logo-placeholder"
+                                            id="preview-logo-placeholder"
+                                        >
+                                            🛡
+                                        </span>
+
+                                    {% endif %}
+
+                                </div>
+
+                                <h3 id="preview-nome-canal">
+                                    {{ personalizacao.nome_canal }}
+                                </h3>
+
+                                <p
+                                    id="preview-nome-empresa"
+                                    {% if not personalizacao.mostrar_nome_empresa %}
+                                        hidden
+                                    {% endif %}
+                                >
+                                    {{ personalizacao.empresa_nome }}
+                                </p>
+
+                            </div>
+
+                            <div class="preview-conteudo">
+
+                                <div class="preview-secure-badge">
+                                    🔒 Canal seguro e confidencial
+                                </div>
+
+                                <p
+                                    class="preview-mensagem"
+                                    id="preview-mensagem"
+                                >
+                                    {{
+                                        personalizacao
+                                        .mensagem_boas_vindas
+                                    }}
+                                </p>
+
+                                <button
+                                    type="button"
+                                    class="preview-botao"
+                                    tabindex="-1"
+                                >
+                                    Registrar denúncia
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="config-summary">
+
+                        <div class="config-summary-row">
+
+                            <span class="config-summary-label">
+                                Empresa
+                            </span>
+
+                            <span class="config-summary-value">
+                                {{ personalizacao.empresa_nome }}
+                            </span>
+
+                        </div>
+
+                        <div class="config-summary-row">
+
+                            <span class="config-summary-label">
+                                Endereço
+                            </span>
+
+                            <span class="config-summary-value">
+                                {{
+                                    personalizacao.empresa_slug
+                                    or 'Não definido'
+                                }}
+                            </span>
+
+                        </div>
+
+                        <div class="config-summary-row">
+
+                            <span class="config-summary-label">
+                                Status
+                            </span>
+
+                            <span class="config-summary-value">
+
+                                {% if personalizacao.empresa_ativa %}
+
+                                    <span class="config-summary-status">
+                                        Ativa
+                                    </span>
+
+                                {% else %}
+
+                                    Inativa
+
+                                {% endif %}
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </aside>
+
+        </div>
+
+    {% else %}
+
+        <div class="card">
+
+            <div class="empty-state">
+                Não foi possível carregar a personalização
+                da empresa.
+            </div>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const formulario = document.getElementById(
+        "form-personalizacao"
+    );
+
+    const formularioSlug = document.getElementById(
+        "form-slug"
+    );
+
+    const campoSlug = document.getElementById("slug");
+
+    const campoNomeCanal = document.getElementById(
+        "nome_canal"
+    );
+
+    const campoCorPrimaria = document.getElementById(
+        "cor_primaria"
+    );
+
+    const campoCorSecundaria = document.getElementById(
+        "cor_secundaria"
+    );
+
+    const valorCorPrimaria = document.getElementById(
+        "valor-cor-primaria"
+    );
+
+    const valorCorSecundaria = document.getElementById(
+        "valor-cor-secundaria"
+    );
+
+    const campoMensagem = document.getElementById(
+        "mensagem_boas_vindas"
+    );
+
+    const campoMostrarLogo = document.getElementById(
+        "mostrar_logo"
+    );
+
+    const campoMostrarNome = document.getElementById(
+        "mostrar_nome_empresa"
+    );
+
+    const campoLogo = document.getElementById("logo");
+    const campoFavicon = document.getElementById("favicon");
+
+    const previewCanal = document.getElementById(
+        "preview-canal"
+    );
+
+    const previewNomeCanal = document.getElementById(
+        "preview-nome-canal"
+    );
+
+    const previewNomeEmpresa = document.getElementById(
+        "preview-nome-empresa"
+    );
+
+    const previewMensagem = document.getElementById(
+        "preview-mensagem"
+    );
+
+    const previewLogo = document.getElementById(
+        "preview-logo"
+    );
+
+    const previewLogoImagem = document.getElementById(
+        "preview-logo-imagem"
+    );
+
+    const previewLogoPlaceholder = document.getElementById(
+        "preview-logo-placeholder"
+    );
+
+    function normalizarSlug(valor) {
+        return valor
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase()
+            .trim()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/-+/g, "-")
+            .replace(/^-|-$/g, "");
+    }
+
+    if (campoSlug) {
+        campoSlug.addEventListener(
+            "blur",
+            function () {
+                campoSlug.value = normalizarSlug(
+                    campoSlug.value
+                );
+            }
+        );
+    }
+
+    if (formularioSlug && campoSlug) {
+        formularioSlug.addEventListener(
+            "submit",
+            function (evento) {
+                const slug = normalizarSlug(
+                    campoSlug.value
+                );
+
+                campoSlug.value = slug;
+
+                if (!slug) {
+                    evento.preventDefault();
+
+                    alert(
+                        "Informe o endereço público."
+                    );
+
+                    campoSlug.focus();
+                    return;
+                }
+
+                if (slug.length < 3) {
+                    evento.preventDefault();
+
+                    alert(
+                        "O endereço público deve possuir "
+                        + "pelo menos 3 caracteres."
+                    );
+
+                    campoSlug.focus();
+                }
+            }
+        );
+    }
+
+    if (
+        !formulario
+        || !campoNomeCanal
+        || !campoCorPrimaria
+        || !campoCorSecundaria
+        || !previewCanal
+    ) {
+        return;
+    }
+
+    function atualizarPreview() {
+        const nomeCanal = campoNomeCanal.value.trim();
+
+        const mensagem = campoMensagem
+            ? campoMensagem.value.trim()
+            : "";
+
+        if (previewNomeCanal) {
+            previewNomeCanal.textContent = (
+                nomeCanal
+                || "Canal de Denúncias"
+            );
+        }
+
+        if (previewMensagem) {
+            previewMensagem.textContent = (
+                mensagem
+                || (
+                    "Este é um canal seguro para "
+                    + "o registro de denúncias."
+                )
+            );
+        }
+
+        previewCanal.style.setProperty(
+            "--preview-cor-primaria",
+            campoCorPrimaria.value || "#1F4E78"
+        );
+
+        previewCanal.style.setProperty(
+            "--preview-cor-secundaria",
+            campoCorSecundaria.value || "#163A5C"
+        );
+
+        if (valorCorPrimaria) {
+            valorCorPrimaria.textContent = (
+                campoCorPrimaria.value
+            );
+        }
+
+        if (valorCorSecundaria) {
+            valorCorSecundaria.textContent = (
+                campoCorSecundaria.value
+            );
+        }
+
+        if (previewLogo && campoMostrarLogo) {
+            previewLogo.hidden = (
+                !campoMostrarLogo.checked
+            );
+        }
+
+        if (
+            previewNomeEmpresa
+            && campoMostrarNome
+        ) {
+            previewNomeEmpresa.hidden = (
+                !campoMostrarNome.checked
+            );
+        }
+    }
+
+    function visualizarLogoSelecionado() {
+        const arquivo = (
+            campoLogo
+            && campoLogo.files
+        )
+            ? campoLogo.files[0]
+            : null;
+
+        if (
+            !arquivo
+            || !previewLogoImagem
+        ) {
+            return;
+        }
+
+        const leitor = new FileReader();
+
+        leitor.onload = function (evento) {
+            previewLogoImagem.src = (
+                evento.target.result
+            );
+
+            previewLogoImagem.hidden = false;
+
+            if (previewLogoPlaceholder) {
+                previewLogoPlaceholder.hidden = true;
+            }
+
+            if (
+                previewLogo
+                && campoMostrarLogo
+            ) {
+                previewLogo.hidden = (
+                    !campoMostrarLogo.checked
+                );
+            }
+        };
+
+        leitor.readAsDataURL(
+            arquivo
+        );
+    }
+
+    function validarArquivo(
+        campo,
+        extensoesPermitidas,
+        tamanhoMaximo,
+        nomeAmigavel
+    ) {
+        if (
+            !campo
+            || !campo.files
+            || !campo.files[0]
+        ) {
+            return true;
+        }
+
+        const arquivo = campo.files[0];
+
+        const nomeArquivo = (
+            arquivo.name.toLowerCase()
+        );
+
+        const extensaoValida = (
+            extensoesPermitidas.some(
+                function (extensao) {
+                    return nomeArquivo.endsWith(
+                        "." + extensao
+                    );
+                }
+            )
+        );
+
+        if (!extensaoValida) {
+            alert(
+                "O "
+                + nomeAmigavel
+                + " deve estar em um dos formatos: "
+                + extensoesPermitidas
+                    .join(", ")
+                    .toUpperCase()
+                + "."
+            );
+
+            campo.value = "";
+            campo.focus();
+
+            return false;
+        }
+
+        if (arquivo.size > tamanhoMaximo) {
+            alert(
+                "O arquivo de "
+                + nomeAmigavel
+                + " ultrapassa o tamanho máximo permitido."
+            );
+
+            campo.value = "";
+            campo.focus();
+
+            return false;
+        }
+
+        return true;
+    }
+
+    campoNomeCanal.addEventListener(
+        "input",
+        atualizarPreview
+    );
+
+    campoCorPrimaria.addEventListener(
+        "input",
+        atualizarPreview
+    );
+
+    campoCorSecundaria.addEventListener(
+        "input",
+        atualizarPreview
+    );
+
+    if (campoMensagem) {
+        campoMensagem.addEventListener(
+            "input",
+            atualizarPreview
+        );
+    }
+
+    if (campoMostrarLogo) {
+        campoMostrarLogo.addEventListener(
+            "change",
+            atualizarPreview
+        );
+    }
+
+    if (campoMostrarNome) {
+        campoMostrarNome.addEventListener(
+            "change",
+            atualizarPreview
+        );
+    }
+
+    if (campoLogo) {
+        campoLogo.addEventListener(
+            "change",
+            function () {
+                if (
+                    validarArquivo(
+                        campoLogo,
+                        [
+                            "png",
+                            "jpg",
+                            "jpeg",
+                            "webp"
+                        ],
+                        3 * 1024 * 1024,
+                        "logotipo"
+                    )
+                ) {
+                    visualizarLogoSelecionado();
+                }
+            }
+        );
+    }
+
+    if (campoFavicon) {
+        campoFavicon.addEventListener(
+            "change",
+            function () {
+                validarArquivo(
+                    campoFavicon,
+                    ["png", "ico"],
+                    1 * 1024 * 1024,
+                    "favicon"
+                );
+            }
+        );
+    }
+
+    formulario.addEventListener(
+        "submit",
+        function (evento) {
+            const nomeCanal = (
+                campoNomeCanal.value.trim()
+            );
+
+            campoNomeCanal.value = nomeCanal;
+
+            if (!nomeCanal) {
+                evento.preventDefault();
+
+                alert(
+                    "Informe o nome do canal."
+                );
+
+                campoNomeCanal.focus();
+                return;
+            }
+
+            if (nomeCanal.length < 3) {
+                evento.preventDefault();
+
+                alert(
+                    "O nome do canal deve possuir "
+                    + "pelo menos 3 caracteres."
+                );
+
+                campoNomeCanal.focus();
+                return;
+            }
+
+            if (
+                !validarArquivo(
+                    campoLogo,
+                    [
+                        "png",
+                        "jpg",
+                        "jpeg",
+                        "webp"
+                    ],
+                    3 * 1024 * 1024,
+                    "logotipo"
+                )
+            ) {
+                evento.preventDefault();
+                return;
+            }
+
+            if (
+                !validarArquivo(
+                    campoFavicon,
+                    ["png", "ico"],
+                    1 * 1024 * 1024,
+                    "favicon"
+                )
+            ) {
+                evento.preventDefault();
+            }
+        }
+    );
+
+    atualizarPreview();
+});
+
+function copiarLinkPublico() {
+    const elemento = document.getElementById(
+        "link-publico"
+    );
+
+    if (!elemento) {
+        return;
+    }
+
+    const link = elemento.textContent.trim();
+
+    navigator.clipboard.writeText(link).then(
+        function () {
+            alert(
+                "Link público copiado com sucesso."
+            );
+        },
+        function () {
+            alert(
+                "Não foi possível copiar "
+                + "o link automaticamente."
+            );
+        }
+    );
+}
+
+function confirmarRemocaoLogo() {
+    return confirm(
+        "Deseja realmente remover "
+        + "o logotipo configurado?"
+    );
+}
+
+function confirmarRemocaoFavicon() {
+    return confirm(
+        "Deseja realmente remover "
+        + "o favicon configurado?"
+    );
+}
+</script>
+
+{% endblock %}

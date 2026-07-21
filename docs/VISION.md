@@ -1,0 +1,1 @@
+"O FALAE existe para tornar a implantação de canais de denúncia simples, acessível e eficiente para empresas brasileiras, oferecendo uma plataforma moderna, segura e intuitiva que fortaleça a cultura de integridade e auxilie as organizações no atendimento às exigências legais e de governança."

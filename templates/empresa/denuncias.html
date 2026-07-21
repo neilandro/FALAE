@@ -1,0 +1,350 @@
+{% extends "layouts/admin_base.html" %}
+{% from "components/badges/status_badge.html" import status_badge %}
+
+{% block title %}Denúncias | FALAE Enterprise{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/denuncias_lista.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<section class="denuncias-page">
+
+    <header class="denuncias-hero">
+        <div class="denuncias-hero__content">
+            <span class="denuncias-eyebrow">Gestão de casos</span>
+            <h1>Denúncias</h1>
+            <p>Consulte, filtre e acompanhe o andamento das denúncias registradas pela empresa.</p>
+        </div>
+
+        <div class="denuncias-hero__actions">
+            <a href="/empresa/centro-controle" class="denuncias-btn denuncias-btn--primary">
+                <i data-lucide="layout-dashboard"></i>
+                Centro de Controle
+            </a>
+
+            <div class="denuncias-export-group">
+                <a href="/empresa/denuncias/exportar" class="denuncias-btn denuncias-btn--secondary">
+                    <i data-lucide="file-spreadsheet"></i>
+                    Excel
+                </a>
+
+                <a href="/empresa/denuncias/exportar-pdf" class="denuncias-btn denuncias-btn--secondary">
+                    <i data-lucide="file-text"></i>
+                    PDF
+                </a>
+            </div>
+
+            <a href="/painel" class="denuncias-btn denuncias-btn--ghost">
+                <i data-lucide="arrow-left"></i>
+                Voltar
+            </a>
+        </div>
+    </header>
+
+    <section class="denuncias-metrics" aria-label="Resumo das denúncias">
+        <article class="denuncias-metric denuncias-metric--total">
+            <div class="denuncias-metric__icon">
+                <i data-lucide="inbox"></i>
+            </div>
+            <div>
+                <span class="denuncias-metric__label">Total encontrado</span>
+                <strong class="denuncias-metric__value">{{ paginacao.total_registros }}</strong>
+                <small>Registros conforme os filtros</small>
+            </div>
+        </article>
+
+        <article class="denuncias-metric denuncias-metric--new">
+            <div class="denuncias-metric__icon">
+                <i data-lucide="bell-ring"></i>
+            </div>
+            <div>
+                <span class="denuncias-metric__label">Novas</span>
+                <strong class="denuncias-metric__value">{{ denuncias|selectattr("status", "equalto", "NOVA")|list|length }}</strong>
+                <small>Nesta página</small>
+            </div>
+        </article>
+
+        <article class="denuncias-metric denuncias-metric--analysis">
+            <div class="denuncias-metric__icon">
+                <i data-lucide="search-check"></i>
+            </div>
+            <div>
+                <span class="denuncias-metric__label">Em análise</span>
+                <strong class="denuncias-metric__value">{{ denuncias|selectattr("status", "equalto", "EM_ANALISE")|list|length }}</strong>
+                <small>Nesta página</small>
+            </div>
+        </article>
+
+        <article class="denuncias-metric denuncias-metric--done">
+            <div class="denuncias-metric__icon">
+                <i data-lucide="circle-check-big"></i>
+            </div>
+            <div>
+                <span class="denuncias-metric__label">Concluídas</span>
+                <strong class="denuncias-metric__value">{{ denuncias|selectattr("status", "equalto", "CONCLUIDA")|list|length }}</strong>
+                <small>Nesta página</small>
+            </div>
+        </article>
+    </section>
+
+    <section class="denuncias-filter-card">
+        <div class="denuncias-section-heading">
+            <div class="denuncias-section-heading__icon">
+                <i data-lucide="sliders-horizontal"></i>
+            </div>
+            <div>
+                <h2>Filtros de pesquisa</h2>
+                <p>Use os critérios abaixo para localizar rapidamente uma denúncia.</p>
+            </div>
+        </div>
+
+        <form method="GET" action="/empresa/denuncias" class="denuncias-filters">
+            <div class="denuncias-field denuncias-field--protocol">
+                <label for="filtro-protocolo">Protocolo</label>
+                <div class="denuncias-input-icon">
+                    <i data-lucide="hash"></i>
+                    <input
+                        id="filtro-protocolo"
+                        type="text"
+                        name="protocolo"
+                        value="{{ filtros.protocolo or '' }}"
+                        placeholder="Ex.: FALAE-2026-001"
+                    >
+                </div>
+            </div>
+
+            <div class="denuncias-field">
+                <label for="filtro-status">Status</label>
+                <select id="filtro-status" name="status">
+                    <option value="">Todos os status</option>
+                    <option value="NOVA" {% if filtros.status == "NOVA" %}selected{% endif %}>Nova</option>
+                    <option value="EM_ANALISE" {% if filtros.status == "EM_ANALISE" %}selected{% endif %}>Em análise</option>
+                    <option value="CONCLUIDA" {% if filtros.status == "CONCLUIDA" %}selected{% endif %}>Concluída</option>
+                    <option value="ARQUIVADA" {% if filtros.status == "ARQUIVADA" %}selected{% endif %}>Arquivada</option>
+                </select>
+            </div>
+
+            <div class="denuncias-field">
+                <label for="filtro-categoria">Categoria</label>
+                <select id="filtro-categoria" name="categoria">
+                    <option value="">Todas as categorias</option>
+                    {% for item in categorias %}
+                        <option value="{{ item.categoria }}" {% if filtros.categoria == item.categoria %}selected{% endif %}>
+                            {{ item.categoria }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="denuncias-field">
+                <label for="filtro-criticidade">Criticidade</label>
+                <select id="filtro-criticidade" name="criticidade">
+                    <option value="">Todas as criticidades</option>
+                    {% for item in criticidades %}
+                        <option value="{{ item.criticidade }}" {% if filtros.criticidade == item.criticidade %}selected{% endif %}>
+                            {{ item.criticidade }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="denuncias-field">
+                <label for="filtro-unidade">Unidade</label>
+                <select id="filtro-unidade" name="unidade_id">
+                    <option value="">Todas as unidades</option>
+                    {% for unidade in unidades %}
+                        <option value="{{ unidade.id }}" {% if filtros.unidade_id and filtros.unidade_id|int == unidade.id %}selected{% endif %}>
+                            {{ unidade.nome }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="denuncias-field">
+                <label for="filtro-inicio">Data inicial</label>
+                <input id="filtro-inicio" type="date" name="data_inicio" value="{{ filtros.data_inicio or '' }}">
+            </div>
+
+            <div class="denuncias-field">
+                <label for="filtro-fim">Data final</label>
+                <input id="filtro-fim" type="date" name="data_fim" value="{{ filtros.data_fim or '' }}">
+            </div>
+
+            <div class="denuncias-field">
+                <label for="filtro-ordenacao">Ordenação</label>
+                <select id="filtro-ordenacao" name="ordenacao">
+                    <option value="recentes" {% if filtros.ordenacao == "recentes" %}selected{% endif %}>Mais recentes</option>
+                    <option value="antigas" {% if filtros.ordenacao == "antigas" %}selected{% endif %}>Mais antigas</option>
+                    <option value="protocolo_asc" {% if filtros.ordenacao == "protocolo_asc" %}selected{% endif %}>Protocolo (A–Z)</option>
+                    <option value="protocolo_desc" {% if filtros.ordenacao == "protocolo_desc" %}selected{% endif %}>Protocolo (Z–A)</option>
+                </select>
+            </div>
+
+            <div class="denuncias-filter-actions">
+                <button type="submit" class="denuncias-btn denuncias-btn--primary">
+                    <i data-lucide="search"></i>
+                    Pesquisar
+                </button>
+                <a href="/empresa/denuncias" class="denuncias-btn denuncias-btn--ghost">
+                    <i data-lucide="rotate-ccw"></i>
+                    Limpar filtros
+                </a>
+            </div>
+        </form>
+    </section>
+
+    <section class="denuncias-list-card">
+        <div class="denuncias-list-header">
+            <div class="denuncias-section-heading denuncias-section-heading--compact">
+                <div class="denuncias-section-heading__icon">
+                    <i data-lucide="list-filter"></i>
+                </div>
+                <div>
+                    <h2>Denúncias da empresa</h2>
+                    <p>{{ paginacao.total_registros }} registro{% if paginacao.total_registros != 1 %}s{% endif %} encontrado{% if paginacao.total_registros != 1 %}s{% endif %}</p>
+                </div>
+            </div>
+
+            <span class="denuncias-page-indicator">
+                Página {{ paginacao.page }} de {{ paginacao.total_paginas }}
+            </span>
+        </div>
+
+        {% if denuncias %}
+            <div class="denuncias-table-wrap">
+                <table class="denuncias-table">
+                    <thead>
+                        <tr>
+                            <th>Protocolo</th>
+                            <th>Localização</th>
+                            <th>Categoria</th>
+                            <th>Criticidade</th>
+                            <th>Status</th>
+                            <th>Data</th>
+                            <th><span class="sr-only">Ação</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for denuncia in denuncias %}
+                        <tr>
+                            <td>
+                                <a class="denuncias-protocol" href="/empresa/denuncia/{{ denuncia.id }}">
+                                    <span class="denuncias-protocol__icon">
+                                        <i data-lucide="file-search"></i>
+                                    </span>
+                                    <span>
+                                        <strong>{{ denuncia.protocolo }}</strong>
+                                        <small>Abrir caso</small>
+                                    </span>
+                                </a>
+                            </td>
+
+                            <td>
+                                <div class="denuncias-location">
+                                    <strong>{{ denuncia.unidade }}</strong>
+                                    <small>{{ denuncia.setor or 'Setor não informado' }}</small>
+                                </div>
+                            </td>
+
+                            <td>
+                                <span class="denuncias-category">
+                                    {{ denuncia.categoria or denuncia.tipo }}
+                                </span>
+                            </td>
+
+                            <td>
+                                {% set criticidade = denuncia.criticidade or 'Não informada' %}
+                                <span class="denuncias-criticality denuncias-criticality--{{ criticidade|lower|replace('á', 'a')|replace('é', 'e')|replace('í', 'i')|replace('ó', 'o')|replace('ú', 'u')|replace(' ', '-') }}">
+                                    <span></span>
+                                    {{ criticidade }}
+                                </span>
+                            </td>
+
+                            <td>{{ status_badge(denuncia.status) }}</td>
+
+                            <td>
+                                <div class="denuncias-date">
+                                    <i data-lucide="calendar-days"></i>
+                                    <span>{{ denuncia.criado_em }}</span>
+                                </div>
+                            </td>
+
+                            <td class="denuncias-action-cell">
+                                <a class="denuncias-open-btn" href="/empresa/denuncia/{{ denuncia.id }}" aria-label="Abrir denúncia {{ denuncia.protocolo }}">
+                                    <i data-lucide="arrow-up-right"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="denuncias-empty-state">
+                <div class="denuncias-empty-state__icon">
+                    <i data-lucide="search-x"></i>
+                </div>
+                <h3>Nenhuma denúncia encontrada</h3>
+                <p>Revise os filtros aplicados ou limpe a pesquisa para visualizar todos os registros.</p>
+                <a href="/empresa/denuncias" class="denuncias-btn denuncias-btn--primary">
+                    <i data-lucide="rotate-ccw"></i>
+                    Limpar filtros
+                </a>
+            </div>
+        {% endif %}
+    </section>
+
+    {% if paginacao.total_paginas > 1 %}
+    <nav class="denuncias-pagination" aria-label="Paginação das denúncias">
+        <div class="denuncias-pagination__summary">
+            <strong>Página {{ paginacao.page }}</strong>
+            <span>de {{ paginacao.total_paginas }}</span>
+        </div>
+
+        <div class="denuncias-pagination__actions">
+            {% if paginacao.page > 1 %}
+                <a class="denuncias-btn denuncias-btn--secondary"
+                   href="{{ url_for(
+                        'denuncia.empresa_denuncias',
+                        protocolo=filtros.protocolo,
+                        status=filtros.status,
+                        categoria=filtros.categoria,
+                        criticidade=filtros.criticidade,
+                        unidade_id=filtros.unidade_id,
+                        data_inicio=filtros.data_inicio,
+                        data_fim=filtros.data_fim,
+                        ordenacao=filtros.ordenacao,
+                        page=paginacao.page - 1
+                   ) }}">
+                    <i data-lucide="chevron-left"></i>
+                    Anterior
+                </a>
+            {% endif %}
+
+            {% if paginacao.page < paginacao.total_paginas %}
+                <a class="denuncias-btn denuncias-btn--primary"
+                   href="{{ url_for(
+                        'denuncia.empresa_denuncias',
+                        protocolo=filtros.protocolo,
+                        status=filtros.status,
+                        categoria=filtros.categoria,
+                        criticidade=filtros.criticidade,
+                        unidade_id=filtros.unidade_id,
+                        data_inicio=filtros.data_inicio,
+                        data_fim=filtros.data_fim,
+                        ordenacao=filtros.ordenacao,
+                        page=paginacao.page + 1
+                   ) }}">
+                    Próxima
+                    <i data-lucide="chevron-right"></i>
+                </a>
+            {% endif %}
+        </div>
+    </nav>
+    {% endif %}
+
+</section>
+
+{% endblock %}

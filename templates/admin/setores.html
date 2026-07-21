@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>Meus Setores</h2>
+
+    <a href="/painel" class="btn-secundario">Voltar</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Unidade</th>
+                <th>Setor</th>
+                <th>Status</th>
+                <th>Criado em</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for setor in setores %}
+            <tr>
+                <td>{{ setor.unidade or 'Não vinculada' }}</td>
+                <td>{{ setor.nome }}</td>
+                <td>{{ 'Ativo' if setor.ativo else 'Inativo' }}</td>
+                <td>{{ setor.criado_em }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

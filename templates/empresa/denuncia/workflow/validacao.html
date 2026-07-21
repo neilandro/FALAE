@@ -1,0 +1,41 @@
+<section class="denuncia-tab-panel {% if denuncia.etapa_atual == 'VALIDACAO' %}ativo{% endif %}"
+         data-denuncia-panel="validacao">
+    <div class="card">
+        <div class="triagem-header">
+            <div>
+                <h2>✅ Validação</h2>
+                <p>Confirme a suficiência da apuração e das ações antes do encerramento.</p>
+            </div>
+            <span class="triagem-status {% if denuncia.etapa_atual == 'VALIDACAO' %}pendente{% else %}concluida{% endif %}">
+                {% if denuncia.etapa_atual == 'VALIDACAO' %}Aguardando validação{% else %}Etapa registrada{% endif %}
+            </span>
+        </div>
+
+        {% if planos_acao %}
+            <div class="triagem-resumo">
+                <div>
+                    <span>Total de planos</span>
+                    <strong>{{ planos_acao|length }}</strong>
+                </div>
+                <div>
+                    <span>Concluídos</span>
+                    <strong>{{ planos_acao|selectattr('status', 'equalto', 'CONCLUIDA')|list|length }}</strong>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if denuncia.etapa_atual == 'VALIDACAO' and denuncia.status not in ['CONCLUIDA', 'ARQUIVADA'] %}
+            <form method="POST" action="/empresa/denuncia/{{ denuncia.id }}/avancar-etapa" class="form-card">
+                <div class="form-group">
+                    <label>Registro da validação *</label>
+                    <textarea name="observacao_workflow" rows="7" required placeholder="Confirme os itens revisados, eventuais pendências e a decisão de encaminhar para encerramento."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit">➜ Avançar para Encerramento</button>
+                </div>
+            </form>
+        {% else %}
+            <div class="empty-state">Esta etapa ficará disponível após a conclusão do plano de ação.</div>
+        {% endif %}
+    </div>
+</section>

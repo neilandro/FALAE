@@ -1,0 +1,57 @@
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}Editar Usuário | FALAE{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>👤 Editar Usuário</h1>
+    <p>Atualize os dados de acesso do usuário.</p>
+</div>
+
+<div class="card">
+    <div class="triagem-header">
+        <div>
+            <h2>Dados do Usuário</h2>
+            <p>Altere nome, e-mail, perfil e status.</p>
+        </div>
+    </div>
+
+    <form method="POST" class="form-card">
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Nome *</label>
+                <input type="text" name="nome" value="{{ usuario.nome }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>E-mail *</label>
+                <input type="email" name="email" value="{{ usuario.email }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Perfil *</label>
+                <select name="perfil" required>
+                    <option value="INVESTIGADOR" {% if usuario.perfil == 'INVESTIGADOR' %}selected{% endif %}>Investigador</option>
+                    <option value="AUDITOR" {% if usuario.perfil == 'AUDITOR' %}selected{% endif %}>Auditor</option>
+                    <option value="VISUALIZADOR" {% if usuario.perfil == 'VISUALIZADOR' %}selected{% endif %}>Visualizador</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Status</label>
+                <select name="ativo">
+                    <option value="1" {% if usuario.ativo %}selected{% endif %}>Ativo</option>
+                    <option value="0" {% if not usuario.ativo %}selected{% endif %}>Inativo</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit">💾 Salvar Alterações</button>
+            <a href="/empresa/usuarios" class="btn-secundario">← Voltar</a>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

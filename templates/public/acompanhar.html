@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acompanhar Denúncia | FALAE</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/public.css') }}">
+</head>
+<body>
+
+<main class="public-page">
+    <section class="public-card">
+
+        <div class="public-header">
+            <div class="public-logo">🔎</div>
+            <h1>Acompanhar denúncia</h1>
+            <p>Informe o protocolo recebido no momento do registro da denúncia.</p>
+        </div>
+
+        <form method="POST" class="public-form">
+            <label>Protocolo *</label>
+            <input
+                type="text"
+                name="protocolo"
+                required
+                placeholder="Ex.: FALAE-ABC1234567">
+
+            <button type="submit" class="public-submit">
+                Consultar protocolo
+            </button>
+        </form>
+
+        {% if erro %}
+            <div class="upload-warning">
+                <strong>Atenção:</strong>
+                <p>{{ erro }}</p>
+            </div>
+        {% endif %}
+
+        {% if resultado %}
+            <div class="protocol-box">
+                <span>Protocolo</span>
+                <strong>{{ resultado.denuncia.protocolo }}</strong>
+                <p>{{ resultado.mensagem }}</p>
+            </div>
+
+            <div class="public-status-grid">
+                <div>
+                    <span>Status</span>
+                    <strong>{{ resultado.denuncia.status }}</strong>
+                </div>
+
+                <div>
+                    <span>Etapa atual</span>
+                    <strong>{{ resultado.resumo_etapa.nome }}</strong>
+                </div>
+
+                <div>
+                    <span>Empresa</span>
+                    <strong>{{ resultado.denuncia.empresa }}</strong>
+                </div>
+            </div>
+
+            <div class="public-timeline">
+                <h2>Andamento</h2>
+
+                {% for etapa in resultado.linha_do_tempo %}
+                    <div class="public-timeline-item public-timeline-{{ etapa.status_visual }}">
+                        <span>{{ etapa.ordem }}</span>
+                        <div>
+                            <strong>{{ etapa.nome }}</strong>
+
+                            {% if etapa.status_visual == 'concluida' %}
+                                <p>Concluída</p>
+                            {% elif etapa.status_visual == 'atual' %}
+                                <p>Em andamento</p>
+                            {% else %}
+                                <p>Pendente</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+    </section>
+</main>
+
+</body>
+</html>

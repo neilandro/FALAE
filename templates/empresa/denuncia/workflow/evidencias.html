@@ -1,0 +1,49 @@
+<section class="denuncia-tab-panel {% if denuncia.etapa_atual == 'EVIDENCIAS' %}ativo{% endif %}"
+         data-denuncia-panel="evidencias">
+    <div class="card">
+        <div class="triagem-header">
+            <div>
+                <h2>📎 Evidências</h2>
+                <p>Revise os anexos e registre a conclusão da coleta de evidências.</p>
+            </div>
+            <span class="triagem-status {% if denuncia.etapa_atual == 'EVIDENCIAS' %}pendente{% else %}concluida{% endif %}">
+                {% if denuncia.etapa_atual == 'EVIDENCIAS' %}Em andamento{% else %}Etapa registrada{% endif %}
+            </span>
+        </div>
+
+        {% if anexos %}
+            <div class="plano-lista">
+                {% for anexo in anexos %}
+                    <div class="plano-card">
+                        <div>
+                            <h3>{{ anexo.nome_original }}</h3>
+                            <p>{{ anexo.mime_type or 'Tipo não informado' }}</p>
+                        </div>
+                        <div class="card-actions">
+                            <a class="btn-secundario" href="{{ url_for('denuncia.empresa_visualizar_anexo', anexo_id=anexo.id) }}" target="_blank">Visualizar</a>
+                            <a class="btn-secundario" href="{{ url_for('denuncia.empresa_download_anexo', anexo_id=anexo.id) }}">Baixar</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">Nenhum anexo disponível para análise.</div>
+        {% endif %}
+    </div>
+
+    {% if denuncia.etapa_atual == 'EVIDENCIAS' and denuncia.status not in ['CONCLUIDA', 'ARQUIVADA'] %}
+        <div class="card workflow-action">
+            <h3>Concluir coleta de evidências</h3>
+            <p>Descreva os documentos, registros e demais elementos considerados antes de avançar.</p>
+            <form method="POST" action="/empresa/denuncia/{{ denuncia.id }}/avancar-etapa" class="form-card">
+                <div class="form-group">
+                    <label>Conclusão da coleta *</label>
+                    <textarea name="observacao_workflow" rows="6" required placeholder="Informe quais evidências foram analisadas e os principais achados."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit">➜ Avançar para Parecer</button>
+                </div>
+            </form>
+        </div>
+    {% endif %}
+</section>

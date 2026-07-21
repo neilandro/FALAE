@@ -1,0 +1,97 @@
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}Workspace Empresa | FALAE{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>🏢 {{ empresa.nome }}</h1>
+    <p>Workspace administrativo da empresa.</p>
+</div>
+
+<div class="metric-grid">
+    {% set card = {
+        "titulo": "Usuários",
+        "valor": total_usuarios,
+        "descricao": "Usuários ativos",
+        "icone": "👥",
+        "classe": "metric-primary"
+    } %}
+    {% include "components/card_metric.html" %}
+
+    {% set card = {
+        "titulo": "Unidades",
+        "valor": total_unidades,
+        "descricao": "Unidades ativas",
+        "icone": "🏢",
+        "classe": "metric-success"
+    } %}
+    {% include "components/card_metric.html" %}
+
+    {% set card = {
+        "titulo": "Setores",
+        "valor": total_setores,
+        "descricao": "Setores ativos",
+        "icone": "🧩",
+        "classe": "metric-warning"
+    } %}
+    {% include "components/card_metric.html" %}
+
+    {% set card = {
+        "titulo": "Denúncias",
+        "valor": total_denuncias,
+        "descricao": "Registros vinculados",
+        "icone": "📢",
+        "classe": "metric-danger"
+    } %}
+    {% include "components/card_metric.html" %}
+</div>
+
+<div class="card">
+    <div class="triagem-header">
+        <div>
+            <h2>Dados da Empresa</h2>
+            <p>Informações cadastrais e vínculo comercial.</p>
+        </div>
+
+        <a href="/admin/empresas/{{ empresa.id }}/editar" class="btn-secundario">
+            ✏ Alterar
+        </a>
+    </div>
+
+    <div class="plano-meta">
+        <span><strong>CNPJ:</strong> {{ empresa.cnpj or 'Não informado' }}</span>
+        <span><strong>Assessoria:</strong> {{ empresa.assessoria or 'Sem assessoria' }}</span>
+        <span><strong>Plano:</strong> {{ empresa.plano or 'Não informado' }}</span>
+        <span><strong>Status:</strong> {{ 'Ativa' if empresa.ativa else 'Inativa' }}</span>
+        <span><strong>Local:</strong> {{ empresa.cidade or '—' }}/{{ empresa.estado or '—' }}</span>
+        <span><strong>Contato:</strong> {{ empresa.contato_nome or 'Não informado' }}</span>
+    </div>
+</div>
+
+<div class="card">
+    <div class="triagem-header">
+        <div>
+            <h2>Módulos da Empresa</h2>
+            <p>Acesse os módulos administrativos ou assuma o contexto operacional.</p>
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <a href="/admin/empresas/{{ empresa.id }}/editar" class="btn-secundario">
+            ✏ Editar Cadastro
+        </a>
+
+        <a href="/assessoria/empresas/{{ empresa.id }}/entrar" class="btn">
+            🏢 Assumir Contexto da Empresa
+        </a>
+    </div>
+</div>
+
+<div class="form-actions">
+    <a href="/admin/empresas" class="btn-secundario">
+        ← Voltar para Empresas
+    </a>
+</div>
+
+{% endblock %}

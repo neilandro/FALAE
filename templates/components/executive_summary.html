@@ -1,0 +1,31 @@
+<div class="card executive-summary">
+
+    <div class="executive-header">
+
+        <div>
+
+            <h2>👋 Bom dia!</h2>
+
+            <p class="executive-subtitle">
+                Hoje identificamos os seguintes pontos para sua atenção.
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="executive-body">
+
+        {% for insight in insights %}
+
+            <div class="insight-item">
+
+                {{ insight }}
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>

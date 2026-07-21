@@ -1,0 +1,28 @@
+<section class="denuncia-tab-panel {% if denuncia.etapa_atual == 'PARECER' %}ativo{% endif %}"
+         data-denuncia-panel="parecer">
+    <div class="card">
+        <div class="triagem-header">
+            <div>
+                <h2>📝 Parecer</h2>
+                <p>Registre a conclusão técnica da apuração e o encaminhamento recomendado.</p>
+            </div>
+            <span class="triagem-status {% if denuncia.etapa_atual == 'PARECER' %}pendente{% else %}concluida{% endif %}">
+                {% if denuncia.etapa_atual == 'PARECER' %}Aguardando parecer{% else %}Etapa registrada{% endif %}
+            </span>
+        </div>
+
+        {% if denuncia.etapa_atual == 'PARECER' and denuncia.status not in ['CONCLUIDA', 'ARQUIVADA'] %}
+            <form method="POST" action="/empresa/denuncia/{{ denuncia.id }}/avancar-etapa" class="form-card">
+                <div class="form-group">
+                    <label>Parecer conclusivo *</label>
+                    <textarea name="observacao_workflow" rows="9" required placeholder="Apresente os fatos apurados, a análise realizada, a conclusão e as recomendações."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit">➜ Encaminhar para Tratamento</button>
+                </div>
+            </form>
+        {% else %}
+            <div class="empty-state">O parecer será registrado no histórico do workflow quando esta etapa for concluída.</div>
+        {% endif %}
+    </div>
+</section>

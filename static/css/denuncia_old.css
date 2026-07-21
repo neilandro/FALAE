@@ -1,0 +1,554 @@
+/* ==================================================
+   FALAE - CENTRAL DE INVESTIGAÇÃO
+================================================== */
+
+.workflow-summary {
+    background: #f8fafc;
+    border-left: 5px solid #2563eb;
+    padding: 18px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.workflow-summary h3 {
+    margin-top: 0;
+    color: #0f172a;
+}
+
+.workflow-steps {
+    display: grid;
+    gap: 12px;
+    margin: 20px 0;
+}
+
+.workflow-step {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px;
+    border-radius: 10px;
+    background: #f8fafc;
+    border-left: 5px solid #cbd5e1;
+}
+
+.workflow-step-number {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    border-radius: 50%;
+    background: #cbd5e1;
+    color: #0f172a;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.workflow-step strong {
+    color: #0f172a;
+}
+
+.workflow-step p {
+    margin: 4px 0 0;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.workflow-step-concluida {
+    border-left-color: #16a34a;
+    background: #f0fdf4;
+}
+
+.workflow-step-concluida .workflow-step-number {
+    background: #16a34a;
+    color: #ffffff;
+}
+
+.workflow-step-atual {
+    border-left-color: #2563eb;
+    background: #eff6ff;
+}
+
+.workflow-step-atual .workflow-step-number {
+    background: #2563eb;
+    color: #ffffff;
+}
+
+.workflow-step-pendente {
+    border-left-color: #cbd5e1;
+}
+
+@media (max-width: 700px) {
+    .workflow-step {
+        align-items: flex-start;
+    }
+}
+
+.anexos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+}
+
+.anexo-item {
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 16px;
+    background: #f8fafc;
+}
+
+.anexo-item p {
+    color: #64748b;
+    font-size: 13px;
+    margin: 6px 0 12px;
+}
+
+.anexo-preview {
+    width: 100%;
+    max-height: 220px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 12px;
+}
+
+.anexo-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.triagem-card {
+    border-left: 6px solid #2563eb;
+}
+
+.triagem-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.triagem-header h2 {
+    margin: 0;
+}
+
+.triagem-header p {
+    margin: 8px 0 0;
+    color: #64748b;
+}
+
+.triagem-status {
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.triagem-status.pendente {
+    background: #fff7ed;
+    color: #c2410c;
+}
+
+.triagem-status.concluida {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.triagem-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.triagem-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.triagem-field-full {
+    grid-column: 1 / -1;
+}
+
+.triagem-form label {
+    font-weight: 700;
+    color: #334155;
+}
+
+.triagem-form select,
+.triagem-form textarea {
+    width: 100%;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 14px;
+    background: #ffffff;
+}
+
+.triagem-form textarea {
+    margin-top: 18px;
+    resize: vertical;
+}
+
+.triagem-actions {
+    margin-top: 22px;
+}
+
+.triagem-actions button {
+    width: 100%;
+    padding: 14px 18px;
+    border-radius: 12px;
+    font-weight: 800;
+}
+
+.triagem-resumo {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.triagem-resumo div {
+    background: #f8fafc;
+    border-radius: 14px;
+    padding: 16px;
+}
+
+.triagem-resumo span {
+    display: block;
+    color: #64748b;
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+.triagem-resumo strong {
+    color: #0f172a;
+}
+
+.triagem-parecer {
+    background: #f8fafc;
+    border-radius: 14px;
+    padding: 18px;
+}
+
+.triagem-parecer h3 {
+    margin-top: 0;
+}
+
+.triagem-parecer p {
+    color: #334155;
+    line-height: 1.6;
+}
+
+@media (max-width: 800px) {
+    .triagem-header {
+        flex-direction: column;
+    }
+
+    .triagem-grid,
+    .triagem-resumo {
+        grid-template-columns: 1fr;
+    }
+
+    .triagem-status {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* ===========================================
+   FORM CARD PADRÃO
+=========================================== */
+
+.form-card{
+
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+
+}
+
+.form-grid{
+
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:20px;
+
+}
+
+.form-group{
+
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+
+}
+
+.form-group label{
+
+    font-size:14px;
+    font-weight:700;
+    color:#334155;
+
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea{
+
+    width:100%;
+
+    border:1px solid #cbd5e1;
+
+    border-radius:12px;
+
+    padding:12px 14px;
+
+    font-size:14px;
+
+    transition:.2s;
+
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus{
+
+    outline:none;
+
+    border-color:#2563eb;
+
+    box-shadow:0 0 0 4px rgba(37,99,235,.10);
+
+}
+
+.form-actions{
+
+    margin-top:15px;
+
+    display:flex;
+
+    gap:15px;
+
+    flex-wrap:wrap;
+
+}
+
+.status-chip{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:6px 14px;
+
+    border-radius:999px;
+
+    font-size:13px;
+
+    font-weight:700;
+
+}
+
+.status-pendente{
+
+    background:#fff7ed;
+
+    color:#c2410c;
+
+}
+
+.status-andamento{
+
+    background:#eff6ff;
+
+    color:#2563eb;
+
+}
+
+.status-concluido{
+
+    background:#ecfdf5;
+
+    color:#047857;
+
+}
+
+.status-cancelado{
+
+    background:#fef2f2;
+
+    color:#dc2626;
+
+}
+
+.form-card {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: 700;
+    color: #334155;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 14px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.status-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.status-pendente {
+    background: #fff7ed;
+    color: #c2410c;
+}
+
+.status-em-andamento {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.status-concluida {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.status-cancelada {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.plano-lista {
+    margin-top: 28px;
+    display: grid;
+    gap: 16px;
+}
+
+.plano-card {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    align-items: flex-start;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 18px;
+}
+
+.plano-card h3 {
+    margin: 0 0 8px;
+    color: #0f172a;
+}
+
+.plano-card p {
+    color: #64748b;
+    margin: 0 0 12px;
+    line-height: 1.5;
+}
+
+.plano-meta {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    color: #334155;
+    font-size: 14px;
+}
+
+.empty-state {
+    margin-top: 20px;
+    padding: 20px;
+    background: #f8fafc;
+    border-radius: 14px;
+    color: #64748b;
+    text-align: center;
+}
+
+@media (max-width: 800px) {
+    .plano-card {
+        flex-direction: column;
+    }
+}
+
+.workflow-action{
+
+    margin-top:30px;
+
+    padding:28px;
+
+    border-radius:18px;
+
+    background:#f8fafc;
+
+    border:1px solid #e5e7eb;
+
+}
+
+.workflow-action h3{
+
+    margin-bottom:8px;
+
+    color:#0f172a;
+
+}
+
+.workflow-action p{
+
+    color:#64748b;
+
+    margin-bottom:20px;
+
+}
+
+.anexo-preview-link {
+    display: block;
+    overflow: hidden;
+    border-radius: 10px;
+    text-decoration: none;
+}
+
+.anexo-preview-link:hover .anexo-preview {
+    transform: scale(1.03);
+}
+
+.anexo-preview {
+    transition: transform 0.2s ease;
+}

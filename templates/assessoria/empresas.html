@@ -1,0 +1,66 @@
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}Empresas da Assessoria | FALAE{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>🏢 Empresas Clientes</h1>
+    <p>Gerencie as empresas vinculadas à assessoria.</p>
+</div>
+
+<div class="card">
+    <div class="triagem-header">
+        <div>
+            <h2>Clientes da Assessoria</h2>
+            <p>Visualize, cadastre e edite as empresas atendidas.</p>
+        </div>
+
+        <a href="/assessoria/empresas/nova" class="btn">
+            ➕ Nova Empresa
+        </a>
+    </div>
+
+    {% if empresas %}
+        <div class="plano-lista">
+            {% for empresa in empresas %}
+                <div class="plano-card">
+                    <div>
+                        <h3>🏢 {{ empresa.nome }}</h3>
+
+                        <div class="plano-meta">
+                            <span><strong>CNPJ:</strong> {{ empresa.cnpj or 'Não informado' }}</span>
+                            <span><strong>Plano:</strong> {{ empresa.plano or 'Não informado' }}</span>
+                            <span><strong>Usuários:</strong> {{ empresa.total_usuarios }}</span>
+                            <span><strong>Denúncias:</strong> {{ empresa.total_denuncias }}</span>
+                        </div>
+                    </div>
+
+                    <div class="card-actions">
+                        {% if empresa.ativa %}
+                            <span class="status-chip status-concluido">Ativa</span>
+                        {% else %}
+                            <span class="status-chip status-cancelado">Inativa</span>
+                        {% endif %}
+
+                         <a href="/assessoria/empresas/{{ empresa.id }}/entrar" class="btn">
+                            Entrar
+                        </a>
+
+                        <a href="/assessoria/empresas/{{ empresa.id }}/editar" class="btn-secundario">
+                            Editar
+                        </a>
+
+                       
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            Nenhuma empresa cliente cadastrada.
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}

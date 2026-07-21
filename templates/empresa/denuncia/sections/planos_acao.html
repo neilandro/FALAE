@@ -1,0 +1,145 @@
+<section class="denuncia-tab-panel {% if denuncia.etapa_atual == 'PLANO_ACAO' %}ativo{% endif %}"
+         data-denuncia-panel="planos"
+         id="planos">
+    <div class="card">
+        <div class="triagem-header">
+            <div>
+                <h2>🎯 Planos de Ação</h2>
+                <p>Registre e acompanhe as ações decorrentes do tratamento da denúncia.</p>
+            </div>
+            <span class="triagem-status {% if resumo_planos.pendentes == 0 and resumo_planos.total > 0 %}concluida{% else %}pendente{% endif %}">
+                {{ resumo_planos.concluidos }}/{{ resumo_planos.total }} concluído(s)
+            </span>
+        </div>
+
+        {% if denuncia.etapa_atual == 'PLANO_ACAO' %}
+            <form method="POST"
+                  action="/empresa/denuncia/{{ denuncia.id }}/plano"
+                  class="form-card js-bloquear-envio-duplo">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Título *</label>
+                        <input type="text" name="titulo" required maxlength="255">
+                    </div>
+                    <div class="form-group">
+                        <label>Responsável</label>
+                        <input type="text" name="responsavel" maxlength="255">
+                    </div>
+                    <div class="form-group">
+                        <label>Prazo</label>
+                        <input type="date" name="prazo">
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select name="status">
+                            <option value="PENDENTE">Pendente</option>
+                            <option value="EM_ANDAMENTO">Em andamento</option>
+                            <option value="CONCLUIDA">Concluída</option>
+                            <option value="CANCELADA">Cancelada</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <textarea name="descricao" rows="4"></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" data-texto-processando="Salvando...">➕ Novo Plano de Ação</button>
+                </div>
+            </form>
+        {% endif %}
+
+        {% if planos_acao %}
+            <div class="plano-lista">
+                {% for plano in planos_acao %}
+                    <div class="plano-card">
+                        <div>
+                            <h3>{{ plano.titulo }}</h3>
+                            <p>{{ plano.descricao or 'Sem descrição informada.' }}</p>
+                            <div class="plano-meta">
+                                <span><strong>Responsável:</strong> {{ plano.responsavel or 'Não informado' }}</span>
+                                <span><strong>Prazo:</strong> {{ plano.prazo or 'Sem prazo' }}</span>
+                            </div>
+                        </div>
+
+                        <div class="card-actions">
+                            <span class="status-chip status-{{ plano.status|lower|replace('_', '-') }}">{{ plano.status }}</span>
+                            <a href="/empresa/plano/{{ plano.id }}/editar" class="btn-secundario">Editar</a>
+
+                            {% if plano.status != 'CONCLUIDA' %}
+                                <form method="POST" action="/empresa/plano/{{ plano.id }}/concluir" class="js-bloquear-envio-duplo">
+                                    <button type="submit" class="btn-success" data-texto-processando="Concluindo...">Concluir</button>
+                                </form>
+                            {% endif %}
+
+                            <form method="POST"
+                                  action="/empresa/plano/{{ plano.id }}/excluir"
+                                  onsubmit="return confirm('Deseja realmente excluir este plano de ação?');">
+                                <button type="submit" class="btn-danger">Excluir</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">Nenhum plano de ação cadastrado.</div>
+        {% endif %}
+    </div>
+
+    {% if denuncia.etapa_atual == 'PLANO_ACAO' %}
+        <div class="card">
+            <div class="triagem-header">
+                <div>
+                    <h2>✅ Encaminhamento para Validação</h2>
+                    <p>O avanço é liberado depois que todos os planos de ação forem concluídos.</p>
+                </div>
+            </div>
+
+            {% if resumo_planos.total == 0 %}
+                <div class="empty-state">Cadastre ao menos um plano de ação para continuar.</div>
+            {% elif resumo_planos.pendentes > 0 %}
+                <div class="empty-state">
+                    Ainda existem {{ resumo_planos.pendentes }} plano(s) pendente(s) ou em andamento.
+                </div>
+            {% else %}
+                <form method="POST"
+                      action="/empresa/denuncia/{{ denuncia.id }}/avancar-etapa"
+                      class="form-card js-bloquear-envio-duplo">
+                    <div class="form-group">
+                        <label>Conclusão dos planos de ação *</label>
+                        <textarea name="observacao_workflow"
+                                  rows="5"
+                                  required
+                                  placeholder="Registre o resumo das ações executadas e os resultados obtidos."></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-success" data-texto-processando="Avançando...">
+                            ➜ Avançar para Validação
+                        </button>
+                    </div>
+                </form>
+            {% endif %}
+        </div>
+    {% endif %}
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".js-bloquear-envio-duplo").forEach(function (formulario) {
+        formulario.addEventListener("submit", function () {
+            const botao = formulario.querySelector('button[type="submit"]');
+
+            if (!botao || botao.disabled) {
+                return;
+            }
+
+            botao.disabled = true;
+            botao.setAttribute("aria-disabled", "true");
+            botao.textContent = botao.dataset.textoProcessando || "Processando...";
+        });
+    });
+});
+</script>

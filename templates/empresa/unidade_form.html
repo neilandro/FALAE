@@ -1,0 +1,296 @@
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}
+    {% if modo == "novo" %}
+        Nova Unidade | FALAE
+    {% else %}
+        Editar Unidade | FALAE
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    {% if modo == "novo" %}
+        <h1>🏢 Nova Unidade</h1>
+        <p>Cadastre uma nova unidade para a empresa em contexto.</p>
+    {% else %}
+        <h1>🏢 Editar Unidade</h1>
+        <p>Atualize os dados cadastrais da unidade.</p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <form method="POST" class="form-card" id="form-unidade">
+
+        <h2>Dados da Unidade</h2>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="nome">Nome *</label>
+                <input
+                    type="text"
+                    id="nome"
+                    name="nome"
+                    required
+                    maxlength="150"
+                    placeholder="Ex.: Matriz, Unidade Guarulhos"
+                    value="{{ unidade.nome if unidade else '' }}"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="cnpj">CNPJ</label>
+                <input
+                    type="text"
+                    id="cnpj"
+                    name="cnpj"
+                    maxlength="18"
+                    inputmode="numeric"
+                    placeholder="00.000.000/0000-00"
+                    value="{{ unidade.cnpj if unidade and unidade.cnpj else '' }}"
+                >
+                <small id="cnpj-feedback"></small>
+            </div>
+
+            {% if modo == "editar" %}
+                <div class="form-group">
+                    <label for="ativa">Status</label>
+                    <select id="ativa" name="ativa">
+                        <option
+                            value="1"
+                            {% if unidade and unidade.ativa %}selected{% endif %}
+                        >
+                            Ativa
+                        </option>
+
+                        <option
+                            value="0"
+                            {% if unidade and not unidade.ativa %}selected{% endif %}
+                        >
+                            Inativa
+                        </option>
+                    </select>
+                </div>
+            {% endif %}
+        </div>
+
+        <h2>Endereço</h2>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="cep">CEP</label>
+                <input
+                    type="text"
+                    id="cep"
+                    name="cep"
+                    maxlength="9"
+                    inputmode="numeric"
+                    placeholder="00000-000"
+                    value="{{ unidade.cep if unidade and unidade.cep else '' }}"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="endereco">Endereço</label>
+                <input
+                    type="text"
+                    id="endereco"
+                    name="endereco"
+                    maxlength="255"
+                    placeholder="Rua, Avenida, Estrada..."
+                    value="{{ unidade.endereco if unidade and unidade.endereco else '' }}"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="numero">Número</label>
+                <input
+                    type="text"
+                    id="numero"
+                    name="numero"
+                    maxlength="20"
+                    placeholder="123"
+                    value="{{ unidade.numero if unidade and unidade.numero else '' }}"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="complemento">Complemento</label>
+                <input
+                    type="text"
+                    id="complemento"
+                    name="complemento"
+                    maxlength="100"
+                    placeholder="Sala, bloco, andar..."
+                    value="{{ unidade.complemento if unidade and unidade.complemento else '' }}"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="bairro">Bairro</label>
+                <input
+                    type="text"
+                    id="bairro"
+                    name="bairro"
+                    maxlength="100"
+                    placeholder="Centro"
+                    value="{{ unidade.bairro if unidade and unidade.bairro else '' }}"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="cidade">Cidade</label>
+                <input
+                    type="text"
+                    id="cidade"
+                    name="cidade"
+                    maxlength="100"
+                    placeholder="Guarulhos"
+                    value="{{ unidade.cidade if unidade and unidade.cidade else '' }}"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="estado">Estado</label>
+                <input
+                    type="text"
+                    id="estado"
+                    name="estado"
+                    maxlength="2"
+                    placeholder="SP"
+                    value="{{ unidade.estado if unidade and unidade.estado else '' }}"
+                >
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn">
+                💾 Salvar Unidade
+            </button>
+
+            <a href="{{ url_for('empresa.unidades') }}" class="btn-secundario">
+                ← Voltar
+            </a>
+        </div>
+
+    </form>
+</div>
+
+<script>
+function somenteNumeros(valor) {
+    return valor.replace(/\D/g, "");
+}
+
+function aplicarMascaraCnpj(valor) {
+    const numeros = somenteNumeros(valor).slice(0, 14);
+
+    return numeros
+        .replace(/^(\d{2})(\d)/, "$1.$2")
+        .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
+        .replace(/\.(\d{3})(\d)/, ".$1/$2")
+        .replace(/(\d{4})(\d)/, "$1-$2");
+}
+
+function aplicarMascaraCep(valor) {
+    const numeros = somenteNumeros(valor).slice(0, 8);
+
+    return numeros.replace(/^(\d{5})(\d)/, "$1-$2");
+}
+
+function cnpjValido(valor) {
+    const cnpj = somenteNumeros(valor);
+
+    if (cnpj.length !== 14) {
+        return false;
+    }
+
+    if (/^(\d)\1{13}$/.test(cnpj)) {
+        return false;
+    }
+
+    function calcularDigito(base, pesos) {
+        let soma = 0;
+
+        for (let i = 0; i < pesos.length; i++) {
+            soma += Number(base[i]) * pesos[i];
+        }
+
+        const resto = soma % 11;
+
+        return resto < 2 ? 0 : 11 - resto;
+    }
+
+    const primeiro = calcularDigito(
+        cnpj.slice(0, 12),
+        [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
+    );
+
+    const segundo = calcularDigito(
+        cnpj.slice(0, 12) + primeiro,
+        [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
+    );
+
+    return cnpj.endsWith(`${primeiro}${segundo}`);
+}
+
+const campoCnpj = document.getElementById("cnpj");
+const campoCep = document.getElementById("cep");
+const campoEstado = document.getElementById("estado");
+const feedbackCnpj = document.getElementById("cnpj-feedback");
+const formulario = document.getElementById("form-unidade");
+
+campoCnpj.addEventListener("input", function () {
+    this.value = aplicarMascaraCnpj(this.value);
+    feedbackCnpj.textContent = "";
+});
+
+campoCnpj.addEventListener("blur", function () {
+    const valor = this.value.trim();
+
+    if (!valor) {
+        feedbackCnpj.textContent = "";
+        return;
+    }
+
+    if (cnpjValido(valor)) {
+        feedbackCnpj.textContent = "CNPJ válido.";
+        return;
+    }
+
+    feedbackCnpj.textContent = "CNPJ inválido.";
+});
+
+campoCep.addEventListener("input", function () {
+    this.value = aplicarMascaraCep(this.value);
+});
+
+campoEstado.addEventListener("input", function () {
+    this.value = this.value
+        .replace(/[^a-zA-Z]/g, "")
+        .toUpperCase()
+        .slice(0, 2);
+});
+
+formulario.addEventListener("submit", function (event) {
+    const cnpj = campoCnpj.value.trim();
+
+    if (cnpj && !cnpjValido(cnpj)) {
+        event.preventDefault();
+        feedbackCnpj.textContent = "Informe um CNPJ válido antes de salvar.";
+        campoCnpj.focus();
+    }
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    if (campoCnpj.value) {
+        campoCnpj.value = aplicarMascaraCnpj(campoCnpj.value);
+    }
+
+    if (campoCep.value) {
+        campoCep.value = aplicarMascaraCep(campoCep.value);
+    }
+});
+</script>
+
+{% endblock %}

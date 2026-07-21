@@ -1,0 +1,845 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Alterar Senha | FALAE
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for(
+            'static',
+            filename='css/style.css'
+        ) }}"
+    >
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            color: #1e293b;
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+            background:
+                linear-gradient(
+                    135deg,
+                    #eef4f8 0%,
+                    #f8fafc 55%,
+                    #e8f0f7 100%
+                );
+        }
+
+        .senha-page {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        .senha-container {
+            width: 100%;
+            max-width: 470px;
+        }
+
+        .senha-marca {
+            margin-bottom: 18px;
+            text-align: center;
+        }
+
+        .senha-marca-icone {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 66px;
+            height: 66px;
+            margin-bottom: 12px;
+            border-radius: 18px;
+            color: #ffffff;
+            font-size: 30px;
+            background:
+                linear-gradient(
+                    135deg,
+                    #163a5c,
+                    #2563a8
+                );
+            box-shadow:
+                0 14px 30px
+                rgba(31, 78, 120, 0.2);
+        }
+
+        .senha-marca h1 {
+            margin: 0;
+            color: #163a5c;
+            font-size: 27px;
+            letter-spacing: 1px;
+        }
+
+        .senha-marca span {
+            display: block;
+            margin-top: 4px;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .senha-card {
+            overflow: hidden;
+            border: 1px solid #dce3ec;
+            border-radius: 18px;
+            background: #ffffff;
+            box-shadow:
+                0 22px 50px
+                rgba(15, 23, 42, 0.12);
+        }
+
+        .senha-card-header {
+            padding: 26px 28px 20px;
+            text-align: center;
+            background:
+                linear-gradient(
+                    180deg,
+                    #f8fafc,
+                    #ffffff
+                );
+        }
+
+        .senha-card-header h2 {
+            margin: 0 0 9px;
+            color: #0f172a;
+            font-size: 22px;
+        }
+
+        .senha-card-header p {
+            margin: 0;
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.55;
+        }
+
+        .senha-card-body {
+            padding: 10px 28px 28px;
+        }
+
+        .senha-alerta {
+            margin-bottom: 18px;
+            padding: 13px 15px;
+            border: 1px solid #fecaca;
+            border-radius: 10px;
+            color: #991b1b;
+            font-size: 13px;
+            line-height: 1.5;
+            background: #fef2f2;
+        }
+
+        .senha-aviso {
+            margin-bottom: 20px;
+            padding: 13px 15px;
+            border: 1px solid #bfdbfe;
+            border-radius: 10px;
+            color: #1e3a5f;
+            font-size: 13px;
+            line-height: 1.5;
+            background: #eff6ff;
+        }
+
+        .senha-campo {
+            margin-bottom: 17px;
+        }
+
+        .senha-campo label {
+            display: block;
+            margin-bottom: 7px;
+            color: #334155;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .senha-input-wrapper {
+            position: relative;
+        }
+
+        .senha-campo input {
+            width: 100%;
+            min-height: 47px;
+            padding: 11px 48px 11px 13px;
+            border: 1px solid #cbd5e1;
+            border-radius: 9px;
+            color: #0f172a;
+            font-size: 14px;
+            background: #ffffff;
+            outline: none;
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .senha-campo input:focus {
+            border-color: #1f4e78;
+            box-shadow:
+                0 0 0 3px
+                rgba(31, 78, 120, 0.12);
+        }
+
+        .senha-exibir {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            width: 34px;
+            height: 34px;
+            padding: 0;
+            border: 0;
+            border-radius: 7px;
+            color: #475569;
+            font-size: 16px;
+            background: transparent;
+            cursor: pointer;
+            transform: translateY(-50%);
+        }
+
+        .senha-exibir:hover {
+            background: #f1f5f9;
+        }
+
+        .senha-regras {
+            margin: 4px 0 20px;
+            padding: 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            background: #f8fafc;
+        }
+
+        .senha-regras-titulo {
+            display: block;
+            margin-bottom: 10px;
+            color: #334155;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .senha-regra {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            margin-top: 7px;
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .senha-regra::before {
+            content: "○";
+            color: #94a3b8;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .senha-regra.valida {
+            color: #166534;
+        }
+
+        .senha-regra.valida::before {
+            content: "✓";
+            color: #15803d;
+        }
+
+        .senha-forca {
+            margin: 3px 0 17px;
+        }
+
+        .senha-forca-barra {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+        }
+
+        .senha-forca-faixa {
+            height: 6px;
+            border-radius: 999px;
+            background: #e2e8f0;
+        }
+
+        .senha-forca-texto {
+            display: block;
+            margin-top: 7px;
+            color: #64748b;
+            font-size: 11px;
+            text-align: right;
+        }
+
+        .senha-forca.nivel-1
+        .senha-forca-faixa:nth-child(1) {
+            background: #dc2626;
+        }
+
+        .senha-forca.nivel-2
+        .senha-forca-faixa:nth-child(-n+2) {
+            background: #d97706;
+        }
+
+        .senha-forca.nivel-3
+        .senha-forca-faixa:nth-child(-n+3) {
+            background: #ca8a04;
+        }
+
+        .senha-forca.nivel-4
+        .senha-forca-faixa {
+            background: #15803d;
+        }
+
+        .senha-confirmacao {
+            display: none;
+            margin-top: 7px;
+            font-size: 12px;
+        }
+
+        .senha-confirmacao.valida {
+            display: block;
+            color: #166534;
+        }
+
+        .senha-confirmacao.invalida {
+            display: block;
+            color: #b91c1c;
+        }
+
+        .senha-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            min-height: 48px;
+            padding: 11px 17px;
+            border: 0;
+            border-radius: 9px;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 700;
+            background:
+                linear-gradient(
+                    135deg,
+                    #1f4e78,
+                    #2563a8
+                );
+            cursor: pointer;
+            transition:
+                transform 0.15s ease,
+                box-shadow 0.15s ease;
+        }
+
+        .senha-btn:hover {
+            box-shadow:
+                0 10px 22px
+                rgba(31, 78, 120, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .senha-btn:disabled {
+            cursor: not-allowed;
+            box-shadow: none;
+            opacity: 0.6;
+            transform: none;
+        }
+
+        .senha-rodape {
+            margin-top: 16px;
+            color: #64748b;
+            font-size: 11px;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        @media (max-width: 520px) {
+            .senha-page {
+                padding: 14px;
+            }
+
+            .senha-card-header {
+                padding:
+                    22px
+                    20px
+                    17px;
+            }
+
+            .senha-card-body {
+                padding:
+                    8px
+                    20px
+                    22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="senha-page">
+
+        <div class="senha-container">
+
+            <div class="senha-marca">
+
+                <div class="senha-marca-icone">
+                    🛡
+                </div>
+
+                <h1>FALAE</h1>
+
+                <span>
+                    Compliance & SST
+                </span>
+
+            </div>
+
+            <section class="senha-card">
+
+                <header class="senha-card-header">
+
+                    <h2>
+                        🔐 Defina sua nova senha
+                    </h2>
+
+                    <p>
+                        A senha utilizada no acesso é temporária.
+                        Por segurança, cadastre uma nova senha
+                        pessoal para continuar.
+                    </p>
+
+                </header>
+
+                <div class="senha-card-body">
+
+                    {% if erro %}
+
+                        <div class="senha-alerta">
+                            {{ erro }}
+                        </div>
+
+                    {% endif %}
+
+                    <div class="senha-aviso">
+                        Após salvar a nova senha, você será
+                        direcionado automaticamente para o FALAE.
+                    </div>
+
+                    <form
+                        method="POST"
+                        id="form-alterar-senha"
+                        autocomplete="off"
+                    >
+
+                        <div class="senha-campo">
+
+                            <label for="nova_senha">
+                                Nova senha
+                            </label>
+
+                            <div class="senha-input-wrapper">
+
+                                <input
+                                    type="password"
+                                    id="nova_senha"
+                                    name="nova_senha"
+                                    minlength="8"
+                                    maxlength="128"
+                                    required
+                                    autofocus
+                                    autocomplete="new-password"
+                                    placeholder="Digite sua nova senha"
+                                >
+
+                                <button
+                                    type="button"
+                                    class="senha-exibir"
+                                    data-alvo="nova_senha"
+                                    aria-label="Exibir ou ocultar nova senha"
+                                    title="Exibir ou ocultar senha"
+                                >
+                                    👁
+                                </button>
+
+                            </div>
+
+                            <div
+                                class="senha-forca"
+                                id="senha-forca"
+                            >
+
+                                <div class="senha-forca-barra">
+
+                                    <span class="senha-forca-faixa"></span>
+                                    <span class="senha-forca-faixa"></span>
+                                    <span class="senha-forca-faixa"></span>
+                                    <span class="senha-forca-faixa"></span>
+
+                                </div>
+
+                                <span
+                                    class="senha-forca-texto"
+                                    id="senha-forca-texto"
+                                >
+                                    Informe uma senha segura
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="senha-campo">
+
+                            <label for="confirmar_senha">
+                                Confirmar nova senha
+                            </label>
+
+                            <div class="senha-input-wrapper">
+
+                                <input
+                                    type="password"
+                                    id="confirmar_senha"
+                                    name="confirmar_senha"
+                                    minlength="8"
+                                    maxlength="128"
+                                    required
+                                    autocomplete="new-password"
+                                    placeholder="Repita a nova senha"
+                                >
+
+                                <button
+                                    type="button"
+                                    class="senha-exibir"
+                                    data-alvo="confirmar_senha"
+                                    aria-label="Exibir ou ocultar confirmação da senha"
+                                    title="Exibir ou ocultar senha"
+                                >
+                                    👁
+                                </button>
+
+                            </div>
+
+                            <span
+                                class="senha-confirmacao"
+                                id="senha-confirmacao"
+                            ></span>
+
+                        </div>
+
+                        <div class="senha-regras">
+
+                            <span class="senha-regras-titulo">
+                                A senha deve conter:
+                            </span>
+
+                            <div
+                                class="senha-regra"
+                                id="regra-tamanho"
+                            >
+                                No mínimo 8 caracteres
+                            </div>
+
+                            <div
+                                class="senha-regra"
+                                id="regra-maiuscula"
+                            >
+                                Uma letra maiúscula
+                            </div>
+
+                            <div
+                                class="senha-regra"
+                                id="regra-minuscula"
+                            >
+                                Uma letra minúscula
+                            </div>
+
+                            <div
+                                class="senha-regra"
+                                id="regra-numero"
+                            >
+                                Um número
+                            </div>
+
+                            <div
+                                class="senha-regra"
+                                id="regra-especial"
+                            >
+                                Um caractere especial:
+                                @ # $ % &amp; * ! _ -
+                            </div>
+
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="senha-btn"
+                            id="botao-salvar"
+                            disabled
+                        >
+                            🔒 Salvar nova senha
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </section>
+
+            <div class="senha-rodape">
+                Sua nova senha é pessoal e não deve ser
+                compartilhada com outras pessoas.
+            </div>
+
+        </div>
+
+    </main>
+
+    <script>
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+                const novaSenha = document.getElementById(
+                    "nova_senha"
+                );
+
+                const confirmarSenha = document.getElementById(
+                    "confirmar_senha"
+                );
+
+                const botaoSalvar = document.getElementById(
+                    "botao-salvar"
+                );
+
+                const senhaForca = document.getElementById(
+                    "senha-forca"
+                );
+
+                const senhaForcaTexto = document.getElementById(
+                    "senha-forca-texto"
+                );
+
+                const senhaConfirmacao = document.getElementById(
+                    "senha-confirmacao"
+                );
+
+                const regras = {
+                    tamanho: document.getElementById(
+                        "regra-tamanho"
+                    ),
+                    maiuscula: document.getElementById(
+                        "regra-maiuscula"
+                    ),
+                    minuscula: document.getElementById(
+                        "regra-minuscula"
+                    ),
+                    numero: document.getElementById(
+                        "regra-numero"
+                    ),
+                    especial: document.getElementById(
+                        "regra-especial"
+                    )
+                };
+
+                function avaliarSenha() {
+                    const senha = novaSenha.value;
+
+                    const validacoes = {
+                        tamanho: senha.length >= 8,
+                        maiuscula: /[A-Z]/.test(senha),
+                        minuscula: /[a-z]/.test(senha),
+                        numero: /\d/.test(senha),
+                        especial: /[@#$%&*!_-]/.test(senha)
+                    };
+
+                    Object.keys(validacoes).forEach(
+                        function (regra) {
+                            regras[regra].classList.toggle(
+                                "valida",
+                                validacoes[regra]
+                            );
+                        }
+                    );
+
+                    const totalValidas = Object.values(
+                        validacoes
+                    ).filter(Boolean).length;
+
+                    senhaForca.className = "senha-forca";
+
+                    if (!senha) {
+                        senhaForcaTexto.textContent =
+                            "Informe uma senha segura";
+
+                    } else if (totalValidas <= 2) {
+                        senhaForca.classList.add(
+                            "nivel-1"
+                        );
+
+                        senhaForcaTexto.textContent =
+                            "Senha fraca";
+
+                    } else if (totalValidas === 3) {
+                        senhaForca.classList.add(
+                            "nivel-2"
+                        );
+
+                        senhaForcaTexto.textContent =
+                            "Senha regular";
+
+                    } else if (totalValidas === 4) {
+                        senhaForca.classList.add(
+                            "nivel-3"
+                        );
+
+                        senhaForcaTexto.textContent =
+                            "Senha boa";
+
+                    } else {
+                        senhaForca.classList.add(
+                            "nivel-4"
+                        );
+
+                        senhaForcaTexto.textContent =
+                            "Senha forte";
+                    }
+
+                    validarFormulario(
+                        validacoes
+                    );
+                }
+
+                function validarConfirmacao() {
+                    const senha = novaSenha.value;
+                    const confirmacao = confirmarSenha.value;
+
+                    senhaConfirmacao.className =
+                        "senha-confirmacao";
+
+                    if (!confirmacao) {
+                        senhaConfirmacao.textContent = "";
+                        return;
+                    }
+
+                    if (senha === confirmacao) {
+                        senhaConfirmacao.classList.add(
+                            "valida"
+                        );
+
+                        senhaConfirmacao.textContent =
+                            "✓ As senhas coincidem.";
+
+                    } else {
+                        senhaConfirmacao.classList.add(
+                            "invalida"
+                        );
+
+                        senhaConfirmacao.textContent =
+                            "As senhas não coincidem.";
+                    }
+                }
+
+                function validarFormulario(
+                    validacoesRecebidas
+                ) {
+                    const validacoes =
+                        validacoesRecebidas || {
+                            tamanho:
+                                novaSenha.value.length >= 8,
+                            maiuscula:
+                                /[A-Z]/.test(novaSenha.value),
+                            minuscula:
+                                /[a-z]/.test(novaSenha.value),
+                            numero:
+                                /\d/.test(novaSenha.value),
+                            especial:
+                                /[@#$%&*!_-]/.test(
+                                    novaSenha.value
+                                )
+                        };
+
+                    const senhaValida = Object.values(
+                        validacoes
+                    ).every(Boolean);
+
+                    const confirmacaoValida = (
+                        novaSenha.value
+                        && novaSenha.value
+                        === confirmarSenha.value
+                    );
+
+                    botaoSalvar.disabled = !(
+                        senhaValida
+                        && confirmacaoValida
+                    );
+                }
+
+                novaSenha.addEventListener(
+                    "input",
+                    function () {
+                        avaliarSenha();
+                        validarConfirmacao();
+                        validarFormulario();
+                    }
+                );
+
+                confirmarSenha.addEventListener(
+                    "input",
+                    function () {
+                        validarConfirmacao();
+                        validarFormulario();
+                    }
+                );
+
+                document.querySelectorAll(
+                    ".senha-exibir"
+                ).forEach(
+                    function (botao) {
+                        botao.addEventListener(
+                            "click",
+                            function () {
+                                const alvo = document.getElementById(
+                                    botao.dataset.alvo
+                                );
+
+                                if (!alvo) {
+                                    return;
+                                }
+
+                                const exibindo = (
+                                    alvo.type === "text"
+                                );
+
+                                alvo.type = (
+                                    exibindo
+                                    ? "password"
+                                    : "text"
+                                );
+
+                                botao.textContent = (
+                                    exibindo
+                                    ? "👁"
+                                    : "🙈"
+                                );
+                            }
+                        );
+                    }
+                );
+            }
+        );
+    </script>
+
+</body>
+
+</html>
+```

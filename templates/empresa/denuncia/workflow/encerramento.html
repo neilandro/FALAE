@@ -1,0 +1,30 @@
+<section class="denuncia-tab-panel {% if denuncia.etapa_atual == 'ENCERRAMENTO' %}ativo{% endif %}"
+         data-denuncia-panel="encerramento">
+    <div class="card">
+        <div class="triagem-header">
+            <div>
+                <h2>🏁 Encerramento</h2>
+                <p>Registre a conclusão final do caso e encerre o workflow.</p>
+            </div>
+            <span class="triagem-status {% if denuncia.status == 'CONCLUIDA' %}concluida{% else %}pendente{% endif %}">
+                {% if denuncia.status == 'CONCLUIDA' %}Denúncia concluída{% else %}Aguardando encerramento{% endif %}
+            </span>
+        </div>
+
+        {% if denuncia.etapa_atual == 'ENCERRAMENTO' and denuncia.status not in ['CONCLUIDA', 'ARQUIVADA'] %}
+            <form method="POST" action="/empresa/denuncia/{{ denuncia.id }}/avancar-etapa" class="form-card">
+                <div class="form-group">
+                    <label>Conclusão final *</label>
+                    <textarea name="observacao_workflow" rows="8" required placeholder="Registre o desfecho, as providências adotadas e as informações necessárias para auditoria."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-success">✓ Concluir Denúncia</button>
+                </div>
+            </form>
+        {% elif denuncia.status == 'CONCLUIDA' %}
+            <div class="empty-state">Workflow concluído com sucesso.</div>
+        {% else %}
+            <div class="empty-state">Esta etapa ficará disponível após a validação.</div>
+        {% endif %}
+    </div>
+</section>

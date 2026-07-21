@@ -1,0 +1,62 @@
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}Editar Empresa Cliente | FALAE{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>🏢 Editar Empresa Cliente</h1>
+    <p>Atualize os dados da empresa vinculada à assessoria.</p>
+</div>
+
+<div class="card">
+    <div class="triagem-header">
+        <div>
+            <h2>Dados da Empresa</h2>
+            <p>Altere informações cadastrais, plano e status.</p>
+        </div>
+    </div>
+
+    <form method="POST" class="form-card">
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Nome *</label>
+                <input type="text" name="nome" value="{{ empresa.nome }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Slug *</label>
+                <input type="text" name="slug" value="{{ empresa.slug }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>CNPJ</label>
+                <input type="text" name="cnpj" value="{{ empresa.cnpj or '' }}">
+            </div>
+         
+            <div class="form-group">
+                <label>Plano</label>
+                <select name="plano">
+                    <option value="BASICO" {% if empresa.plano == 'BASICO' %}selected{% endif %}>Básico</option>
+                    <option value="PROFISSIONAL" {% if empresa.plano == 'PROFISSIONAL' %}selected{% endif %}>Profissional</option>
+                    <option value="ENTERPRISE" {% if empresa.plano == 'ENTERPRISE' %}selected{% endif %}>Enterprise</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Status</label>
+                <select name="ativa">
+                    <option value="1" {% if empresa.ativa %}selected{% endif %}>Ativa</option>
+                    <option value="0" {% if not empresa.ativa %}selected{% endif %}>Inativa</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit">💾 Salvar Alterações</button>
+            <a href="/assessoria/empresas" class="btn-secundario">← Voltar</a>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

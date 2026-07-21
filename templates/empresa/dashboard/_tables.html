@@ -1,0 +1,99 @@
+<section>
+    <div class="dashboard-section-header" style="padding: 0 0 14px;">
+        <div><h2>Detalhamento analítico</h2><p>Listas consolidadas para apoiar comparação e priorização.</p></div>
+    </div>
+
+    <div class="dashboard-grid">
+<article class="dashboard-section dashboard-table-card">
+    <div class="dashboard-section-header">
+        <div><h3>Denúncias por categoria</h3><p>Ranking consolidado dos temas registrados.</p></div>
+    </div>
+    <div class="table-scroll">
+        <table>
+            <thead><tr><th>Categoria</th><th>Total</th></tr></thead>
+            <tbody>
+                {% for item in por_categoria %}
+                    <tr><td>{{ item.categoria or "Não informada" }}</td><td>{{ item.total }}</td></tr>
+                {% else %}
+                    <tr><td colspan="2">Nenhuma denúncia encontrada.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</article>
+<article class="dashboard-section dashboard-table-card">
+    <div class="dashboard-section-header">
+        <div><h3>Denúncias por criticidade</h3><p>Distribuição dos casos segundo o nível de risco.</p></div>
+    </div>
+    <div class="table-scroll">
+        <table>
+            <thead><tr><th>Criticidade</th><th>Total</th></tr></thead>
+            <tbody>
+                {% for item in por_criticidade %}
+                    <tr><td>{{ item.criticidade or "Não informada" }}</td><td>{{ item.total }}</td></tr>
+                {% else %}
+                    <tr><td colspan="2">Nenhuma denúncia encontrada.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</article>
+    </div>
+
+    <div class="dashboard-grid" style="margin-top: 20px;">
+<article class="dashboard-section dashboard-table-card">
+    <div class="dashboard-section-header">
+        <div><h3>Denúncias por unidade</h3><p>Volume comparativo entre unidades.</p></div>
+    </div>
+    <div class="table-scroll">
+        <table>
+            <thead><tr><th>Unidade</th><th>Total</th></tr></thead>
+            <tbody>
+                {% for item in por_unidade %}
+                    <tr><td>{{ item.unidade }}</td><td>{{ item.total }}</td></tr>
+                {% else %}
+                    <tr><td colspan="2">Nenhuma denúncia encontrada.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</article>
+<article class="dashboard-section dashboard-table-card">
+    <div class="dashboard-section-header">
+        <div><h3>Denúncias por setor</h3><p>Volume comparativo entre setores.</p></div>
+    </div>
+    <div class="table-scroll">
+        <table>
+            <thead><tr><th>Setor</th><th>Total</th></tr></thead>
+            <tbody>
+                {% for item in por_setor %}
+                    <tr><td>{{ item.setor }}</td><td>{{ item.total }}</td></tr>
+                {% else %}
+                    <tr><td colspan="2">Nenhuma denúncia encontrada.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</article>
+    </div>
+
+    <div class="dashboard-grid dashboard-grid-single" style="margin-top: 20px;">
+<article class="dashboard-section dashboard-table-card">
+    <div class="dashboard-section-header">
+        <div><h3>Denúncias por turno</h3><p>Volume comparativo entre turnos.</p></div>
+    </div>
+    <div class="table-scroll">
+        <table>
+            <thead><tr><th>Turno</th><th>Total</th></tr></thead>
+            <tbody>
+                {% for item in por_turno %}
+                    <tr><td>{{ item.turno }}</td><td>{{ item.total }}</td></tr>
+                {% else %}
+                    <tr><td colspan="2">Nenhuma denúncia vinculada a turno.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</article>
+    </div>
+</section>

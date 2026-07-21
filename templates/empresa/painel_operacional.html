@@ -1,0 +1,360 @@
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}
+Painel Operacional | FALAE
+{% endblock %}
+
+{% block extra_css %}
+<link
+    rel="stylesheet"
+    href="{{ url_for(
+        'static',
+        filename='css/painel_operacional.css'
+    ) }}"
+>
+{% endblock %}
+
+{% block content %}
+
+<div class="operacional-page">
+
+    <header class="operacional-header">
+
+        <div>
+            <h1>📌 Painel Operacional</h1>
+
+            <p>
+                Acompanhe as investigações em andamento,
+                prazos, criticidades e etapas do fluxo.
+            </p>
+        </div>
+
+        <div class="operacional-header-status">
+            <span class="operacional-status-indicador"></span>
+            Visão atualizada
+        </div>
+
+    </header>
+
+    {% include "components/dashboard/alert_center.html" %}
+
+    <section class="operational-summary">
+
+        <div
+            class="
+                score-card
+                score-{{ health_score.classe }}
+            "
+        >
+
+            <div class="summary-card-header">
+
+                <span class="summary-card-icon">
+                    🎯
+                </span>
+
+                <span class="summary-card-label">
+                    Compliance Score
+                </span>
+
+            </div>
+
+            <strong>
+                {{ health_score.score }}
+                <small>/100</small>
+            </strong>
+
+            <p>
+                {{ health_score.icone }}
+                {{ health_score.status }}
+            </p>
+
+        </div>
+
+        <div class="summary-card summary-card-open">
+
+            <div class="summary-card-header">
+
+                <span class="summary-card-icon">
+                    📂
+                </span>
+
+                <span class="summary-card-label">
+                    Denúncias abertas
+                </span>
+
+            </div>
+
+            <strong>
+                {{ total_abertas }}
+            </strong>
+
+            <p>
+                Registros em tratamento
+            </p>
+
+        </div>
+
+        <div class="summary-card summary-card-critical">
+
+            <div class="summary-card-header">
+
+                <span class="summary-card-icon">
+                    🚨
+                </span>
+
+                <span class="summary-card-label">
+                    Críticas abertas
+                </span>
+
+            </div>
+
+            <strong>
+                {{ total_criticas }}
+            </strong>
+
+            <p>
+                Casos com maior prioridade
+            </p>
+
+        </div>
+
+        <div class="summary-card summary-card-overdue">
+
+            <div class="summary-card-header">
+
+                <span class="summary-card-icon">
+                    ⏳
+                </span>
+
+                <span class="summary-card-label">
+                    Mais de 7 dias
+                </span>
+
+            </div>
+
+            <strong>
+                {{ total_atrasadas }}
+            </strong>
+
+            <p>
+                Registros que exigem atenção
+            </p>
+
+        </div>
+
+    </section>
+
+    <section class="kanban-section">
+
+        <div class="kanban-section-header">
+
+            <div>
+                <h2>Fluxo das investigações</h2>
+
+                <p>
+                    Selecione um card para consultar os detalhes
+                    e dar continuidade ao atendimento.
+                </p>
+            </div>
+
+            <div class="kanban-legenda">
+
+                <span>
+                    <i class="legenda-cor legenda-alta"></i>
+                    Alta
+                </span>
+
+                <span>
+                    <i class="legenda-cor legenda-media"></i>
+                    Média
+                </span>
+
+                <span>
+                    <i class="legenda-cor legenda-baixa"></i>
+                    Baixa
+                </span>
+
+            </div>
+
+        </div>
+
+        <div class="kanban-board">
+
+            {% for coluna in kanban %}
+
+                <section class="kanban-column">
+
+                    <div class="kanban-column-header">
+
+                        <div>
+
+                            <span class="kanban-column-step">
+                                Etapa
+                            </span>
+
+                            <h2>
+                                {{ coluna.nome }}
+                            </h2>
+
+                        </div>
+
+                        <span class="kanban-column-count">
+                            {{ coluna.total }}
+                        </span>
+
+                    </div>
+
+                    <div class="kanban-column-stats">
+
+                        <div>
+                            <span>SLA</span>
+                            <strong>
+                                {{ coluna.sla_dias }} dia(s)
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>Críticas</span>
+                            <strong>
+                                {{ coluna.criticas }}
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>+7 dias</span>
+                            <strong>
+                                {{ coluna.mais_7_dias }}
+                            </strong>
+                        </div>
+
+                    </div>
+
+                    <div class="kanban-column-content">
+
+                        {% if coluna.denuncias %}
+
+                            {% for denuncia in coluna.denuncias %}
+
+                                <a
+                                    href="{{ url_for(
+                                        'denuncia.empresa_denuncia_detalhe',
+                                        denuncia_id=denuncia.id
+                                    ) }}"
+                                    class="kanban-card"
+                                >
+
+                                    <div class="kanban-card-header">
+
+                                        <strong>
+                                            {{ denuncia.protocolo }}
+                                        </strong>
+
+                                        <span class="kanban-card-arrow">
+                                            →
+                                        </span>
+
+                                    </div>
+
+                                    <h3>
+                                        {{
+                                            denuncia.categoria
+                                            or denuncia.tipo
+                                            or "Sem categoria"
+                                        }}
+                                    </h3>
+
+                                    <div class="kanban-card-info">
+
+                                        <span>
+                                            🏢
+                                            {{
+                                                denuncia.unidade
+                                                or "Unidade não informada"
+                                            }}
+                                        </span>
+
+                                        {% if denuncia.responsavel %}
+
+                                            <span>
+                                                👤
+                                                {{ denuncia.responsavel }}
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="kanban-sem-responsavel">
+                                                👤 Sem responsável
+                                            </span>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                    <div class="kanban-card-footer">
+
+                                        <span
+                                            class="
+                                                badge
+                                                badge-{{
+                                                    denuncia.criticidade
+                                                    | lower
+                                                    if denuncia.criticidade
+                                                    else 'neutra'
+                                                }}
+                                            "
+                                        >
+                                            {{
+                                                denuncia.criticidade
+                                                or "Sem criticidade"
+                                            }}
+                                        </span>
+
+                                        {% if denuncia.criado_em %}
+
+                                            <small>
+                                                {{ denuncia.criado_em }}
+                                            </small>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                </a>
+
+                            {% endfor %}
+
+                        {% else %}
+
+                            <div class="kanban-empty">
+
+                                <span class="kanban-empty-icon">
+                                    ✓
+                                </span>
+
+                                <strong>
+                                    Etapa sem registros
+                                </strong>
+
+                                <p>
+                                    Nenhuma denúncia está nesta
+                                    etapa no momento.
+                                </p>
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </section>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}

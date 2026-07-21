@@ -1,0 +1,55 @@
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}Editar Setor | FALAE{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>🏭 Editar Setor</h1>
+    <p>Atualize os dados do setor selecionado.</p>
+</div>
+
+<div class="card">
+    <div class="triagem-header">
+        <div>
+            <h2>Dados do Setor</h2>
+            <p>Altere a unidade, o nome e o status do setor.</p>
+        </div>
+    </div>
+
+    <form method="POST" class="form-card">
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Unidade</label>
+                <select name="unidade_id">
+                    <option value="">Não vincular a uma unidade</option>
+                    {% for unidade in unidades %}
+                        <option value="{{ unidade.id }}" {% if setor.unidade_id == unidade.id %}selected{% endif %}>
+                            {{ unidade.nome }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Nome do Setor *</label>
+                <input type="text" name="nome" value="{{ setor.nome }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Status</label>
+                <select name="ativo">
+                    <option value="1" {% if setor.ativo %}selected{% endif %}>Ativo</option>
+                    <option value="0" {% if not setor.ativo %}selected{% endif %}>Inativo</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit">💾 Salvar Alterações</button>
+            <a href="/empresa/setores" class="btn-secundario">← Voltar</a>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,241 @@
+/*
+==================================================
+
+ARQUIVO LEGADO
+
+Este arquivo será removido após a migração
+para o Design System.
+
+Não adicionar novos estilos aqui.
+
+==================================================
+*/
+
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    margin: 0;
+    padding: 0;
+    color: #222;
+}
+
+header {
+    background: #1f3b57;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+main {
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.08);
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    box-sizing: border-box;
+}
+
+button,
+.btn {
+    display: inline-block;
+    margin-top: 20px;
+    background: #1f3b57;
+    color: white;
+    padding: 10px 18px;
+    border: none;
+    text-decoration: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.btn-secundario {
+    display: inline-block;
+    margin-bottom: 20px;
+    color: #1f3b57;
+    text-decoration: none;
+}
+
+.alerta {
+    background: #fff8d6;
+    padding: 12px;
+    border-left: 4px solid #d6a800;
+}
+
+.erro {
+    background: #ffe1e1;
+    color: #a00000;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 25px;
+}
+
+th,
+td {
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background: #f0f0f0;
+}
+
+.cards-dashboard {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.mini-card {
+    background: #f4f6f8;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.mini-card h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.mini-card p {
+    font-size: 28px;
+    font-weight: bold;
+    margin: 10px 0 0;
+}
+
+.filtros-dashboard {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    align-items: end;
+    margin: 20px 0;
+}
+
+.graficos-dashboard {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.grafico-card {
+    background: #f4f6f8;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.executive-summary{
+
+    border-left:6px solid #2563eb;
+
+    padding:24px;
+
+    border-radius:16px;
+
+    background:#ffffff;
+
+    margin-bottom:40px;
+
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+
+}
+
+.executive-header h2{
+
+    margin:0;
+
+    font-size:28px;
+
+    color:#1e293b;
+
+}
+
+.executive-subtitle{
+
+    margin-top:8px;
+
+    color:#64748b;
+
+}
+
+.executive-body{
+
+    margin-top:20px;
+
+}
+
+.insight-item{
+
+    background:#f8fafc;
+
+    padding:14px 18px;
+
+    margin-bottom:14px;
+
+    border-left:4px solid #2563eb;
+
+    border-radius:10px;
+
+    line-height:1.6;
+
+}
+.ranking-card{
+
+    padding:20px;
+
+}
+
+.ranking-item{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:12px 0;
+
+    border-bottom:1px solid #eee;
+
+}
+
+.badge{
+
+    background:#2563eb;
+
+    color:white;
+
+    padding:6px 12px;
+
+    border-radius:20px;
+
+    font-weight:bold;
+
+}

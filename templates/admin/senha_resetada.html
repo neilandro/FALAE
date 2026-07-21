@@ -1,0 +1,61 @@
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}Senha Resetada | FALAE{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>🔑 Senha Resetada</h1>
+    <p>A senha temporária foi gerada com sucesso.</p>
+</div>
+
+<div class="card">
+    <div class="triagem-header">
+        <div>
+            <h2>{{ usuario.nome }}</h2>
+            <p>{{ usuario.email }} • {{ usuario.perfil }}</p>
+        </div>
+    </div>
+
+    <div class="empty-state">
+        <p><strong>Senha temporária:</strong></p>
+        <h2>{{ senha_temporaria }}</h2>
+        <p>Copie esta senha agora. Ela não será exibida novamente.</p>
+    </div>
+
+    <div class="form-actions">
+        <a href="/admin/dashboard" class="btn-secundario">← Voltar ao Dashboard</a>
+    </div>
+</div>
+
+{% endblock %}
+
+@admin_bp.route("/usuarios")
+@super_admin_required
+def usuarios():
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT
+            u.id,
+            u.nome,
+            u.email,
+            u.perfil,
+            u.ativo,
+            u.criado_em,
+            e.nome AS empresa,
+            a.nome AS assessoria
+        FROM usuarios u
+        LEFT JOIN empresas e ON e.id = u.empresa_id
+        LEFT JOIN assessorias a ON a.id = u.assessoria_id
+        ORDER BY u.nome
+    """)
+
+    usuarios = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return render_template("admin/usuarios.html", usuarios=usuarios)
+    

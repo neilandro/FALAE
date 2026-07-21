@@ -1,0 +1,27 @@
+.badge {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.badge-nova {
+    background: #DBEAFE;
+    color: #1E40AF;
+}
+
+.badge-analise {
+    background: #FEF3C7;
+    color: #92400E;
+}
+
+.badge-concluida {
+    background: #D1FAE5;
+    color: #065F46;
+}
+
+.badge-arquivada {
+    background: #E5E7EB;
+    color: #374151;
+}

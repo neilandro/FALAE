@@ -1,0 +1,15 @@
+{% macro status_badge(status) %}
+
+    {% if status == 'NOVA' %}
+        <span class="badge badge-nova">Nova</span>
+    {% elif status == 'EM_ANALISE' %}
+        <span class="badge badge-analise">Em análise</span>
+    {% elif status == 'CONCLUIDA' %}
+        <span class="badge badge-concluida">Concluída</span>
+    {% elif status == 'ARQUIVADA' %}
+        <span class="badge badge-arquivada">Arquivada</span>
+    {% else %}
+        <span class="badge">{{ status }}</span>
+    {% endif %}
+
+{% endmacro %}

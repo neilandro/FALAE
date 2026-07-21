@@ -1,0 +1,561 @@
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}
+Turnos | FALAE
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .turnos-page {
+        --turnos-border: #e2e8f0;
+        --turnos-muted: #64748b;
+        --turnos-primary: #1f4e78;
+    }
+
+    .turnos-page *,
+    .turnos-page *::before,
+    .turnos-page *::after {
+        box-sizing: border-box;
+    }
+
+    .turnos-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 22px;
+    }
+
+    .turnos-header-texto h1 {
+        margin: 0 0 7px;
+        color: #0f172a;
+    }
+
+    .turnos-header-texto p {
+        margin: 0;
+        color: var(--turnos-muted);
+        line-height: 1.55;
+    }
+
+    .turnos-header-acoes {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .turnos-resumo {
+        display: grid;
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        margin-bottom: 22px;
+    }
+
+    .turnos-resumo-card {
+        padding: 17px 18px;
+        border: 1px solid var(--turnos-border);
+        border-radius: 13px;
+        background: #ffffff;
+        box-shadow:
+            0 7px 20px
+            rgba(15, 23, 42, 0.045);
+    }
+
+    .turnos-resumo-label {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--turnos-muted);
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .turnos-resumo-valor {
+        color: #0f172a;
+        font-size: 25px;
+        font-weight: 800;
+    }
+
+    .turnos-container {
+        padding: 20px;
+        border: 1px solid var(--turnos-border);
+        border-radius: 16px;
+        background: #ffffff;
+        box-shadow:
+            0 9px 26px
+            rgba(15, 23, 42, 0.045);
+    }
+
+    .turnos-lista {
+        display: grid;
+        gap: 15px;
+    }
+
+    .turno-card {
+        display: grid;
+        grid-template-columns:
+            minmax(0, 1fr)
+            auto;
+        gap: 20px;
+        align-items: center;
+        padding: 18px;
+        border: 1px solid var(--turnos-border);
+        border-radius: 14px;
+        background:
+            linear-gradient(
+                180deg,
+                #ffffff,
+                #fbfdff
+            );
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease,
+            transform 0.2s ease;
+    }
+
+    .turno-card:hover {
+        border-color: #bfdbfe;
+        box-shadow:
+            0 10px 24px
+            rgba(15, 23, 42, 0.07);
+        transform: translateY(-1px);
+    }
+
+    .turno-identidade {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        min-width: 0;
+    }
+
+    .turno-icone {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        width: 50px;
+        height: 50px;
+        border-radius: 14px;
+        color: #ffffff;
+        font-size: 22px;
+        background:
+            linear-gradient(
+                135deg,
+                #1f4e78,
+                #2563a8
+            );
+    }
+
+    .turno-conteudo {
+        min-width: 0;
+    }
+
+    .turno-titulo {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 9px;
+    }
+
+    .turno-titulo h3 {
+        margin: 0;
+        color: #0f172a;
+        font-size: 17px;
+    }
+
+    .turno-identificador {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 8px;
+        border-radius: 999px;
+        color: #1e3a5f;
+        font-size: 10px;
+        font-weight: 800;
+        background: #dbeafe;
+    }
+
+    .turno-dados {
+        display: grid;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+        gap: 7px 18px;
+    }
+
+    .turno-dado {
+        min-width: 0;
+        color: #64748b;
+        font-size: 12px;
+        line-height: 1.45;
+    }
+
+    .turno-dado strong {
+        color: #334155;
+    }
+
+    .turno-acoes {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 9px;
+    }
+
+    .turno-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-right: 3px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .turno-status::before {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        content: "";
+    }
+
+    .turno-status-ativo {
+        color: #166534;
+        background: #dcfce7;
+    }
+
+    .turno-status-ativo::before {
+        background: #16a34a;
+    }
+
+    .turno-status-inativo {
+        color: #991b1b;
+        background: #fee2e2;
+    }
+
+    .turno-status-inativo::before {
+        background: #dc2626;
+    }
+
+    .turno-btn-editar {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 39px;
+        padding: 8px 13px;
+        border: 1px solid #bfdbfe;
+        border-radius: 8px;
+        color: #1d4ed8;
+        font-size: 12px;
+        font-weight: 750;
+        text-decoration: none;
+        background: #eff6ff;
+        transition:
+            border-color 0.2s ease,
+            background 0.2s ease;
+    }
+
+    .turno-btn-editar:hover {
+        border-color: #93c5fd;
+        background: #dbeafe;
+    }
+
+    .turnos-empty {
+        padding: 52px 20px;
+        text-align: center;
+    }
+
+    .turnos-empty-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 64px;
+        height: 64px;
+        margin-bottom: 14px;
+        border-radius: 18px;
+        font-size: 29px;
+        background: #eff6ff;
+    }
+
+    .turnos-empty h3 {
+        margin: 0 0 7px;
+        color: #334155;
+    }
+
+    .turnos-empty p {
+        margin: 0;
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    @media (max-width: 850px) {
+        .turno-card {
+            grid-template-columns: 1fr;
+        }
+
+        .turno-acoes {
+            justify-content: flex-start;
+        }
+    }
+
+    @media (max-width: 680px) {
+        .turnos-header {
+            flex-direction: column;
+        }
+
+        .turnos-header-acoes,
+        .turnos-header-acoes .btn {
+            width: 100%;
+        }
+
+        .turnos-resumo {
+            grid-template-columns: 1fr;
+        }
+
+        .turno-identidade {
+            flex-direction: column;
+        }
+
+        .turno-dados {
+            grid-template-columns: 1fr;
+        }
+
+        .turno-acoes,
+        .turno-acoes a {
+            width: 100%;
+        }
+
+        .turno-status {
+            width: 100%;
+            justify-content: center;
+            margin: 0;
+        }
+    }
+</style>
+
+{% set total_turnos = turnos | length if turnos else 0 %}
+
+{% set total_ativos = (
+turnos
+| selectattr("ativo")
+| list
+| length
+if turnos
+else 0
+) %}
+
+{% set total_inativos = total_turnos - total_ativos %}
+
+<div class="turnos-page">
+
+<div class="turnos-header">
+
+    <div class="turnos-header-texto">
+
+        <h1>
+            🕒 Turnos
+        </h1>
+
+        <p>
+            Organize os turnos utilizados nos cadastros,
+            denúncias, indicadores e filtros gerenciais.
+        </p>
+
+    </div>
+
+    <div class="turnos-header-acoes">
+
+        <a
+            href="/empresa/turnos/novo"
+            class="btn"
+        >
+            ➕ Novo Turno
+        </a>
+
+    </div>
+
+</div>
+
+<div class="turnos-resumo">
+
+    <div class="turnos-resumo-card">
+
+        <span class="turnos-resumo-label">
+            Total de turnos
+        </span>
+
+        <span class="turnos-resumo-valor">
+            {{ total_turnos }}
+        </span>
+
+    </div>
+
+    <div class="turnos-resumo-card">
+
+        <span class="turnos-resumo-label">
+            Turnos ativos
+        </span>
+
+        <span class="turnos-resumo-valor">
+            {{ total_ativos }}
+        </span>
+
+    </div>
+
+    <div class="turnos-resumo-card">
+
+        <span class="turnos-resumo-label">
+            Turnos inativos
+        </span>
+
+        <span class="turnos-resumo-valor">
+            {{ total_inativos }}
+        </span>
+
+    </div>
+
+</div>
+
+<div class="turnos-container">
+
+    {% if turnos %}
+
+        <div class="turnos-lista">
+
+            {% for turno in turnos %}
+
+                <article class="turno-card">
+
+                    <div class="turno-identidade">
+
+                        <div class="turno-icone">
+                            🕒
+                        </div>
+
+                        <div class="turno-conteudo">
+
+                            <div class="turno-titulo">
+
+                                <h3>
+                                    {{ turno.nome }}
+                                </h3>
+
+                                <span class="turno-identificador">
+                                    Turno #{{ turno.id }}
+                                </span>
+
+                            </div>
+
+                            <div class="turno-dados">
+
+                                {% if turno.criado_em %}
+
+                                    <div class="turno-dado">
+
+                                        <strong>Criado em:</strong>
+                                        {{ turno.criado_em }}
+
+                                    </div>
+
+                                {% endif %}
+
+                                <div class="turno-dado">
+
+                                    <strong>Situação:</strong>
+
+                                    {% if turno.ativo is defined %}
+
+                                        {% if turno.ativo %}
+                                            Disponível para utilização
+                                        {% else %}
+                                            Cadastro desativado
+                                        {% endif %}
+
+                                    {% else %}
+
+                                        Situação não informada
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="turno-acoes">
+
+                        {% if turno.ativo is defined %}
+
+                            {% if turno.ativo %}
+
+                                <span
+                                    class="
+                                        turno-status
+                                        turno-status-ativo
+                                    "
+                                >
+                                    Ativo
+                                </span>
+
+                            {% else %}
+
+                                <span
+                                    class="
+                                        turno-status
+                                        turno-status-inativo
+                                    "
+                                >
+                                    Inativo
+                                </span>
+
+                            {% endif %}
+
+                        {% endif %}
+
+                        <a
+                            href="/empresa/turnos/{{ turno.id }}/editar"
+                            class="turno-btn-editar"
+                        >
+                            ✏️ Editar
+                        </a>
+
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="turnos-empty">
+
+            <div class="turnos-empty-icon">
+                🕒
+            </div>
+
+            <h3>
+                Nenhum turno cadastrado
+            </h3>
+
+            <p>
+                Utilize o botão “Novo Turno” para
+                organizar os períodos de trabalho da empresa.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,538 @@
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}
+    {% if modo == "novo" %}
+        Novo Usuário | FALAE
+    {% else %}
+        Editar Usuário | FALAE
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .form-alerta-erro {
+        margin-bottom: 20px;
+        padding: 14px 16px;
+        border: 1px solid #fecaca;
+        border-radius: 10px;
+        color: #991b1b;
+        line-height: 1.5;
+        background: #fef2f2;
+    }
+
+    .form-ajuda {
+        display: block;
+        margin-top: 6px;
+        color: #64748b;
+        font-size: 12px;
+        line-height: 1.4;
+    }
+
+    .form-secao-titulo {
+        margin-top: 26px;
+        margin-bottom: 16px;
+    }
+
+    .campo-oculto {
+        display: none;
+    }
+</style>
+
+<div class="page-header">
+
+    {% if modo == "novo" %}
+
+        <h1>👤 Novo Usuário</h1>
+
+        <p>
+            Cadastre um novo usuário e defina
+            seu perfil de acesso.
+        </p>
+
+    {% else %}
+
+        <h1>👤 Editar Usuário</h1>
+
+        <p>
+            Atualize os dados e o perfil do usuário.
+        </p>
+
+    {% endif %}
+
+</div>
+
+<div class="card">
+
+    {% if erro %}
+
+        <div class="form-alerta-erro">
+            <strong>Não foi possível salvar o usuário.</strong>
+            <br>
+            {{ erro }}
+        </div>
+
+    {% endif %}
+
+    <form
+        method="POST"
+        class="form-card"
+        id="form-usuario"
+        autocomplete="off"
+        data-perfil-logado="{{ session.perfil }}"
+    >
+
+        <h2>Dados do usuário</h2>
+
+        <div class="form-grid">
+
+            <div class="form-group">
+
+                <label for="nome">
+                    Nome *
+                </label>
+
+                <input
+                    type="text"
+                    id="nome"
+                    name="nome"
+                    maxlength="150"
+                    required
+                    value="{{ usuario.nome if usuario else '' }}"
+                    placeholder="Nome completo"
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="email">
+                    E-mail *
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    maxlength="180"
+                    required
+                    value="{{ usuario.email if usuario else '' }}"
+                    placeholder="usuario@empresa.com"
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="celular">
+                    Celular
+                </label>
+
+                <input
+                    type="text"
+                    id="celular"
+                    name="celular"
+                    maxlength="30"
+                    value="{{ usuario.celular if usuario and usuario.celular else '' }}"
+                    placeholder="(00) 00000-0000"
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="whatsapp">
+                    WhatsApp
+                </label>
+
+                <input
+                    type="text"
+                    id="whatsapp"
+                    name="whatsapp"
+                    maxlength="30"
+                    value="{{ usuario.whatsapp if usuario and usuario.whatsapp else '' }}"
+                    placeholder="(00) 00000-0000"
+                >
+
+            </div>
+
+            {% if modo == "novo" %}
+
+                <div class="form-group">
+
+                    <label for="senha">
+                        Senha inicial *
+                    </label>
+
+                    <input
+                        type="password"
+                        id="senha"
+                        name="senha"
+                        minlength="8"
+                        maxlength="128"
+                        required
+                        autocomplete="new-password"
+                        placeholder="Informe a senha temporária"
+                    >
+
+                    <small class="form-ajuda">
+                        Mínimo de 8 caracteres, contendo letra
+                        maiúscula, minúscula, número e caractere
+                        especial. O usuário deverá alterar essa
+                        senha no primeiro acesso.
+                    </small>
+
+                </div>
+
+            {% endif %}
+
+
+            <div class="form-group">
+
+                <label for="perfil">
+                    Perfil *
+                </label>
+
+                {% if (
+                    modo == "editar"
+                    and usuario
+                    and (usuario.id | int)
+                    == (session.get("usuario_id", 0) | int)
+                ) %}
+
+                    <input
+                        type="text"
+                        id="perfil_bloqueado"
+                        value="{{ usuario.perfil }}"
+                        readonly
+                        aria-readonly="true"
+                    >
+
+                    <input
+                        type="hidden"
+                        id="perfil"
+                        name="perfil"
+                        value="{{ usuario.perfil }}"
+                    >
+
+                    <small class="form-ajuda">
+                        Por segurança, você não pode alterar
+                        o seu próprio perfil de acesso.
+                    </small>
+
+                {% else %}
+
+                    <select
+                        id="perfil"
+                        name="perfil"
+                        required
+                    >
+
+                        <option value="">
+                            Selecione
+                        </option>
+
+                        {% for perfil_opcao in perfis %}
+
+                            <option
+                                value="{{ perfil_opcao }}"
+                                {% if (
+                                    usuario
+                                    and usuario.perfil == perfil_opcao
+                                ) %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ perfil_opcao }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                {% endif %}
+
+            </div>
+
+
+
+        </div>
+
+        <h2 class="form-secao-titulo">
+            Vínculo
+        </h2>
+
+        <div class="form-grid">
+
+            <div
+                class="form-group campo-oculto"
+                id="grupo-assessoria"
+            >
+
+                <label for="assessoria_id">
+                    Assessoria *
+                </label>
+
+                <select
+                    id="assessoria_id"
+                    name="assessoria_id"
+                >
+
+                    <option value="">
+                        Selecione a assessoria
+                    </option>
+
+                    {% for assessoria in assessorias %}
+
+                        <option
+                            value="{{ assessoria.id }}"
+                            {% if (
+                                usuario
+                                and usuario.assessoria_id
+                                and usuario.assessoria_id | int
+                                == assessoria.id
+                            ) %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ assessoria.nome }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+                <small class="form-ajuda">
+                    Campo obrigatório para usuários
+                    ADM_ASSESSORIA.
+                </small>
+
+            </div>
+
+            <div
+                class="form-group campo-oculto"
+                id="grupo-empresa"
+            >
+
+                <label for="empresa_id">
+                    Empresa *
+                </label>
+
+                <select
+                    id="empresa_id"
+                    name="empresa_id"
+                >
+
+                    <option value="">
+                        Selecione a empresa
+                    </option>
+
+                    {% for empresa in empresas %}
+
+                        {% if (
+                            session.perfil != "ADM_ASSESSORIA"
+                            or empresa.assessoria_id
+                            == session.assessoria_id
+                        ) %}
+
+                            <option
+                                value="{{ empresa.id }}"
+                                {% if (
+                                    empresa_id_preselecionada
+                                    and empresa_id_preselecionada | int
+                                    == empresa.id
+                                ) %}
+                                    selected
+
+                                {% elif (
+                                    usuario
+                                    and usuario.empresa_id
+                                    and usuario.empresa_id | int
+                                    == empresa.id
+                                ) %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ empresa.nome }}
+                            </option>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+                </select>
+
+                {% if session.perfil == "ADM_ASSESSORIA" %}
+
+                    <small class="form-ajuda">
+                        São exibidas somente empresas
+                        vinculadas à sua assessoria.
+                    </small>
+
+                {% elif session.perfil == "ADMIN_EMPRESA" %}
+
+                    <small class="form-ajuda">
+                        O usuário será vinculado à sua empresa.
+                    </small>
+
+                {% endif %}
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="ativo">
+                    Status
+                </label>
+
+                <select
+                    id="ativo"
+                    name="ativo"
+                >
+
+                    <option
+                        value="1"
+                        {% if (
+                            not usuario
+                            or usuario.ativo
+                        ) %}
+                            selected
+                        {% endif %}
+                    >
+                        Ativo
+                    </option>
+
+                    <option
+                        value="0"
+                        {% if (
+                            usuario
+                            and not usuario.ativo
+                        ) %}
+                            selected
+                        {% endif %}
+                    >
+                        Inativo
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+        <div class="form-actions">
+
+            <button
+                type="submit"
+                class="btn"
+            >
+                💾 Salvar Usuário
+            </button>
+
+            <a
+                href="{{ url_for('admin.usuarios') }}"
+                class="btn-secundario"
+            >
+                ← Voltar
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const formulario = document.getElementById("form-usuario");
+        const campoPerfil = document.getElementById("perfil");
+        const grupoAssessoria = document.getElementById(
+            "grupo-assessoria"
+        );
+        const grupoEmpresa = document.getElementById(
+            "grupo-empresa"
+        );
+        const campoAssessoria = document.getElementById(
+            "assessoria_id"
+        );
+        const campoEmpresa = document.getElementById(
+            "empresa_id"
+        );
+
+        if (
+            !formulario
+            || !campoPerfil
+            || !grupoAssessoria
+            || !grupoEmpresa
+            || !campoAssessoria
+            || !campoEmpresa
+        ) {
+            return;
+        }
+
+        const perfilLogado = formulario.dataset.perfilLogado || "";
+
+        const perfisComEmpresa = [
+            "ADMIN_EMPRESA",
+            "GESTOR",
+            "INVESTIGADOR",
+            "AUDITOR",
+            "VISUALIZADOR"
+        ];
+
+        function mostrarCampo(elemento, mostrar) {
+            elemento.classList.toggle(
+                "campo-oculto",
+                !mostrar
+            );
+        }
+
+        function atualizarFormularioUsuario() {
+            const perfilSelecionado = campoPerfil.value;
+
+            const usaAssessoria = (
+                perfilSelecionado === "ADM_ASSESSORIA"
+                && perfilLogado === "SUPER_ADMIN"
+            );
+
+            const usaEmpresa = perfisComEmpresa.includes(
+                perfilSelecionado
+            );
+
+            mostrarCampo(
+                grupoAssessoria,
+                usaAssessoria
+            );
+
+            mostrarCampo(
+                grupoEmpresa,
+                usaEmpresa
+            );
+
+            campoAssessoria.required = usaAssessoria;
+            campoAssessoria.disabled = !usaAssessoria;
+
+            campoEmpresa.required = usaEmpresa;
+            campoEmpresa.disabled = !usaEmpresa;
+
+            if (!usaAssessoria) {
+                campoAssessoria.value = "";
+            }
+
+            if (!usaEmpresa) {
+                campoEmpresa.value = "";
+            }
+        }
+
+        if (campoPerfil.tagName === "SELECT") {
+            campoPerfil.addEventListener(
+                "change",
+                atualizarFormularioUsuario
+            );
+        }
+
+        atualizarFormularioUsuario();
+    });
+</script>
+
+{% endblock %}

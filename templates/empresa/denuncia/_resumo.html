@@ -1,0 +1,75 @@
+<section class="denuncia-sidebar-card">
+
+    <div class="denuncia-sidebar-card-header">
+        <div class="denuncia-sidebar-icon">
+            📋
+        </div>
+
+        <div>
+            <h3>Resumo da denúncia</h3>
+            <p>Informações principais do relato</p>
+        </div>
+    </div>
+
+    <div class="denuncia-sidebar-lista">
+
+        <div class="denuncia-sidebar-item">
+            <span>Categoria</span>
+            <strong>
+                {{ denuncia.categoria or denuncia.tipo or 'Não informada' }}
+            </strong>
+        </div>
+
+        <div class="denuncia-sidebar-item">
+            <span>Unidade</span>
+            <strong>
+                {{ denuncia.unidade or 'Não informada' }}
+            </strong>
+        </div>
+
+        <div class="denuncia-sidebar-item">
+            <span>Setor</span>
+            <strong>
+                {{ denuncia.setor or 'Não informado' }}
+            </strong>
+        </div>
+
+        <div class="denuncia-sidebar-item">
+            <span>Criticidade</span>
+            <strong>
+                {{ denuncia.criticidade or 'Não informada' }}
+            </strong>
+        </div>
+
+        <div class="denuncia-sidebar-item">
+            <span>Prioridade</span>
+            <strong>
+                {{ denuncia.prioridade or 'Não informada' }}
+            </strong>
+        </div>
+
+        <div class="denuncia-sidebar-item">
+            <span>Status</span>
+            <strong>
+                {{ denuncia.status|replace('_', ' ')|title }}
+            </strong>
+        </div>
+
+        <div class="denuncia-sidebar-item">
+            <span>Responsável</span>
+            <strong>
+                {{ denuncia.responsavel or 'Não atribuído' }}
+            </strong>
+        </div>
+
+    </div>
+
+    <div class="denuncia-sidebar-descricao">
+        <span>Descrição do relato</span>
+
+        <p>
+            {{ denuncia.descricao or 'Nenhuma descrição informada.' }}
+        </p>
+    </div>
+
+</section>

@@ -1,0 +1,29 @@
+{% if session.perfil == "SUPER_ADMIN" or session.perfil == "ADM_ASSESSORIA" %}
+
+<div class="context-bar">
+    <div class="plano-meta">
+
+        {% if session.perfil == "SUPER_ADMIN" %}
+            <span><strong>👑 Plataforma:</strong> FALAE</span>
+        {% endif %}
+
+        {% if session.assessoria_nome %}
+            <span><strong>🏥 Assessoria:</strong> {{ session.assessoria_nome }}</span>
+        {% endif %}
+
+        {% if session.empresa_ativa_nome %}
+            <span><strong>🏢 Empresa:</strong> {{ session.empresa_ativa_nome }}</span>
+        {% endif %}
+
+    </div>
+
+    {% if session.empresa_ativa %}
+        <div class="form-actions">
+            <a href="/assessoria/sair-empresa" class="btn-secundario">
+                🔙 Sair da Empresa
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+{% endif %}

@@ -1,0 +1,27 @@
+{% macro metric_card(titulo, valor, subtitulo, icone="", cor="primary") %}
+
+<div class="card card-metric">
+
+    <div class="metric-header">
+
+        {% if icone %}
+        <div class="metric-icon {{ cor }}">
+            {{ icone }}
+        </div>
+        {% endif %}
+
+    </div>
+
+    <h3>{{ titulo }}</h3>
+
+    <div class="metric-value">
+        {{ valor }}
+    </div>
+
+    <div class="metric-subtitle">
+        {{ subtitulo }}
+    </div>
+
+</div>
+
+{% endmacro %}

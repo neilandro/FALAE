@@ -1,0 +1,33 @@
+{% if alertas_inteligentes %}
+<div class="alert-center">
+    <div class="alert-center-header">
+        <div>
+            <h2>🚨 Atenção necessária</h2>
+            <p>O FALAE identificou situações que merecem ação.</p>
+        </div>
+
+        <span class="alert-count">
+            {{ alertas_inteligentes|length }}
+        </span>
+    </div>
+
+    <div class="alert-list">
+        {% for alerta in alertas_inteligentes %}
+            <div class="smart-alert smart-alert-{{ alerta.prioridade }}">
+                <div class="smart-alert-icon">
+                    {{ alerta.icone }}
+                </div>
+
+                <div class="smart-alert-content">
+                    <strong>{{ alerta.titulo }}</strong>
+                    <p>{{ alerta.descricao }}</p>
+                </div>
+
+                <a href="{{ alerta.url }}" class="smart-alert-action">
+                    {{ alerta.acao }}
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}

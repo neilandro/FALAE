@@ -1,0 +1,486 @@
+/* =========================================================
+   FALAE — SISTEMA DE CARDS
+   ========================================================= */
+
+/* =========================================================
+   GRID DE MÉTRICAS
+   ========================================================= */
+
+.metric-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-5, 20px);
+    width: 100%;
+    margin-bottom: var(--space-6, 24px);
+}
+
+/* =========================================================
+   CARD BASE
+   ========================================================= */
+
+.card,
+.metric-card {
+    position: relative;
+    min-width: 0;
+    border: 1px solid var(--color-border, #e5e7eb);
+    border-radius: var(--radius-xl, 16px);
+    background: var(--color-surface, #ffffff);
+    box-shadow: var(--shadow-sm, 0 1px 3px rgba(15, 23, 42, 0.08));
+    transition:
+        transform var(--transition-fast, 180ms ease),
+        box-shadow var(--transition-fast, 180ms ease),
+        border-color var(--transition-fast, 180ms ease);
+}
+
+.card:hover,
+.metric-card:hover {
+    border-color: var(--color-border-strong, #cbd5e1);
+    box-shadow: var(
+        --shadow-md,
+        0 10px 25px rgba(15, 23, 42, 0.08)
+    );
+}
+
+/* =========================================================
+   NOVO COMPONENTE METRIC CARD
+   ========================================================= */
+
+.metric-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 156px;
+    padding: var(--space-5, 20px);
+    overflow: hidden;
+    color: var(--color-text-primary, #0f172a);
+    text-decoration: none;
+}
+
+/* Barra lateral de destaque */
+
+.metric-card::before {
+    content: "";
+    position: absolute;
+    top: 18px;
+    bottom: 18px;
+    left: 0;
+    width: 4px;
+    border-radius: 0 999px 999px 0;
+    background: var(--metric-accent, #2563eb);
+}
+
+/* Efeito visual suave no fundo */
+
+.metric-card::after {
+    content: "";
+    position: absolute;
+    top: -45px;
+    right: -45px;
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    background: var(--metric-soft, rgba(37, 99, 235, 0.08));
+    pointer-events: none;
+}
+
+/* =========================================================
+   CABEÇALHO
+   ========================================================= */
+
+.metric-card__header {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-4, 16px);
+}
+
+.metric-card__content {
+    min-width: 0;
+}
+
+.metric-card__label {
+    display: block;
+    margin-bottom: var(--space-2, 8px);
+    color: var(--color-text-secondary, #64748b);
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.metric-card__value {
+    display: block;
+    color: var(--color-text-primary, #0f172a);
+    font-size: clamp(1.8rem, 2.5vw, 2.4rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   ÍCONE
+   ========================================================= */
+
+.metric-card__icon {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    border: 1px solid var(--metric-border, rgba(37, 99, 235, 0.16));
+    border-radius: var(--radius-lg, 14px);
+    background: var(--metric-soft, rgba(37, 99, 235, 0.1));
+    color: var(--metric-accent, #2563eb);
+}
+
+.metric-card__emoji {
+    display: block;
+    font-size: 1.35rem;
+    line-height: 1;
+}
+
+/* =========================================================
+   RODAPÉ
+   ========================================================= */
+
+.metric-card__footer {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-3, 12px);
+    margin-top: var(--space-5, 20px);
+}
+
+.metric-card__subtitle {
+    min-width: 0;
+    color: var(--color-text-muted, #94a3b8);
+    font-size: 0.82rem;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.metric-card__trend {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 8px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.metric-card__trend svg {
+    width: 14px;
+    height: 14px;
+    stroke-width: 2.2;
+}
+
+.metric-card__trend--positive {
+    background: rgba(22, 163, 74, 0.1);
+    color: #15803d;
+}
+
+.metric-card__trend--negative {
+    background: rgba(220, 38, 38, 0.1);
+    color: #b91c1c;
+}
+
+.metric-card__trend--neutral {
+    background: rgba(100, 116, 139, 0.1);
+    color: #64748b;
+}
+
+/* =========================================================
+   CARD CLICÁVEL
+   ========================================================= */
+
+.metric-card--clickable {
+    cursor: pointer;
+}
+
+.metric-card--clickable:hover {
+    transform: translateY(-3px);
+    text-decoration: none;
+}
+
+.metric-card--clickable:focus-visible {
+    outline: 3px solid var(--metric-soft, rgba(37, 99, 235, 0.18));
+    outline-offset: 3px;
+}
+
+/* =========================================================
+   VARIAÇÕES DE COR
+   ========================================================= */
+
+.metric-card--primary,
+.metric-primary {
+    --metric-accent: #2563eb;
+    --metric-soft: rgba(37, 99, 235, 0.09);
+    --metric-border: rgba(37, 99, 235, 0.18);
+}
+
+.metric-card--success,
+.metric-success {
+    --metric-accent: #16a34a;
+    --metric-soft: rgba(22, 163, 74, 0.09);
+    --metric-border: rgba(22, 163, 74, 0.18);
+}
+
+.metric-card--warning,
+.metric-warning {
+    --metric-accent: #d97706;
+    --metric-soft: rgba(217, 119, 6, 0.1);
+    --metric-border: rgba(217, 119, 6, 0.18);
+}
+
+.metric-card--danger,
+.metric-danger {
+    --metric-accent: #dc2626;
+    --metric-soft: rgba(220, 38, 38, 0.09);
+    --metric-border: rgba(220, 38, 38, 0.18);
+}
+
+.metric-card--info,
+.metric-info {
+    --metric-accent: #0891b2;
+    --metric-soft: rgba(8, 145, 178, 0.09);
+    --metric-border: rgba(8, 145, 178, 0.18);
+}
+
+.metric-card--neutral,
+.metric-neutral {
+    --metric-accent: #64748b;
+    --metric-soft: rgba(100, 116, 139, 0.09);
+    --metric-border: rgba(100, 116, 139, 0.18);
+}
+
+/* =========================================================
+   COMPATIBILIDADE COM CARDS ANTIGOS
+   ========================================================= */
+
+.card-metric {
+    position: relative;
+    min-height: 145px;
+    padding: var(--space-5, 20px);
+    overflow: hidden;
+}
+
+.card-metric::before {
+    content: "";
+    position: absolute;
+    top: 18px;
+    bottom: 18px;
+    left: 0;
+    width: 4px;
+    border-radius: 0 999px 999px 0;
+    background: var(--metric-accent, #2563eb);
+}
+
+.card-metric::after {
+    content: "";
+    position: absolute;
+    top: -45px;
+    right: -45px;
+    width: 125px;
+    height: 125px;
+    border-radius: 50%;
+    background: var(--metric-soft, rgba(37, 99, 235, 0.08));
+    pointer-events: none;
+}
+
+.metric-label {
+    position: relative;
+    z-index: 1;
+    display: block;
+    margin-bottom: var(--space-3, 12px);
+    color: var(--color-text-secondary, #64748b);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.metric-value {
+    position: relative;
+    z-index: 1;
+    color: var(--color-text-primary, #0f172a);
+    font-size: clamp(1.8rem, 2.5vw, 2.4rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.04em;
+}
+
+.metric-subtitle {
+    position: relative;
+    z-index: 1;
+    margin: var(--space-4, 16px) 0 0;
+    color: var(--color-text-muted, #94a3b8);
+    font-size: 0.82rem;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+/* =========================================================
+   CARDS DE CONTEÚDO
+   ========================================================= */
+
+.content-card {
+    padding: var(--space-6, 24px);
+}
+
+.content-card__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-4, 16px);
+    margin-bottom: var(--space-5, 20px);
+}
+
+.content-card__title {
+    margin: 0;
+    color: var(--color-text-primary, #0f172a);
+    font-size: 1rem;
+    font-weight: 750;
+    line-height: 1.3;
+}
+
+.content-card__subtitle {
+    margin: 6px 0 0;
+    color: var(--color-text-secondary, #64748b);
+    font-size: 0.84rem;
+    line-height: 1.5;
+}
+
+.content-card__body {
+    min-width: 0;
+}
+
+/* =========================================================
+   ESTADO VAZIO
+   ========================================================= */
+
+.empty-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 220px;
+    padding: var(--space-7, 32px);
+    text-align: center;
+}
+
+.empty-card__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    margin-bottom: var(--space-4, 16px);
+    border-radius: 50%;
+    background: var(--color-surface-secondary, #f1f5f9);
+    color: var(--color-text-secondary, #64748b);
+}
+
+.empty-card__icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+.empty-card__title {
+    margin: 0;
+    color: var(--color-text-primary, #0f172a);
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.empty-card__description {
+    max-width: 380px;
+    margin: 8px 0 0;
+    color: var(--color-text-secondary, #64748b);
+    font-size: 0.84rem;
+    line-height: 1.5;
+}
+
+/* =========================================================
+   RESPONSIVIDADE
+   ========================================================= */
+
+@media (max-width: 1200px) {
+    .metric-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 720px) {
+    .metric-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-4, 16px);
+    }
+
+    .metric-card,
+    .card-metric {
+        min-height: 140px;
+        padding: var(--space-4, 16px);
+    }
+
+    .metric-card__icon {
+        width: 42px;
+        height: 42px;
+    }
+
+    .metric-card__icon svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .metric-card__footer {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .content-card {
+        padding: var(--space-5, 20px);
+    }
+}
+
+@media (max-width: 420px) {
+    .metric-card__header {
+        gap: var(--space-3, 12px);
+    }
+
+    .metric-card__value,
+    .metric-value {
+        font-size: 1.85rem;
+    }
+
+    .metric-card__icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+    }
+}
+
+/* =========================================================
+   ACESSIBILIDADE
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    .card,
+    .metric-card {
+        transition: none;
+    }
+
+    .metric-card--clickable:hover {
+        transform: none;
+    }
+}

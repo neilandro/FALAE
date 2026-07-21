@@ -1,0 +1,537 @@
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}
+Unidades | FALAE
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .unidades-page {
+        --unidades-border: #e2e8f0;
+        --unidades-muted: #64748b;
+        --unidades-primary: #1f4e78;
+    }
+
+    .unidades-page *,
+    .unidades-page *::before,
+    .unidades-page *::after {
+        box-sizing: border-box;
+    }
+
+    .unidades-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 22px;
+    }
+
+    .unidades-header-texto h1 {
+        margin: 0 0 7px;
+        color: #0f172a;
+    }
+
+    .unidades-header-texto p {
+        margin: 0;
+        color: var(--unidades-muted);
+        line-height: 1.55;
+    }
+
+    .unidades-header-acoes {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .unidades-resumo {
+        display: grid;
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        margin-bottom: 22px;
+    }
+
+    .unidades-resumo-card {
+        padding: 17px 18px;
+        border: 1px solid var(--unidades-border);
+        border-radius: 13px;
+        background: #ffffff;
+        box-shadow:
+            0 7px 20px
+            rgba(15, 23, 42, 0.045);
+    }
+
+    .unidades-resumo-label {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--unidades-muted);
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .unidades-resumo-valor {
+        color: #0f172a;
+        font-size: 25px;
+        font-weight: 800;
+    }
+
+    .unidades-container {
+        padding: 20px;
+        border: 1px solid var(--unidades-border);
+        border-radius: 16px;
+        background: #ffffff;
+        box-shadow:
+            0 9px 26px
+            rgba(15, 23, 42, 0.045);
+    }
+
+    .unidades-lista {
+        display: grid;
+        gap: 15px;
+    }
+
+    .unidade-card {
+        display: grid;
+        grid-template-columns:
+            minmax(0, 1fr)
+            auto;
+        gap: 20px;
+        align-items: center;
+        padding: 18px;
+        border: 1px solid var(--unidades-border);
+        border-radius: 14px;
+        background:
+            linear-gradient(
+                180deg,
+                #ffffff,
+                #fbfdff
+            );
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease,
+            transform 0.2s ease;
+    }
+
+    .unidade-card:hover {
+        border-color: #bfdbfe;
+        box-shadow:
+            0 10px 24px
+            rgba(15, 23, 42, 0.07);
+        transform: translateY(-1px);
+    }
+
+    .unidade-identidade {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        min-width: 0;
+    }
+
+    .unidade-icone {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        width: 50px;
+        height: 50px;
+        border-radius: 14px;
+        color: #ffffff;
+        font-size: 22px;
+        background:
+            linear-gradient(
+                135deg,
+                #1f4e78,
+                #2563a8
+            );
+    }
+
+    .unidade-conteudo {
+        min-width: 0;
+    }
+
+    .unidade-titulo {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 9px;
+    }
+
+    .unidade-titulo h3 {
+        margin: 0;
+        color: #0f172a;
+        font-size: 17px;
+    }
+
+    .unidade-identificador {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 8px;
+        border-radius: 999px;
+        color: #1e3a5f;
+        font-size: 10px;
+        font-weight: 800;
+        background: #dbeafe;
+    }
+
+    .unidade-dados {
+        display: grid;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+        gap: 7px 18px;
+    }
+
+    .unidade-dado {
+        min-width: 0;
+        color: #64748b;
+        font-size: 12px;
+        line-height: 1.45;
+    }
+
+    .unidade-dado strong {
+        color: #334155;
+    }
+
+    .unidade-acoes {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 9px;
+    }
+
+    .unidade-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-right: 3px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .unidade-status::before {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        content: "";
+    }
+
+    .unidade-status-ativa {
+        color: #166534;
+        background: #dcfce7;
+    }
+
+    .unidade-status-ativa::before {
+        background: #16a34a;
+    }
+
+    .unidade-status-inativa {
+        color: #991b1b;
+        background: #fee2e2;
+    }
+
+    .unidade-status-inativa::before {
+        background: #dc2626;
+    }
+
+    .unidade-btn-editar {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 39px;
+        padding: 8px 13px;
+        border: 1px solid #bfdbfe;
+        border-radius: 8px;
+        color: #1d4ed8;
+        font-size: 12px;
+        font-weight: 750;
+        text-decoration: none;
+        background: #eff6ff;
+        transition:
+            border-color 0.2s ease,
+            background 0.2s ease;
+    }
+
+    .unidade-btn-editar:hover {
+        border-color: #93c5fd;
+        background: #dbeafe;
+    }
+
+    .unidades-empty {
+        padding: 52px 20px;
+        text-align: center;
+    }
+
+    .unidades-empty-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 64px;
+        height: 64px;
+        margin-bottom: 14px;
+        border-radius: 18px;
+        font-size: 29px;
+        background: #eff6ff;
+    }
+
+    .unidades-empty h3 {
+        margin: 0 0 7px;
+        color: #334155;
+    }
+
+    .unidades-empty p {
+        margin: 0;
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    @media (max-width: 850px) {
+        .unidade-card {
+            grid-template-columns: 1fr;
+        }
+
+        .unidade-acoes {
+            justify-content: flex-start;
+        }
+    }
+
+    @media (max-width: 680px) {
+        .unidades-header {
+            flex-direction: column;
+        }
+
+        .unidades-header-acoes,
+        .unidades-header-acoes .btn {
+            width: 100%;
+        }
+
+        .unidades-resumo {
+            grid-template-columns: 1fr;
+        }
+
+        .unidade-identidade {
+            flex-direction: column;
+        }
+
+        .unidade-dados {
+            grid-template-columns: 1fr;
+        }
+
+        .unidade-acoes,
+        .unidade-acoes a {
+            width: 100%;
+        }
+
+        .unidade-status {
+            width: 100%;
+            justify-content: center;
+            margin: 0;
+        }
+    }
+</style>
+
+{% set total_unidades = unidades | length if unidades else 0 %}
+{% set total_ativas = unidades | selectattr("ativa") | list | length if unidades else 0 %}
+{% set total_inativas = total_unidades - total_ativas %}
+
+<div class="unidades-page">
+
+
+<div class="unidades-header">
+
+    <div class="unidades-header-texto">
+
+        <h1>
+            🏢 Unidades
+        </h1>
+
+        <p>
+            Gerencie as unidades vinculadas à empresa ativa
+            e mantenha os cadastros organizados.
+        </p>
+
+    </div>
+
+    <div class="unidades-header-acoes">
+
+        <a
+            href="/empresa/unidades/nova"
+            class="btn"
+        >
+            ➕ Nova Unidade
+        </a>
+
+    </div>
+
+</div>
+
+<div class="unidades-resumo">
+
+    <div class="unidades-resumo-card">
+
+        <span class="unidades-resumo-label">
+            Total de unidades
+        </span>
+
+        <span class="unidades-resumo-valor">
+            {{ total_unidades }}
+        </span>
+
+    </div>
+
+    <div class="unidades-resumo-card">
+
+        <span class="unidades-resumo-label">
+            Unidades ativas
+        </span>
+
+        <span class="unidades-resumo-valor">
+            {{ total_ativas }}
+        </span>
+
+    </div>
+
+    <div class="unidades-resumo-card">
+
+        <span class="unidades-resumo-label">
+            Unidades inativas
+        </span>
+
+        <span class="unidades-resumo-valor">
+            {{ total_inativas }}
+        </span>
+
+    </div>
+
+</div>
+
+<div class="unidades-container">
+
+    {% if unidades %}
+
+        <div class="unidades-lista">
+
+            {% for unidade in unidades %}
+
+                <article class="unidade-card">
+
+                    <div class="unidade-identidade">
+
+                        <div class="unidade-icone">
+                            🏢
+                        </div>
+
+                        <div class="unidade-conteudo">
+
+                            <div class="unidade-titulo">
+
+                                <h3>
+                                    {{ unidade.nome }}
+                                </h3>
+
+                                <span class="unidade-identificador">
+                                    Unidade #{{ unidade.id }}
+                                </span>
+
+                            </div>
+
+                            <div class="unidade-dados">
+
+                                <div class="unidade-dado">
+
+                                    <strong>Criada em:</strong>
+                                    {{ unidade.criado_em }}
+
+                                </div>
+
+                                <div class="unidade-dado">
+
+                                    <strong>Situação:</strong>
+
+                                    {% if unidade.ativa %}
+                                        Disponível para utilização
+                                    {% else %}
+                                        Cadastro desativado
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="unidade-acoes">
+
+                        {% if unidade.ativa %}
+
+                            <span
+                                class="
+                                    unidade-status
+                                    unidade-status-ativa
+                                "
+                            >
+                                Ativa
+                            </span>
+
+                        {% else %}
+
+                            <span
+                                class="
+                                    unidade-status
+                                    unidade-status-inativa
+                                "
+                            >
+                                Inativa
+                            </span>
+
+                        {% endif %}
+
+                        <a
+                            href="/empresa/unidades/{{ unidade.id }}/editar"
+                            class="unidade-btn-editar"
+                        >
+                            ✏️ Editar
+                        </a>
+
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="unidades-empty">
+
+            <div class="unidades-empty-icon">
+                🏢
+            </div>
+
+            <h3>
+                Nenhuma unidade cadastrada
+            </h3>
+
+            <p>
+                Utilize o botão “Nova Unidade” para
+                realizar o primeiro cadastro da empresa.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+</div>
+
+{% endblock %}

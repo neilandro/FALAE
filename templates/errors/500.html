@@ -1,0 +1,21 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+
+<div class="card">
+
+<h2>Ops...</h2>
+
+<p>Ocorreu um erro inesperado.</p>
+
+<p>
+
+Código da ocorrência:
+
+<strong>{{ request_id }}</strong>
+
+</p>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}Nova Assessoria | FALAE{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>🏥 Nova Assessoria</h1>
+    <p>Cadastre uma assessoria parceira na plataforma.</p>
+</div>
+
+<div class="card">
+    <form method="POST" action="/admin/assessorias/nova" class="form-card">
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Nome *</label>
+                <input type="text" name="nome" required placeholder="Ex.: Solução Med">
+            </div>
+
+            <div class="form-group">
+                <label>CNPJ</label>
+                <input type="text" name="cnpj" placeholder="00.000.000/0000-00">
+            </div>
+
+            <div class="form-group">
+                <label>Responsável</label>
+                <input type="text" name="responsavel" placeholder="Nome do responsável">
+            </div>
+
+            <div class="form-group">
+                <label>E-mail</label>
+                <input type="email" name="email" placeholder="contato@assessoria.com.br">
+            </div>
+
+            <div class="form-group">
+                <label>Telefone</label>
+                <input type="text" name="telefone" placeholder="(00) 00000-0000">
+            </div>
+
+            <div class="form-group">
+                <label>Status</label>
+                <select name="ativa">
+                    <option value="1">Ativa</option>
+                    <option value="0">Inativa</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn">
+                💾 Salvar Assessoria
+            </button>
+
+            <a href="/admin/assessorias" class="btn-secundario">
+                ← Voltar
+            </a>
+        </div>
+
+    </form>
+</div>
+
+{% endblock %}

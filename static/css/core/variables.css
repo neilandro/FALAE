@@ -1,0 +1,151 @@
+/* ==========================================================
+   FALAE Compliance Platform
+   Design System
+
+   Arquivo......: variables.css
+   Responsável..: Tokens de Design Globais
+   Dependências.: Todos os componentes CSS
+
+   Não utilizar cores, sombras ou espaçamentos
+   diretamente nos componentes.
+
+   Utilize sempre as variáveis abaixo.
+
+========================================================== */
+
+:root {
+
+    /* ======================================================
+       BRAND
+    ====================================================== */
+
+    --color-primary: #2563eb;
+    --color-primary-hover: #1d4ed8;
+    --color-primary-light: #dbeafe;
+
+    --color-secondary: #0f172a;
+
+    /* ======================================================
+       SIDEBAR
+    ====================================================== */
+
+    --sidebar-bg: #0f172a;
+    --sidebar-surface: #162033;
+    --sidebar-hover: #1e293b;
+    --sidebar-active: #2563eb;
+    --sidebar-border: rgba(255,255,255,.06);
+
+    /* ======================================================
+       BACKGROUND
+    ====================================================== */
+
+    --bg-body: #f8fafc;
+    --bg-surface: #ffffff;
+    --bg-muted: #f1f5f9;
+
+    /* ======================================================
+       TEXT
+    ====================================================== */
+
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --text-white: #ffffff;
+
+    /* ======================================================
+       BORDER
+    ====================================================== */
+
+    --border-color: #e2e8f0;
+
+    /* ======================================================
+       STATUS
+    ====================================================== */
+
+    --success: #16a34a;
+    --warning: #f59e0b;
+    --danger: #dc2626;
+    --info: #0ea5e9;
+
+    /* ======================================================
+       RADIUS
+    ====================================================== */
+
+    --radius-xs: 6px;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 22px;
+    --radius-pill: 999px;
+
+    /* ======================================================
+       SHADOWS
+    ====================================================== */
+
+    --shadow-xs: 0 1px 3px rgba(15,23,42,.05);
+
+    --shadow-sm: 0 2px 8px rgba(15,23,42,.08);
+
+    --shadow-md: 0 8px 24px rgba(15,23,42,.10);
+
+    --shadow-lg: 0 16px 40px rgba(15,23,42,.12);
+
+    /* ======================================================
+       TRANSITIONS
+    ====================================================== */
+
+    --transition-fast: .15s ease;
+
+    --transition: .25s ease;
+
+    --transition-slow: .40s ease;
+
+    /* ======================================================
+       LAYOUT
+    ====================================================== */
+
+    --sidebar-width: 290px;
+
+    --sidebar-width-collapsed: 84px;
+
+    --header-height: 72px;
+
+    --content-max-width: 1600px;
+
+    /* ======================================================
+       SPACING
+    ====================================================== */
+
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-7: 32px;
+    --space-8: 40px;
+    --space-9: 48px;
+
+    /* ======================================================
+       TYPOGRAPHY
+    ====================================================== */
+
+    --font-family:
+        "Inter",
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    --font-xs: .75rem;
+    --font-sm: .875rem;
+    --font-md: 1rem;
+    --font-lg: 1.125rem;
+    --font-xl: 1.5rem;
+    --font-2xl: 2rem;
+
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+
+}

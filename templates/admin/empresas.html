@@ -1,0 +1,547 @@
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}
+Empresas | FALAE
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .empresas-page {
+        --empresas-primary: #1f4e78;
+        --empresas-border: #e2e8f0;
+        --empresas-muted: #64748b;
+        --empresas-background: #f8fafc;
+    }
+
+    .empresas-page *,
+    .empresas-page *::before,
+    .empresas-page *::after {
+        box-sizing: border-box;
+    }
+
+    .empresas-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 22px;
+    }
+
+    .empresas-header-texto h1 {
+        margin: 0 0 7px;
+        color: #0f172a;
+    }
+
+    .empresas-header-texto p {
+        margin: 0;
+        color: var(--empresas-muted);
+        line-height: 1.55;
+    }
+
+    .empresas-header-acoes {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .empresas-resumo {
+        display: grid;
+        grid-template-columns:
+            repeat(4, minmax(0, 1fr));
+        gap: 14px;
+        margin-bottom: 22px;
+    }
+
+    .empresas-resumo-card {
+        padding: 17px 18px;
+        border: 1px solid var(--empresas-border);
+        border-radius: 13px;
+        background: #ffffff;
+        box-shadow:
+            0 7px 20px
+            rgba(15, 23, 42, 0.045);
+    }
+
+    .empresas-resumo-label {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--empresas-muted);
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .empresas-resumo-valor {
+        color: #0f172a;
+        font-size: 25px;
+        font-weight: 800;
+    }
+
+    .empresas-container {
+        padding: 20px;
+        border: 1px solid var(--empresas-border);
+        border-radius: 16px;
+        background: #ffffff;
+        box-shadow:
+            0 9px 26px
+            rgba(15, 23, 42, 0.045);
+    }
+
+    .empresas-lista {
+        display: grid;
+        gap: 16px;
+    }
+
+    .empresa-card {
+        overflow: hidden;
+        border: 1px solid var(--empresas-border);
+        border-radius: 15px;
+        background:
+            linear-gradient(
+                180deg,
+                #ffffff,
+                #fbfdff
+            );
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease,
+            transform 0.2s ease;
+    }
+
+    .empresa-card:hover {
+        border-color: #bfdbfe;
+        box-shadow:
+            0 12px 27px
+            rgba(15, 23, 42, 0.07);
+        transform: translateY(-1px);
+    }
+
+    .empresa-card-topo {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 18px;
+        border-bottom: 1px solid #eef2f7;
+    }
+
+    .empresa-identidade {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        min-width: 0;
+    }
+
+    .empresa-icone {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        width: 50px;
+        height: 50px;
+        border-radius: 14px;
+        color: #ffffff;
+        font-size: 22px;
+        background:
+            linear-gradient(
+                135deg,
+                #1f4e78,
+                #2563a8
+            );
+    }
+
+    .empresa-identidade-conteudo {
+        min-width: 0;
+    }
+
+    .empresa-titulo {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 8px;
+    }
+
+    .empresa-titulo h3 {
+        margin: 0;
+        color: #0f172a;
+        font-size: 17px;
+    }
+
+    .empresa-plano {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 8px;
+        border-radius: 999px;
+        color: #1e3a5f;
+        font-size: 10px;
+        font-weight: 800;
+        background: #dbeafe;
+    }
+
+    .empresa-dados {
+        display: grid;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+        gap: 7px 18px;
+    }
+
+    .empresa-dado {
+        min-width: 0;
+        color: #64748b;
+        font-size: 12px;
+        line-height: 1.45;
+    }
+
+    .empresa-dado strong {
+        color: #334155;
+    }
+
+    .empresa-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        flex: 0 0 auto;
+        padding: 7px 10px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .empresa-status::before {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        content: "";
+    }
+
+    .empresa-status-ativa {
+        color: #166534;
+        background: #dcfce7;
+    }
+
+    .empresa-status-ativa::before {
+        background: #16a34a;
+    }
+
+    .empresa-status-inativa {
+        color: #991b1b;
+        background: #fee2e2;
+    }
+
+    .empresa-status-inativa::before {
+        background: #dc2626;
+    }
+
+    .empresa-indicadores {
+        display: grid;
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        padding: 16px 18px;
+        background: #f8fafc;
+    }
+
+    .empresa-indicador {
+        padding: 13px 14px;
+        border: 1px solid #e2e8f0;
+        border-radius: 11px;
+        background: #ffffff;
+    }
+
+    .empresa-indicador-label {
+        display: block;
+        margin-bottom: 5px;
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
+    .empresa-indicador-valor {
+        color: #0f172a;
+        font-size: 21px;
+        font-weight: 800;
+    }
+
+    .empresa-indicador-critico
+    .empresa-indicador-valor {
+        color: #b91c1c;
+    }
+
+    .empresa-acoes {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 9px;
+        padding: 15px 18px;
+        border-top: 1px solid #eef2f7;
+        background: #ffffff;
+    }
+
+    .empresa-btn-alterar,
+    .empresa-btn-workspace,
+    .empresa-btn-contexto {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 39px;
+        padding: 8px 13px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 750;
+        text-decoration: none;
+        transition:
+            border-color 0.2s ease,
+            background 0.2s ease,
+            transform 0.15s ease;
+    }
+
+    .empresa-btn-alterar {
+        border: 1px solid #cbd5e1;
+        color: #334155;
+        background: #ffffff;
+    }
+
+    .empresa-btn-alterar:hover {
+        border-color: #94a3b8;
+        background: #f8fafc;
+    }
+
+    .empresa-btn-workspace {
+        border: 1px solid #bfdbfe;
+        color: #1d4ed8;
+        background: #eff6ff;
+    }
+
+    .empresa-btn-workspace:hover {
+        border-color: #93c5fd;
+        background: #dbeafe;
+    }
+
+    .empresa-btn-contexto {
+        border: 1px solid #1f4e78;
+        color: #ffffff;
+        background:
+            linear-gradient(
+                135deg,
+                #1f4e78,
+                #2563a8
+            );
+    }
+
+    .empresa-btn-contexto:hover {
+        box-shadow:
+            0 8px 18px
+            rgba(31, 78, 120, 0.2);
+        transform: translateY(-1px);
+    }
+
+    .empresas-empty {
+        padding: 52px 20px;
+        text-align: center;
+    }
+
+    .empresas-empty-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 64px;
+        height: 64px;
+        margin-bottom: 14px;
+        border-radius: 18px;
+        font-size: 29px;
+        background: #eff6ff;
+    }
+
+    .empresas-empty h3 {
+        margin: 0 0 7px;
+        color: #334155;
+    }
+
+    .empresas-empty p {
+        margin: 0;
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    @media (max-width: 980px) {
+        .empresas-resumo {
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 760px) {
+        .empresas-header,
+        .empresa-card-topo {
+            flex-direction: column;
+        }
+
+        .empresas-header-acoes,
+        .empresas-header-acoes .btn {
+            width: 100%;
+        }
+
+        .empresa-dados,
+        .empresa-indicadores {
+            grid-template-columns: 1fr;
+        }
+
+        .empresa-acoes {
+            justify-content: stretch;
+        }
+
+        .empresa-acoes a {
+            width: 100%;
+        }
+
+        .empresa-status {
+            align-self: flex-start;
+        }
+    }
+
+    @media (max-width: 560px) {
+        .empresas-resumo {
+            grid-template-columns: 1fr;
+        }
+
+        .empresa-identidade {
+            flex-direction: column;
+        }
+    }
+</style>
+
+{% set total_empresas = empresas | length if empresas else 0 %}
+{% set total_ativas = empresas | selectattr("ativa") | list | length if empresas else 0 %}
+{% set total_inativas = total_empresas - total_ativas %}
+{% set total_denuncias_geral = empresas | sum(attribute="total_denuncias") if empresas else 0 %}
+
+<div class="empresas-page">
+
+    <div class="empresas-header">
+
+        <div class="empresas-header-texto">
+
+            <h1>
+                🏢 Empresas
+            </h1>
+
+            <p>
+                Gerencie empresas, vínculos com assessorias,
+                planos e indicadores operacionais.
+            </p>
+
+        </div>
+
+        <div class="empresas-header-acoes">
+
+            <a
+                href="/admin/empresas/nova"
+                class="btn"
+            >
+                ➕ Nova Empresa
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="empresas-resumo">
+
+        <div class="empresas-resumo-card">
+
+            <span class="empresas-resumo-label">
+                Total de empresas
+            </span>
+
+            <span class="empresas-resumo-valor">
+                {{ total_empresas }}
+            </span>
+
+        </div>
+
+        <div class="empresas-resumo-card">
+
+            <span class="empresas-resumo-label">
+                Empresas ativas
+            </span>
+
+            <span class="empresas-resumo-valor">
+                {{ total_ativas }}
+            </span>
+
+        </div>
+
+        <div class="empresas-resumo-card">
+
+            <span class="empresas-resumo-label">
+                Empresas inativas
+            </span>
+
+            <span class="empresas-resumo-valor">
+                {{ total_inativas }}
+            </span>
+
+        </div>
+
+        <div class="empresas-resumo-card">
+
+            <span class="empresas-resumo-label">
+                Total de denúncias
+            </span>
+
+            <span class="empresas-resumo-valor">
+                {{ total_denuncias_geral }}
+            </span>
+
+        </div>
+
+    </div>
+
+    <div class="empresas-container">
+
+        {% if empresas %}
+
+            <div class="empresas-lista">
+
+                {% for empresa in empresas %}
+
+                    {% include
+                        "components/cards/card_empresa.html"
+                    %}
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empresas-empty">
+
+                <div class="empresas-empty-icon">
+                    🏢
+                </div>
+
+                <h3>
+                    Nenhuma empresa cadastrada
+                </h3>
+
+                <p>
+                    Utilize o botão “Nova Empresa” para
+                    iniciar o primeiro cadastro.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

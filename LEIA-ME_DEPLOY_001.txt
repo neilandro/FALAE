@@ -1,0 +1,26 @@
+FALAE — Sprint Deploy 001
+
+Objetivo: preparar Flask/Gunicorn e MySQL para execução com Docker Compose.
+
+1. Faça backup do projeto.
+2. Copie a pasta FALAE desta entrega sobre a raiz do projeto.
+3. Não substitua seu .env automaticamente; compare-o com .env.example.
+4. Gere uma SECRET_KEY:
+   python -c "import secrets; print(secrets.token_hex(32))"
+5. Use senhas diferentes em DB_PASSWORD e MYSQL_ROOT_PASSWORD.
+
+Primeiro teste:
+  docker compose config
+  docker compose build
+  docker compose up -d
+  docker compose ps
+  docker compose logs -f web
+
+Acesso local:
+  http://127.0.0.1:8000
+
+Parar sem apagar dados:
+  docker compose down
+
+ATENÇÃO — apagar banco, uploads e logs persistidos:
+  docker compose down -v

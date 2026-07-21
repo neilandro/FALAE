@@ -1,0 +1,60 @@
+<section class="dashboard-section dashboard-filter-card">
+    <div class="dashboard-section-header">
+        <div>
+            <h2>Filtros inteligentes</h2>
+            <p>Refine a análise por período, unidade, turno e situação.</p>
+        </div>
+    </div>
+
+    <form method="GET" class="filtros-dashboard">
+        <div>
+            <label for="data_inicio">Data início</label>
+            <input type="date" id="data_inicio" name="data_inicio" value="{{ filtros.data_inicio or '' }}">
+        </div>
+
+        <div>
+            <label for="data_fim">Data fim</label>
+            <input type="date" id="data_fim" name="data_fim" value="{{ filtros.data_fim or '' }}">
+        </div>
+
+        <div>
+            <label for="unidade_id">Unidade</label>
+            <select id="unidade_id" name="unidade_id">
+                <option value="">Todas</option>
+                {% for unidade in unidades %}
+                    <option value="{{ unidade.id }}" {% if filtros.unidade_id and filtros.unidade_id|int == unidade.id %}selected{% endif %}>
+                        {{ unidade.nome }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label for="turno_id">Turno</label>
+            <select id="turno_id" name="turno_id">
+                <option value="">Todos</option>
+                {% for turno in turnos %}
+                    <option value="{{ turno.id }}" {% if filtros.turno_id and filtros.turno_id|int == turno.id %}selected{% endif %}>
+                        {{ turno.nome }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label for="status">Status</label>
+            <select id="status" name="status">
+                <option value="">Todos</option>
+                <option value="NOVA" {% if filtros.status == "NOVA" %}selected{% endif %}>Nova</option>
+                <option value="EM_ANALISE" {% if filtros.status == "EM_ANALISE" %}selected{% endif %}>Em análise</option>
+                <option value="CONCLUIDA" {% if filtros.status == "CONCLUIDA" %}selected{% endif %}>Concluída</option>
+                <option value="ARQUIVADA" {% if filtros.status == "ARQUIVADA" %}selected{% endif %}>Arquivada</option>
+            </select>
+        </div>
+
+        <div class="filter-actions">
+            <button type="submit" class="btn">Aplicar filtros</button>
+            <a href="/empresa/dashboard" class="btn-secundario">Limpar filtros</a>
+        </div>
+    </form>
+</section>

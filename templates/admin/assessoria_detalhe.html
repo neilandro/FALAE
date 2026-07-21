@@ -1,0 +1,98 @@
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}Dashboard da Assessoria | FALAE{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>🏥 {{ assessoria.nome }}</h1>
+    <p>Visão consolidada das empresas vinculadas a esta assessoria.</p>
+</div>
+
+<div class="metric-grid">
+    {% set card = {
+        "titulo": "Empresas",
+        "valor": total_empresas,
+        "descricao": "Empresas ativas",
+        "icone": "🏢",
+        "classe": "metric-primary"
+    } %}
+    {% include "components/card_metric.html" %}
+
+    {% set card = {
+        "titulo": "Usuários",
+        "valor": total_usuarios,
+        "descricao": "Usuários ativos nas empresas",
+        "icone": "👥",
+        "classe": "metric-success"
+    } %}
+    {% include "components/card_metric.html" %}
+
+    {% set card = {
+        "titulo": "Denúncias",
+        "valor": total_denuncias,
+        "descricao": "Registros vinculados à assessoria",
+        "icone": "📢",
+        "classe": "metric-warning"
+    } %}
+    {% include "components/card_metric.html" %}
+
+    {% set card = {
+        "titulo": "Críticas",
+        "valor": total_criticas,
+        "descricao": "Denúncias críticas em aberto",
+        "icone": "🔴",
+        "classe": "metric-danger"
+    } %}
+    {% include "components/card_metric.html" %}
+</div>
+
+<div class="card">
+    <div class="triagem-header">
+        <div>
+            <h2>Empresas da Assessoria</h2>
+            <p>Visualize os clientes vinculados e assuma contexto para suporte ou implantação.</p>
+        </div>
+
+        <a href="/admin/assessorias" class="btn-secundario">
+            ← Voltar para Assessorias
+        </a>
+    </div>
+
+    {% if empresas %}
+        <div class="plano-lista">
+            {% for empresa in empresas %}
+                <div class="plano-card">
+                    <div>
+                        <h3>🏢 {{ empresa.nome }}</h3>
+
+                        <div class="plano-meta">
+                            <span><strong>CNPJ:</strong> {{ empresa.cnpj or 'Não informado' }}</span>
+                            <span><strong>Plano:</strong> {{ empresa.plano or 'Não informado' }}</span>
+                            <span><strong>Usuários:</strong> {{ empresa.total_usuarios }}</span>
+                            <span><strong>Denúncias:</strong> {{ empresa.total_denuncias }}</span>
+                        </div>
+                    </div>
+
+                    <div class="card-actions">
+                        {% if empresa.ativa %}
+                            <span class="status-chip status-concluido">Ativa</span>
+                        {% else %}
+                            <span class="status-chip status-cancelado">Inativa</span>
+                        {% endif %}
+
+                        <a href="/assessoria/empresas/{{ empresa.id }}/entrar" class="btn">
+                            Assumir Contexto
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            Nenhuma empresa vinculada a esta assessoria.
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}

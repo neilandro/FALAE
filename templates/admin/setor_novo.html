@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>Novo Setor</h2>
+
+    <form method="POST">
+        <label>Empresa *</label>
+        <select name="empresa_id" required>
+            <option value="">Selecione a empresa</option>
+            {% for empresa in empresas %}
+                <option value="{{ empresa.id }}">{{ empresa.nome }}</option>
+            {% endfor %}
+        </select>
+
+        <label>Unidade</label>
+        <select name="unidade_id">
+            <option value="">Não vincular a uma unidade</option>
+            {% for unidade in unidades %}
+                <option value="{{ unidade.id }}">
+                    {{ unidade.empresa }} - {{ unidade.nome }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label>Nome do setor *</label>
+        <input type="text" name="nome" required placeholder="Ex: RH, Operacional, Comercial">
+
+        <button type="submit">Salvar Setor</button>
+        <a href="/admin/setores" class="btn-secundario">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

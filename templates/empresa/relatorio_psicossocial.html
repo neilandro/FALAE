@@ -1,0 +1,1275 @@
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}
+Diagnóstico Organizacional | FALAE
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .relatorio-hero {
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 24px;
+        padding: 32px;
+        border-radius: 18px;
+        color: #ffffff;
+        background:
+            linear-gradient(
+                135deg,
+                #163a5c 0%,
+                #1f4e78 55%,
+                #2563a8 100%
+            );
+        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.16);
+    }
+
+    .relatorio-hero::after {
+        position: absolute;
+        top: -90px;
+        right: -70px;
+        width: 240px;
+        height: 240px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.08);
+        content: "";
+    }
+
+    .relatorio-hero-conteudo {
+        position: relative;
+        z-index: 1;
+        max-width: 850px;
+    }
+
+    .relatorio-hero-etiqueta {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 14px;
+        padding: 7px 12px;
+        border: 1px solid rgba(255, 255, 255, 0.24);
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 700;
+        background: rgba(255, 255, 255, 0.12);
+    }
+
+    .relatorio-hero h1 {
+        margin: 0 0 12px;
+        color: #ffffff;
+        font-size: clamp(26px, 4vw, 40px);
+        line-height: 1.12;
+    }
+
+    .relatorio-hero p {
+        max-width: 760px;
+        margin: 0;
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 16px;
+        line-height: 1.65;
+    }
+
+    .relatorio-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.7fr) minmax(290px, 0.8fr);
+        gap: 24px;
+        align-items: start;
+    }
+
+    .relatorio-card {
+        padding: 24px;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        background: #ffffff;
+        box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+    }
+
+    .relatorio-card + .relatorio-card {
+        margin-top: 22px;
+    }
+
+    .relatorio-card-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 22px;
+    }
+
+    .relatorio-card-header h2 {
+        margin: 0 0 6px;
+        color: #0f172a;
+        font-size: 21px;
+    }
+
+    .relatorio-card-header p {
+        margin: 0;
+        color: #64748b;
+        line-height: 1.5;
+    }
+
+    .relatorio-filtros-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .relatorio-campo-completo {
+        grid-column: 1 / -1;
+    }
+
+    .relatorio-campo label {
+        display: block;
+        margin-bottom: 8px;
+        color: #334155;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .relatorio-campo input,
+    .relatorio-campo select {
+        width: 100%;
+        min-height: 46px;
+        box-sizing: border-box;
+        padding: 10px 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 9px;
+        color: #0f172a;
+        background: #ffffff;
+        outline: none;
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .relatorio-campo input:focus,
+    .relatorio-campo select:focus {
+        border-color: #1f4e78;
+        box-shadow: 0 0 0 3px rgba(31, 78, 120, 0.12);
+    }
+
+    .relatorio-ajuda {
+        display: block;
+        margin-top: 6px;
+        color: #64748b;
+        font-size: 12px;
+        line-height: 1.4;
+    }
+
+    .relatorio-acoes {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 24px;
+    }
+
+    .relatorio-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 44px;
+        padding: 10px 18px;
+        border: 0;
+        border-radius: 9px;
+        color: #ffffff;
+        font-weight: 700;
+        text-decoration: none;
+        background: #1f4e78;
+        cursor: pointer;
+        transition:
+            transform 0.15s ease,
+            box-shadow 0.15s ease,
+            background 0.15s ease;
+    }
+
+    .relatorio-btn:hover {
+        color: #ffffff;
+        background: #163a5c;
+        box-shadow: 0 8px 18px rgba(31, 78, 120, 0.18);
+        transform: translateY(-1px);
+    }
+
+    .relatorio-btn-secundario {
+        color: #1f4e78;
+        border: 1px solid #b8c7d8;
+        background: #ffffff;
+    }
+
+    .relatorio-btn-secundario:hover {
+        color: #163a5c;
+        background: #f8fafc;
+    }
+
+    .relatorio-btn-pdf {
+        background: #166534;
+    }
+
+    .relatorio-btn-pdf:hover {
+        background: #14532d;
+    }
+
+    .relatorio-mensagem {
+        margin-bottom: 22px;
+        padding: 14px 16px;
+        border-radius: 10px;
+        line-height: 1.5;
+    }
+
+    .relatorio-mensagem-erro {
+        border: 1px solid #fecaca;
+        color: #991b1b;
+        background: #fef2f2;
+    }
+
+    .relatorio-resumo-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .relatorio-indicador {
+        position: relative;
+        overflow: hidden;
+        min-height: 122px;
+        padding: 18px;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        background: #ffffff;
+    }
+
+    .relatorio-indicador::before {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 5px;
+        height: 100%;
+        background: var(--cor-indicador, #1f4e78);
+        content: "";
+    }
+
+    .relatorio-indicador-label {
+        display: block;
+        margin-bottom: 12px;
+        color: #64748b;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .relatorio-indicador-valor {
+        display: block;
+        margin-bottom: 6px;
+        color: #0f172a;
+        font-size: 30px;
+        font-weight: 800;
+        line-height: 1;
+    }
+
+    .relatorio-indicador-detalhe {
+        color: #64748b;
+        font-size: 12px;
+    }
+
+    .relatorio-indice-box {
+        position: sticky;
+        top: 22px;
+    }
+
+    .relatorio-indice-topo {
+        padding: 24px;
+        border-radius: 15px;
+        color: #ffffff;
+        text-align: center;
+        background: var(--cor-indice, #1f4e78);
+    }
+
+    .relatorio-indice-topo span {
+        display: block;
+    }
+
+    .relatorio-indice-titulo {
+        margin-bottom: 10px;
+        font-size: 13px;
+        font-weight: 700;
+        opacity: 0.9;
+    }
+
+    .relatorio-indice-valor {
+        font-size: 54px;
+        font-weight: 900;
+        line-height: 1;
+    }
+
+    .relatorio-indice-nivel {
+        margin-top: 10px;
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .relatorio-indice-escala {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 4px;
+        margin-top: 16px;
+    }
+
+    .relatorio-indice-faixa {
+        height: 8px;
+        border-radius: 999px;
+    }
+
+    .faixa-muito-baixo {
+        background: #15803d;
+    }
+
+    .faixa-baixo {
+        background: #0369a1;
+    }
+
+    .faixa-moderado {
+        background: #ca8a04;
+    }
+
+    .faixa-elevado {
+        background: #c2410c;
+    }
+
+    .faixa-critico {
+        background: #991b1b;
+    }
+
+    .relatorio-indice-nota {
+        margin: 16px 0 0;
+        color: #64748b;
+        font-size: 12px;
+        line-height: 1.55;
+    }
+
+    .relatorio-secao {
+        margin-top: 24px;
+    }
+
+    .relatorio-secao h3 {
+        margin: 0 0 14px;
+        color: #0f172a;
+        font-size: 18px;
+    }
+
+    .relatorio-lista {
+        display: grid;
+        gap: 12px;
+    }
+
+    .relatorio-item {
+        padding: 15px 16px;
+        border: 1px solid #e2e8f0;
+        border-left: 5px solid var(--cor-item, #1f4e78);
+        border-radius: 10px;
+        background: #ffffff;
+    }
+
+    .relatorio-item h4 {
+        margin: 0 0 6px;
+        color: #0f172a;
+        font-size: 15px;
+    }
+
+    .relatorio-item p {
+        margin: 0;
+        color: #475569;
+        line-height: 1.55;
+    }
+
+    .relatorio-item small {
+        display: block;
+        margin-top: 8px;
+        color: #64748b;
+        line-height: 1.45;
+    }
+
+    .prioridade-alta {
+        --cor-item: #dc2626;
+        background: #fffafa;
+    }
+
+    .prioridade-media {
+        --cor-item: #d97706;
+        background: #fffdf8;
+    }
+
+    .prioridade-baixa {
+        --cor-item: #15803d;
+        background: #f8fffa;
+    }
+
+    .relatorio-tabela-wrapper {
+        overflow-x: auto;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+    }
+
+    .relatorio-tabela {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 680px;
+    }
+
+    .relatorio-tabela th,
+    .relatorio-tabela td {
+        padding: 12px 14px;
+        border-bottom: 1px solid #e2e8f0;
+        text-align: left;
+        vertical-align: top;
+    }
+
+    .relatorio-tabela th {
+        color: #ffffff;
+        font-size: 13px;
+        background: #1f4e78;
+    }
+
+    .relatorio-tabela td {
+        color: #334155;
+        font-size: 13px;
+    }
+
+    .relatorio-tabela tbody tr:nth-child(even) {
+        background: #f8fafc;
+    }
+
+    .relatorio-tabela tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .relatorio-vazio {
+        padding: 24px;
+        border: 1px dashed #cbd5e1;
+        border-radius: 12px;
+        color: #64748b;
+        text-align: center;
+        background: #f8fafc;
+    }
+
+    .relatorio-aviso {
+        margin-top: 24px;
+        padding: 16px;
+        border: 1px solid #bfdbfe;
+        border-radius: 10px;
+        color: #1e3a5f;
+        font-size: 13px;
+        line-height: 1.55;
+        background: #eff6ff;
+    }
+
+    .relatorio-download-flutuante {
+        display: grid;
+        gap: 10px;
+        margin-top: 18px;
+    }
+
+    .relatorio-download-flutuante .relatorio-btn {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    @media (max-width: 1180px) {
+        .relatorio-resumo-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 980px) {
+        .relatorio-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .relatorio-indice-box {
+            position: static;
+        }
+    }
+
+    @media (max-width: 680px) {
+        .relatorio-hero {
+            padding: 24px 20px;
+        }
+
+        .relatorio-card {
+            padding: 18px;
+        }
+
+        .relatorio-filtros-grid,
+        .relatorio-resumo-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .relatorio-campo-completo {
+            grid-column: auto;
+        }
+
+        .relatorio-acoes {
+            flex-direction: column;
+        }
+
+        .relatorio-acoes .relatorio-btn {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    }
+</style>
+
+<div class="relatorio-hero">
+    <div class="relatorio-hero-conteudo">
+
+        <div class="relatorio-hero-etiqueta">
+            📄 Diagnóstico Organizacional
+        </div>
+
+        <h1>
+            Relatório Técnico de Apoio à Gestão de Riscos Psicossociais
+        </h1>
+
+        <p>
+            Consolide indicadores do Canal de Denúncias, identifique
+            concentrações, acompanhe tendências e gere um documento
+            profissional para apoiar o SESMT, RH, Compliance e a gestão.
+        </p>
+
+    </div>
+</div>
+
+{% if erro %}
+    <div class="relatorio-mensagem relatorio-mensagem-erro">
+        {{ erro }}
+    </div>
+{% endif %}
+
+<div class="relatorio-layout">
+
+    <div>
+
+        <div class="relatorio-card">
+
+            <div class="relatorio-card-header">
+                <div>
+                    <h2>Filtros do diagnóstico</h2>
+
+                    <p>
+                        Selecione o período e, se necessário, restrinja
+                        a análise por unidade, setor ou turno.
+                    </p>
+                </div>
+            </div>
+
+            <form
+                method="POST"
+                action="{{ url_for(
+                    'relatorios.relatorio_psicossocial'
+                ) }}"
+            >
+
+                <div class="relatorio-filtros-grid">
+
+                    <div class="relatorio-campo">
+                        <label for="data_inicio">
+                            Data inicial
+                        </label>
+
+                        <input
+                            type="date"
+                            id="data_inicio"
+                            name="data_inicio"
+                            value="{{ filtros.get(
+                                'data_inicio',
+                                ''
+                            ) or '' }}"
+                        >
+
+                        <small class="relatorio-ajuda">
+                            Deixe em branco para considerar o primeiro
+                            registro disponível.
+                        </small>
+                    </div>
+
+                    <div class="relatorio-campo">
+                        <label for="data_fim">
+                            Data final
+                        </label>
+
+                        <input
+                            type="date"
+                            id="data_fim"
+                            name="data_fim"
+                            value="{{ filtros.get(
+                                'data_fim',
+                                ''
+                            ) or '' }}"
+                        >
+
+                        <small class="relatorio-ajuda">
+                            Deixe em branco para considerar todos os
+                            registros até a data atual.
+                        </small>
+                    </div>
+
+                    <div class="relatorio-campo">
+                        <label for="unidade_id">
+                            Unidade
+                        </label>
+
+                        <select
+                            id="unidade_id"
+                            name="unidade_id"
+                        >
+                            <option value="">
+                                Todas as unidades
+                            </option>
+
+                            {% for unidade in unidades %}
+                                <option
+                                    value="{{ unidade.id }}"
+                                    {% if (
+                                        filtros.get('unidade_id') | string
+                                    ) == (
+                                        unidade.id | string
+                                    ) %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ unidade.nome }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="relatorio-campo">
+                        <label for="setor_id">
+                            Setor
+                        </label>
+
+                        <select
+                            id="setor_id"
+                            name="setor_id"
+                        >
+                            <option value="">
+                                Todos os setores
+                            </option>
+
+                            {% for setor in setores %}
+                                <option
+                                    value="{{ setor.id }}"
+                                    data-unidade-id="{{ setor.unidade_id }}"
+                                    {% if (
+                                        filtros.get('setor_id') | string
+                                    ) == (
+                                        setor.id | string
+                                    ) %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ setor.unidade }} — {{ setor.nome }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="relatorio-campo relatorio-campo-completo">
+                        <label for="turno_id">
+                            Turno
+                        </label>
+
+                        <select
+                            id="turno_id"
+                            name="turno_id"
+                        >
+                            <option value="">
+                                Todos os turnos
+                            </option>
+
+                            {% for turno in turnos %}
+                                <option
+                                    value="{{ turno.id }}"
+                                    {% if (
+                                        filtros.get('turno_id') | string
+                                    ) == (
+                                        turno.id | string
+                                    ) %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ turno.nome }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="relatorio-acoes">
+
+                    <a
+                        href="{{ url_for(
+                            'relatorios.relatorio_psicossocial'
+                        ) }}"
+                        class="relatorio-btn relatorio-btn-secundario"
+                    >
+                        Limpar filtros
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="relatorio-btn"
+                    >
+                        🔎 Gerar diagnóstico
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+        {% if dados %}
+
+            <div class="relatorio-card">
+
+                <div class="relatorio-card-header">
+                    <div>
+                        <h2>Resumo dos indicadores</h2>
+
+                        <p>
+                            Período analisado:
+                            <strong>
+                                {{ dados.periodo.descricao }}
+                            </strong>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="relatorio-resumo-grid">
+
+                    <div
+                        class="relatorio-indicador"
+                        style="--cor-indicador: #1f4e78;"
+                    >
+                        <span class="relatorio-indicador-label">
+                            Total de denúncias
+                        </span>
+
+                        <span class="relatorio-indicador-valor">
+                            {{ dados.total_denuncias }}
+                        </span>
+
+                        <span class="relatorio-indicador-detalhe">
+                            Registros incluídos na análise
+                        </span>
+                    </div>
+
+                    <div
+                        class="relatorio-indicador"
+                        style="--cor-indicador: #dc2626;"
+                    >
+                        <span class="relatorio-indicador-label">
+                            Alta criticidade
+                        </span>
+
+                        <span class="relatorio-indicador-valor">
+                            {{ dados.indicadores.criticas }}
+                        </span>
+
+                        <span class="relatorio-indicador-detalhe">
+                            {{
+                                "%.2f"
+                                | format(
+                                    dados.indicadores
+                                    .percentual_criticas
+                                )
+                            }}% do total
+                        </span>
+                    </div>
+
+                    <div
+                        class="relatorio-indicador"
+                        style="--cor-indicador: #d97706;"
+                    >
+                        <span class="relatorio-indicador-label">
+                            Em aberto
+                        </span>
+
+                        <span class="relatorio-indicador-valor">
+                            {{ dados.indicadores.em_aberto }}
+                        </span>
+
+                        <span class="relatorio-indicador-detalhe">
+                            {{
+                                "%.2f"
+                                | format(
+                                    dados.indicadores
+                                    .percentual_em_aberto
+                                )
+                            }}% do total
+                        </span>
+                    </div>
+
+                    <div
+                        class="relatorio-indicador"
+                        style="--cor-indicador: #0369a1;"
+                    >
+                        <span class="relatorio-indicador-label">
+                            Tempo médio
+                        </span>
+
+                        <span class="relatorio-indicador-valor">
+                            {{
+                                "%.1f"
+                                | format(
+                                    dados.indicadores
+                                    .tempo_medio_encerramento_dias
+                                )
+                            }}
+                        </span>
+
+                        <span class="relatorio-indicador-detalhe">
+                            Dias para encerramento
+                        </span>
+                    </div>
+
+                </div>
+
+                <div class="relatorio-secao">
+
+                    <h3>Resumo executivo</h3>
+
+                    {% if interpretacoes.resumo_executivo %}
+                        <div class="relatorio-lista">
+
+                            {% for paragrafo in (
+                                interpretacoes.resumo_executivo
+                            ) %}
+                                <div class="relatorio-item">
+                                    <p>{{ paragrafo }}</p>
+                                </div>
+                            {% endfor %}
+
+                        </div>
+                    {% else %}
+                        <div class="relatorio-vazio">
+                            Nenhuma interpretação executiva foi gerada.
+                        </div>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            <div class="relatorio-card">
+
+                <div class="relatorio-card-header">
+                    <div>
+                        <h2>Pontos de atenção</h2>
+
+                        <p>
+                            Alertas identificados pelas regras
+                            transparentes da metodologia FALAE.
+                        </p>
+                    </div>
+                </div>
+
+                {% if interpretacoes.pontos_atencao %}
+
+                    <div class="relatorio-lista">
+
+                        {% for ponto in (
+                            interpretacoes.pontos_atencao
+                        ) %}
+
+                            <div
+                                class="
+                                    relatorio-item
+                                    prioridade-{{ ponto.prioridade }}
+                                "
+                            >
+                                <h4>{{ ponto.titulo }}</h4>
+
+                                <p>{{ ponto.descricao }}</p>
+
+                                <small>
+                                    <strong>Critério aplicado:</strong>
+                                    {{ ponto.criterio }}
+                                </small>
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="relatorio-vazio">
+                        Nenhum ponto de atenção automático foi
+                        identificado para os filtros selecionados.
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+            <div class="relatorio-card">
+
+                <div class="relatorio-card-header">
+                    <div>
+                        <h2>Recomendações</h2>
+
+                        <p>
+                            Sugestões geradas conforme os padrões
+                            encontrados nos dados analisados.
+                        </p>
+                    </div>
+                </div>
+
+                {% if interpretacoes.recomendacoes %}
+
+                    <div class="relatorio-lista">
+
+                        {% for recomendacao in (
+                            interpretacoes.recomendacoes
+                        ) %}
+
+                            <div
+                                class="
+                                    relatorio-item
+                                    prioridade-{{ recomendacao.prioridade }}
+                                "
+                            >
+                                <h4>
+                                    {{ recomendacao.titulo }}
+                                </h4>
+
+                                <p>
+                                    {{ recomendacao.descricao }}
+                                </p>
+
+                                <small>
+                                    <strong>Fundamento:</strong>
+                                    {{ recomendacao.fundamento }}
+                                </small>
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="relatorio-vazio">
+                        Nenhuma recomendação automática foi gerada.
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+            <div class="relatorio-card">
+
+                <div class="relatorio-card-header">
+                    <div>
+                        <h2>Plano de ação sugerido</h2>
+
+                        <p>
+                            Modelo inicial para apoiar a priorização
+                            das ações pela organização.
+                        </p>
+                    </div>
+                </div>
+
+                {% if interpretacoes.plano_acao_sugerido %}
+
+                    <div class="relatorio-tabela-wrapper">
+
+                        <table class="relatorio-tabela">
+                            <thead>
+                                <tr>
+                                    <th>Prioridade</th>
+                                    <th>Ação</th>
+                                    <th>Responsável sugerido</th>
+                                    <th>Prazo</th>
+                                    <th>Indicador</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                {% for plano in (
+                                    interpretacoes
+                                    .plano_acao_sugerido
+                                ) %}
+                                    <tr>
+                                        <td>
+                                            {{ plano.prioridade }}
+                                        </td>
+
+                                        <td>
+                                            <strong>
+                                                {{ plano.acao }}
+                                            </strong>
+
+                                            <br>
+
+                                            <small>
+                                                {{ plano.objetivo }}
+                                            </small>
+                                        </td>
+
+                                        <td>
+                                            {{
+                                                plano
+                                                .responsavel_sugerido
+                                            }}
+                                        </td>
+
+                                        <td>
+                                            {{ plano.prazo_sugerido }}
+                                        </td>
+
+                                        <td>
+                                            {{
+                                                plano
+                                                .indicador_acompanhamento
+                                            }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                {% else %}
+
+                    <div class="relatorio-vazio">
+                        Nenhum plano de ação automático foi gerado.
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+    <aside>
+
+        <div class="relatorio-card relatorio-indice-box">
+
+            <div class="relatorio-card-header">
+                <div>
+                    <h2>Índice indicativo</h2>
+
+                    <p>
+                        Síntese estatística dos padrões registrados.
+                    </p>
+                </div>
+            </div>
+
+            {% if dados %}
+
+                {% set indice = dados.indice_indicativo.valor %}
+
+                {% if indice >= 85 %}
+                    {% set cor_indice = '#991b1b' %}
+                {% elif indice >= 70 %}
+                    {% set cor_indice = '#c2410c' %}
+                {% elif indice >= 50 %}
+                    {% set cor_indice = '#ca8a04' %}
+                {% elif indice >= 25 %}
+                    {% set cor_indice = '#0369a1' %}
+                {% else %}
+                    {% set cor_indice = '#15803d' %}
+                {% endif %}
+
+                <div
+                    class="relatorio-indice-topo"
+                    style="--cor-indice: {{ cor_indice }};"
+                >
+                    <span class="relatorio-indice-titulo">
+                        Atenção Psicossocial
+                    </span>
+
+                    <span class="relatorio-indice-valor">
+                        {{
+                            "%.2f"
+                            | format(
+                                dados.indice_indicativo.valor
+                            )
+                        }}
+                    </span>
+
+                    <span class="relatorio-indice-nivel">
+                        {{ dados.indice_indicativo.nivel }}
+                    </span>
+                </div>
+
+                <div class="relatorio-indice-escala">
+                    <div
+                        class="
+                            relatorio-indice-faixa
+                            faixa-muito-baixo
+                        "
+                    ></div>
+
+                    <div
+                        class="
+                            relatorio-indice-faixa
+                            faixa-baixo
+                        "
+                    ></div>
+
+                    <div
+                        class="
+                            relatorio-indice-faixa
+                            faixa-moderado
+                        "
+                    ></div>
+
+                    <div
+                        class="
+                            relatorio-indice-faixa
+                            faixa-elevado
+                        "
+                    ></div>
+
+                    <div
+                        class="
+                            relatorio-indice-faixa
+                            faixa-critico
+                        "
+                    ></div>
+                </div>
+
+                <p class="relatorio-indice-nota">
+                    Indicador gerencial baseado na criticidade,
+                    quantidade de casos críticos em aberto, tempo de
+                    tratamento e concentração dos registros.
+                </p>
+
+                <div class="relatorio-download-flutuante">
+
+                    <a
+                        href="{{ url_for(
+                            'relatorios.baixar_relatorio_psicossocial',
+                            data_inicio=filtros.get('data_inicio') or '',
+                            data_fim=filtros.get('data_fim') or '',
+                            unidade_id=filtros.get('unidade_id') or '',
+                            setor_id=filtros.get('setor_id') or '',
+                            turno_id=filtros.get('turno_id') or ''
+                        ) }}"
+                        class="relatorio-btn relatorio-btn-pdf"
+                    >
+                        📥 Baixar relatório em PDF
+                    </a>
+
+                    <a
+                        href="{{ url_for(
+                            'dashboard.centro_controle'
+                        ) }}"
+                        class="
+                            relatorio-btn
+                            relatorio-btn-secundario
+                        "
+                    >
+                        ← Centro de Controle
+                    </a>
+
+                </div>
+
+            {% else %}
+
+                <div class="relatorio-vazio">
+                    Selecione os filtros e clique em
+                    <strong>Gerar diagnóstico</strong> para visualizar
+                    o índice e os indicadores.
+                </div>
+
+                <div class="relatorio-download-flutuante">
+
+                    <a
+                        href="{{ url_for(
+                            'dashboard.centro_controle'
+                        ) }}"
+                        class="
+                            relatorio-btn
+                            relatorio-btn-secundario
+                        "
+                    >
+                        ← Centro de Controle
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+            <div class="relatorio-aviso">
+                <strong>Importante:</strong>
+
+                este diagnóstico possui finalidade gerencial e de
+                apoio à tomada de decisão. Ele não substitui laudos,
+                avaliações técnicas, diagnósticos, perícias ou o
+                trabalho dos profissionais responsáveis pelo PGR.
+            </div>
+
+        </div>
+
+    </aside>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const campoUnidade = document.getElementById("unidade_id");
+    const campoSetor = document.getElementById("setor_id");
+
+    if (!campoUnidade || !campoSetor) {
+        return;
+    }
+
+    function filtrarSetores() {
+        const unidadeSelecionada = campoUnidade.value;
+
+        Array.from(campoSetor.options).forEach(function (option) {
+            if (!option.value) {
+                option.hidden = false;
+                return;
+            }
+
+            const unidadeSetor = option.dataset.unidadeId;
+
+            option.hidden = (
+                unidadeSelecionada
+                && unidadeSetor !== unidadeSelecionada
+            );
+        });
+
+        const opcaoAtual = campoSetor.options[
+            campoSetor.selectedIndex
+        ];
+
+        if (
+            opcaoAtual
+            && opcaoAtual.hidden
+        ) {
+            campoSetor.value = "";
+        }
+    }
+
+    campoUnidade.addEventListener(
+        "change",
+        filtrarSetores
+    );
+
+    filtrarSetores();
+});
+</script>
+
+{% endblock %}

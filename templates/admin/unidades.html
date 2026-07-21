@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>Unidades</h2>
+
+    <a href="/admin/unidades/nova" class="btn">Nova Unidade</a>
+    <a href="/painel" class="btn-secundario">Voltar</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Empresa</th>
+                <th>Unidade</th>
+                <th>Status</th>
+                <th>Criado em</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for unidade in unidades %}
+            <tr>
+                <td>{{ unidade.empresa }}</td>
+                <td>{{ unidade.nome }}</td>
+                <td>{{ 'Ativa' if unidade.ativa else 'Inativa' }}</td>
+                <td>{{ unidade.criado_em }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,547 @@
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}
+Setores | FALAE
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .setores-page {
+        --setores-border: #e2e8f0;
+        --setores-muted: #64748b;
+        --setores-primary: #1f4e78;
+    }
+
+    .setores-page *,
+    .setores-page *::before,
+    .setores-page *::after {
+        box-sizing: border-box;
+    }
+
+    .setores-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 22px;
+    }
+
+    .setores-header-texto h1 {
+        margin: 0 0 7px;
+        color: #0f172a;
+    }
+
+    .setores-header-texto p {
+        margin: 0;
+        color: var(--setores-muted);
+        line-height: 1.55;
+    }
+
+    .setores-header-acoes {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .setores-resumo {
+        display: grid;
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        margin-bottom: 22px;
+    }
+
+    .setores-resumo-card {
+        padding: 17px 18px;
+        border: 1px solid var(--setores-border);
+        border-radius: 13px;
+        background: #ffffff;
+        box-shadow:
+            0 7px 20px
+            rgba(15, 23, 42, 0.045);
+    }
+
+    .setores-resumo-label {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--setores-muted);
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .setores-resumo-valor {
+        color: #0f172a;
+        font-size: 25px;
+        font-weight: 800;
+    }
+
+    .setores-container {
+        padding: 20px;
+        border: 1px solid var(--setores-border);
+        border-radius: 16px;
+        background: #ffffff;
+        box-shadow:
+            0 9px 26px
+            rgba(15, 23, 42, 0.045);
+    }
+
+    .setores-lista {
+        display: grid;
+        gap: 15px;
+    }
+
+    .setor-card {
+        display: grid;
+        grid-template-columns:
+            minmax(0, 1fr)
+            auto;
+        gap: 20px;
+        align-items: center;
+        padding: 18px;
+        border: 1px solid var(--setores-border);
+        border-radius: 14px;
+        background:
+            linear-gradient(
+                180deg,
+                #ffffff,
+                #fbfdff
+            );
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease,
+            transform 0.2s ease;
+    }
+
+    .setor-card:hover {
+        border-color: #bfdbfe;
+        box-shadow:
+            0 10px 24px
+            rgba(15, 23, 42, 0.07);
+        transform: translateY(-1px);
+    }
+
+    .setor-identidade {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        min-width: 0;
+    }
+
+    .setor-icone {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        width: 50px;
+        height: 50px;
+        border-radius: 14px;
+        color: #ffffff;
+        font-size: 22px;
+        background:
+            linear-gradient(
+                135deg,
+                #1f4e78,
+                #2563a8
+            );
+    }
+
+    .setor-conteudo {
+        min-width: 0;
+    }
+
+    .setor-titulo {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 9px;
+    }
+
+    .setor-titulo h3 {
+        margin: 0;
+        color: #0f172a;
+        font-size: 17px;
+    }
+
+    .setor-identificador {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 8px;
+        border-radius: 999px;
+        color: #1e3a5f;
+        font-size: 10px;
+        font-weight: 800;
+        background: #dbeafe;
+    }
+
+    .setor-dados {
+        display: grid;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+        gap: 7px 18px;
+    }
+
+    .setor-dado {
+        min-width: 0;
+        color: #64748b;
+        font-size: 12px;
+        line-height: 1.45;
+    }
+
+    .setor-dado strong {
+        color: #334155;
+    }
+
+    .setor-acoes {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 9px;
+    }
+
+    .setor-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-right: 3px;
+        padding: 7px 10px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .setor-status::before {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        content: "";
+    }
+
+    .setor-status-ativo {
+        color: #166534;
+        background: #dcfce7;
+    }
+
+    .setor-status-ativo::before {
+        background: #16a34a;
+    }
+
+    .setor-status-inativo {
+        color: #991b1b;
+        background: #fee2e2;
+    }
+
+    .setor-status-inativo::before {
+        background: #dc2626;
+    }
+
+    .setor-btn-editar {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 39px;
+        padding: 8px 13px;
+        border: 1px solid #bfdbfe;
+        border-radius: 8px;
+        color: #1d4ed8;
+        font-size: 12px;
+        font-weight: 750;
+        text-decoration: none;
+        background: #eff6ff;
+        transition:
+            border-color 0.2s ease,
+            background 0.2s ease;
+    }
+
+    .setor-btn-editar:hover {
+        border-color: #93c5fd;
+        background: #dbeafe;
+    }
+
+    .setores-empty {
+        padding: 52px 20px;
+        text-align: center;
+    }
+
+    .setores-empty-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 64px;
+        height: 64px;
+        margin-bottom: 14px;
+        border-radius: 18px;
+        font-size: 29px;
+        background: #eff6ff;
+    }
+
+    .setores-empty h3 {
+        margin: 0 0 7px;
+        color: #334155;
+    }
+
+    .setores-empty p {
+        margin: 0;
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    @media (max-width: 850px) {
+        .setor-card {
+            grid-template-columns: 1fr;
+        }
+
+        .setor-acoes {
+            justify-content: flex-start;
+        }
+    }
+
+    @media (max-width: 680px) {
+        .setores-header {
+            flex-direction: column;
+        }
+
+        .setores-header-acoes,
+        .setores-header-acoes .btn {
+            width: 100%;
+        }
+
+        .setores-resumo {
+            grid-template-columns: 1fr;
+        }
+
+        .setor-identidade {
+            flex-direction: column;
+        }
+
+        .setor-dados {
+            grid-template-columns: 1fr;
+        }
+
+        .setor-acoes,
+        .setor-acoes a {
+            width: 100%;
+        }
+
+        .setor-status {
+            width: 100%;
+            justify-content: center;
+            margin: 0;
+        }
+    }
+</style>
+
+{% set total_setores = setores | length if setores else 0 %}
+{% set total_ativos = setores | selectattr("ativo") | list | length if setores else 0 %}
+{% set total_inativos = total_setores - total_ativos %}
+
+<div class="setores-page">
+
+
+<div class="setores-header">
+
+    <div class="setores-header-texto">
+
+        <h1>
+            🏭 Setores
+        </h1>
+
+        <p>
+            Organize os setores vinculados às unidades
+            da empresa ativa.
+        </p>
+
+    </div>
+
+    <div class="setores-header-acoes">
+
+        <a
+            href="/empresa/setores/novo"
+            class="btn"
+        >
+            ➕ Novo Setor
+        </a>
+
+    </div>
+
+</div>
+
+<div class="setores-resumo">
+
+    <div class="setores-resumo-card">
+
+        <span class="setores-resumo-label">
+            Total de setores
+        </span>
+
+        <span class="setores-resumo-valor">
+            {{ total_setores }}
+        </span>
+
+    </div>
+
+    <div class="setores-resumo-card">
+
+        <span class="setores-resumo-label">
+            Setores ativos
+        </span>
+
+        <span class="setores-resumo-valor">
+            {{ total_ativos }}
+        </span>
+
+    </div>
+
+    <div class="setores-resumo-card">
+
+        <span class="setores-resumo-label">
+            Setores inativos
+        </span>
+
+        <span class="setores-resumo-valor">
+            {{ total_inativos }}
+        </span>
+
+    </div>
+
+</div>
+
+<div class="setores-container">
+
+    {% if setores %}
+
+        <div class="setores-lista">
+
+            {% for setor in setores %}
+
+                <article class="setor-card">
+
+                    <div class="setor-identidade">
+
+                        <div class="setor-icone">
+                            🏭
+                        </div>
+
+                        <div class="setor-conteudo">
+
+                            <div class="setor-titulo">
+
+                                <h3>
+                                    {{ setor.nome }}
+                                </h3>
+
+                                <span class="setor-identificador">
+                                    Setor #{{ setor.id }}
+                                </span>
+
+                            </div>
+
+                            <div class="setor-dados">
+
+                                <div class="setor-dado">
+
+                                    <strong>Unidade:</strong>
+                                    {{
+                                        setor.unidade
+                                        or "Não vinculada"
+                                    }}
+
+                                </div>
+
+                                <div class="setor-dado">
+
+                                    <strong>Criado em:</strong>
+                                    {{ setor.criado_em }}
+
+                                </div>
+
+                                <div class="setor-dado">
+
+                                    <strong>Situação:</strong>
+
+                                    {% if setor.ativo %}
+                                        Disponível para utilização
+                                    {% else %}
+                                        Cadastro desativado
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="setor-acoes">
+
+                        {% if setor.ativo %}
+
+                            <span
+                                class="
+                                    setor-status
+                                    setor-status-ativo
+                                "
+                            >
+                                Ativo
+                            </span>
+
+                        {% else %}
+
+                            <span
+                                class="
+                                    setor-status
+                                    setor-status-inativo
+                                "
+                            >
+                                Inativo
+                            </span>
+
+                        {% endif %}
+
+                        <a
+                            href="/empresa/setores/{{ setor.id }}/editar"
+                            class="setor-btn-editar"
+                        >
+                            ✏️ Editar
+                        </a>
+
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="setores-empty">
+
+            <div class="setores-empty-icon">
+                🏭
+            </div>
+
+            <h3>
+                Nenhum setor cadastrado
+            </h3>
+
+            <p>
+                Utilize o botão “Novo Setor” para
+                organizar a estrutura das unidades.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+</div>
+
+{% endblock %}

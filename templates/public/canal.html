@@ -1,0 +1,543 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Canal seguro e confidencial para registro e acompanhamento de denúncias."
+    >
+
+    <title>
+        {{ personalizacao.nome_canal or "Canal de Denúncias" }}
+        {% if personalizacao.mostrar_nome_empresa %}
+            | {{ personalizacao.empresa_nome }}
+        {% endif %}
+    </title>
+
+    {% if personalizacao.favicon %}
+        <link
+            rel="icon"
+            href="{{ url_for(
+                'static',
+                filename=personalizacao.favicon
+            ) }}"
+        >
+    {% endif %}
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for(
+            'static',
+            filename='css/public.css'
+        ) }}"
+    >
+
+    <style>
+        :root {
+            --canal-cor-primaria:
+                {{ personalizacao.cor_primaria or "#1F4E78" }};
+
+            --canal-cor-secundaria:
+                {{ personalizacao.cor_secundaria or "#163A5C" }};
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            color: #1f2937;
+            font-family: Arial, sans-serif;
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(31, 78, 120, 0.10),
+                    rgba(22, 58, 92, 0.04)
+                ),
+                #f4f7fa;
+        }
+
+        .canal-page {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 32px 20px;
+        }
+
+        .canal-card {
+            width: 100%;
+            max-width: 920px;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+            border-radius: 22px;
+            background: #ffffff;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
+        }
+
+        .canal-header {
+            padding: 44px 32px 38px;
+            color: #ffffff;
+            text-align: center;
+            background: var(--canal-cor-primaria);
+        }
+
+        .canal-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 112px;
+            height: 112px;
+            margin: 0 auto 20px;
+            overflow: hidden;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.16);
+        }
+
+        .canal-logo img {
+            display: block;
+            max-width: 94%;
+            max-height: 94%;
+            object-fit: contain;
+        }
+
+        .canal-logo-placeholder {
+            font-size: 50px;
+        }
+
+        .canal-selo {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            margin-bottom: 16px;
+            padding: 7px 13px;
+            border: 1px solid rgba(255, 255, 255, 0.26);
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .canal-header h1 {
+            margin: 0 0 10px;
+            color: inherit;
+            font-size: clamp(28px, 5vw, 42px);
+        }
+
+        .canal-empresa {
+            margin: 0 0 18px;
+            color: inherit;
+            font-size: 17px;
+            font-weight: 700;
+            opacity: 0.92;
+        }
+
+        .canal-mensagem {
+            max-width: 690px;
+            margin: 0 auto;
+            color: inherit;
+            font-size: 16px;
+            line-height: 1.7;
+            opacity: 0.94;
+            white-space: pre-line;
+        }
+
+        .canal-content {
+            padding: 34px;
+        }
+
+        .canal-intro {
+            max-width: 680px;
+            margin: 0 auto 30px;
+            text-align: center;
+        }
+
+        .canal-intro h2 {
+            margin: 0 0 10px;
+            color: var(--canal-cor-primaria);
+            font-size: 25px;
+        }
+
+        .canal-intro p {
+            margin: 0;
+            color: #64748b;
+            line-height: 1.65;
+        }
+
+        .canal-beneficios {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 15px;
+            margin-bottom: 32px;
+        }
+
+        .canal-beneficio {
+            padding: 20px 15px;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            text-align: center;
+            background: #f8fafc;
+        }
+
+        .canal-beneficio-icone {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 29px;
+        }
+
+        .canal-beneficio strong {
+            display: block;
+            margin-bottom: 6px;
+            color: #1e293b;
+        }
+
+        .canal-beneficio span {
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.45;
+        }
+
+        .canal-acoes {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .canal-acao {
+            display: flex;
+            flex-direction: column;
+            min-height: 210px;
+            padding: 25px;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            background: #ffffff;
+        }
+
+        .canal-acao-icone {
+            margin-bottom: 14px;
+            font-size: 34px;
+        }
+
+        .canal-acao h3 {
+            margin: 0 0 9px;
+            color: var(--canal-cor-primaria);
+            font-size: 21px;
+        }
+
+        .canal-acao p {
+            flex: 1;
+            margin: 0 0 20px;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        .canal-botao {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px;
+            padding: 12px 18px;
+            border: 2px solid var(--canal-cor-secundaria);
+            border-radius: 10px;
+            color: #ffffff;
+            font-weight: 700;
+            text-decoration: none;
+            background: var(--canal-cor-secundaria);
+            transition:
+                transform 0.2s ease,
+                opacity 0.2s ease;
+        }
+
+        .canal-botao:hover {
+            opacity: 0.94;
+            transform: translateY(-1px);
+        }
+
+        .canal-botao-secundario {
+            color: var(--canal-cor-secundaria);
+            background: #ffffff;
+        }
+
+        .canal-legal {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+            margin-top: 32px;
+        }
+
+        .canal-legal-card {
+            padding: 18px;
+            border-left: 4px solid var(--canal-cor-primaria);
+            border-radius: 0 10px 10px 0;
+            color: #475569;
+            font-size: 13px;
+            line-height: 1.6;
+            background: #f8fafc;
+        }
+
+        .canal-legal-card strong {
+            display: block;
+            margin-bottom: 7px;
+            color: #1e293b;
+            font-size: 14px;
+        }
+
+        .canal-footer {
+            padding: 22px 30px;
+            border-top: 1px solid #e5e7eb;
+            color: #64748b;
+            font-size: 13px;
+            text-align: center;
+            background: #f8fafc;
+        }
+
+        .canal-footer strong {
+            color: var(--canal-cor-primaria);
+        }
+
+        @media (max-width: 800px) {
+            .canal-beneficios {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .canal-acoes,
+            .canal-legal {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 540px) {
+            .canal-page {
+                padding: 0;
+            }
+
+            .canal-card {
+                min-height: 100vh;
+                border: 0;
+                border-radius: 0;
+                box-shadow: none;
+            }
+
+            .canal-header {
+                padding: 36px 20px 30px;
+            }
+
+            .canal-content {
+                padding: 24px 18px;
+            }
+
+            .canal-beneficios {
+                grid-template-columns: 1fr;
+            }
+
+            .canal-acao {
+                min-height: auto;
+            }
+
+            .canal-footer {
+                padding: 20px 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<main class="canal-page">
+
+    <section class="canal-card">
+
+        <header class="canal-header">
+
+            {% if personalizacao.mostrar_logo %}
+                <div class="canal-logo">
+
+                    {% if personalizacao.empresa_logo %}
+                        <img
+                            src="{{ url_for(
+                                'static',
+                                filename=personalizacao.empresa_logo
+                            ) }}"
+                            alt="Logotipo de {{ personalizacao.empresa_nome }}"
+                        >
+                    {% else %}
+                        <span class="canal-logo-placeholder">
+                            🛡️
+                        </span>
+                    {% endif %}
+
+                </div>
+            {% endif %}
+
+            <div class="canal-selo">
+                🔒 Ambiente seguro e confidencial
+            </div>
+
+            <h1>
+                {{ personalizacao.nome_canal or "Canal de Denúncias" }}
+            </h1>
+
+            {% if personalizacao.mostrar_nome_empresa %}
+                <p class="canal-empresa">
+                    {{ personalizacao.empresa_nome or empresa.nome }}
+                </p>
+            {% endif %}
+
+            <p class="canal-mensagem">
+                {{
+                    personalizacao.mensagem_boas_vindas
+                    or
+                    "Este é um canal seguro para o registro e acompanhamento de denúncias."
+                }}
+            </p>
+
+        </header>
+
+        <div class="canal-content">
+
+            <div class="canal-intro">
+                <h2>Fale com segurança</h2>
+
+                <p>
+                    Escolha abaixo se deseja registrar uma nova denúncia ou
+                    acompanhar uma manifestação já enviada.
+                </p>
+            </div>
+
+            <div class="canal-beneficios">
+
+                <div class="canal-beneficio">
+                    <span class="canal-beneficio-icone">🔐</span>
+
+                    <strong>Confidencialidade</strong>
+
+                    <span>
+                        As informações são tratadas de maneira restrita.
+                    </span>
+                </div>
+
+                <div class="canal-beneficio">
+                    <span class="canal-beneficio-icone">🕶️</span>
+
+                    <strong>Anonimato</strong>
+
+                    <span>
+                        Não é necessário se identificar para denunciar.
+                    </span>
+                </div>
+
+                <div class="canal-beneficio">
+                    <span class="canal-beneficio-icone">⚖️</span>
+
+                    <strong>Privacidade</strong>
+
+                    <span>
+                        Tratamento de dados conforme as regras aplicáveis.
+                    </span>
+                </div>
+
+                <div class="canal-beneficio">
+                    <span class="canal-beneficio-icone">📨</span>
+
+                    <strong>Protocolo</strong>
+
+                    <span>
+                        Acompanhe posteriormente o andamento do registro.
+                    </span>
+                </div>
+
+            </div>
+
+            <div class="canal-acoes">
+
+                <article class="canal-acao">
+                    <span class="canal-acao-icone">📢</span>
+
+                    <h3>Registrar denúncia</h3>
+
+                    <p>
+                        Relate uma situação de forma segura, confidencial e
+                        objetiva. Ao finalizar, você receberá um protocolo.
+                    </p>
+
+                    <a
+                        href="{{ url_for(
+                            'public.canal_denunciar',
+                            slug=empresa.slug
+                        ) }}"
+                        class="canal-botao"
+                    >
+                        Registrar denúncia
+                    </a>
+                </article>
+
+                <article class="canal-acao">
+                    <span class="canal-acao-icone">🔎</span>
+
+                    <h3>Acompanhar denúncia</h3>
+
+                    <p>
+                        Consulte o andamento de uma denúncia utilizando o
+                        protocolo recebido após o envio.
+                    </p>
+
+                    <a
+                        href="{{ url_for(
+                            'public.acompanhar'
+                        ) }}"
+                        class="canal-botao canal-botao-secundario"
+                    >
+                        Acompanhar denúncia
+                    </a>
+                </article>
+
+            </div>
+
+            {% if personalizacao.texto_lgpd or personalizacao.termo_uso %}
+                <div class="canal-legal">
+
+                    {% if personalizacao.texto_lgpd %}
+                        <div class="canal-legal-card">
+                            <strong>Privacidade e LGPD</strong>
+
+                            {{ personalizacao.texto_lgpd }}
+                        </div>
+                    {% endif %}
+
+                    {% if personalizacao.termo_uso %}
+                        <div class="canal-legal-card">
+                            <strong>Uso responsável do canal</strong>
+
+                            {{ personalizacao.termo_uso }}
+                        </div>
+                    {% endif %}
+
+                </div>
+            {% endif %}
+
+        </div>
+
+        <footer class="canal-footer">
+            Canal disponibilizado por
+            <strong>FALAE</strong>
+            — Compliance & SST.
+        </footer>
+
+    </section>
+
+</main>
+
+</body>
+</html>
+```

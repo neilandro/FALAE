@@ -1,0 +1,155 @@
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}
+    {% if turno %}
+        Editar turno
+    {% else %}
+        Novo turno
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+
+        <h1>
+            {% if turno %}
+                Editar turno
+            {% else %}
+                Novo turno
+            {% endif %}
+        </h1>
+
+        <p>
+            {% if turno %}
+                Atualize os dados do turno selecionado.
+            {% else %}
+                Cadastre um novo turno para a empresa ativa.
+            {% endif %}
+        </p>
+
+    </div>
+
+</div>
+
+<div class="card">
+
+    <div class="card-header">
+        <h2>Dados do turno</h2>
+    </div>
+
+    <div class="card-body">
+
+        {% if erro %}
+
+            <div class="alert alert-danger">
+                {{ erro }}
+            </div>
+
+        {% endif %}
+
+        <form
+            method="POST"
+            id="turno-form"
+            novalidate
+        >
+
+            <div class="form-group">
+
+                <label for="nome">
+                    Nome do turno
+                    <span class="required">*</span>
+                </label>
+
+                <input
+                    type="text"
+                    id="nome"
+                    name="nome"
+                    class="form-control"
+                    maxlength="100"
+                    required
+                    autocomplete="off"
+                    autofocus
+                    placeholder="Exemplo: Manhã"
+                    value="{{ request.form.get(
+                        'nome',
+                        turno.nome if turno else ''
+                    ) }}"
+                >
+
+                <small class="form-text">
+                    O nome não pode se repetir dentro da mesma empresa.
+                </small>
+
+            </div>
+
+            <div class="form-actions">
+
+                <a
+                    href="{{ url_for('empresa.turnos') }}"
+                    class="btn btn-secondary"
+                >
+                    Cancelar
+                </a>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    {% if turno %}
+                        Salvar alterações
+                    {% else %}
+                        Cadastrar turno
+                    {% endif %}
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const formulario = document.getElementById("turno-form");
+        const campoNome = document.getElementById("nome");
+
+        formulario.addEventListener("submit", function (event) {
+
+            const nome = campoNome.value
+                .trim()
+                .replace(/\s+/g, " ");
+
+            campoNome.value = nome;
+
+            if (!nome) {
+                event.preventDefault();
+
+                alert("Informe o nome do turno.");
+
+                campoNome.focus();
+
+                return;
+            }
+
+            if (nome.length < 2) {
+                event.preventDefault();
+
+                alert(
+                    "O nome do turno deve possuir pelo menos 2 caracteres."
+                );
+
+                campoNome.focus();
+            }
+
+        });
+
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,11 @@
+<header class="topbar">
+    <div>
+        <h1>{% block page_title %}FALAE Enterprise{% endblock %}</h1>
+        <p>Gestão de Ética, Compliance e Riscos Psicossociais</p>
+    </div>
+
+    <div class="topbar-user">
+        <strong>{{ session.nome }}</strong>
+        <span>{{ session.perfil }}</span>
+    </div>
+</header>

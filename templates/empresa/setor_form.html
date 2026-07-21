@@ -1,0 +1,176 @@
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}
+    {% if setor %}
+        Editar setor
+    {% else %}
+        Novo setor
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1>
+            {% if setor %}
+                Editar setor
+            {% else %}
+                Novo setor
+            {% endif %}
+        </h1>
+
+        <p>
+            {% if setor %}
+                Atualize os dados do setor selecionado.
+            {% else %}
+                Cadastre um novo setor para a empresa ativa.
+            {% endif %}
+        </p>
+    </div>
+</div>
+
+<div class="card">
+
+    <div class="card-header">
+        <h2>Dados do setor</h2>
+    </div>
+
+    <div class="card-body">
+
+        <form method="POST" novalidate>
+
+            <div class="form-group">
+
+                <label for="unidade_id">
+                    Unidade
+                    <span class="required">*</span>
+                </label>
+
+                <select
+                    id="unidade_id"
+                    name="unidade_id"
+                    class="form-control"
+                    required
+                >
+                    <option value="">Selecione uma unidade</option>
+
+                    {% for unidade in unidades %}
+                        <option
+                            value="{{ unidade.id }}"
+                            {% if
+                                request.form.get('unidade_id', setor.unidade_id if setor else '')|string
+                                == unidade.id|string
+                            %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ unidade.nome }}
+                        </option>
+                    {% endfor %}
+
+                </select>
+
+                <small class="form-text">
+                    Selecione a unidade à qual o setor pertence.
+                </small>
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="nome">
+                    Nome do setor
+                    <span class="required">*</span>
+                </label>
+
+                <input
+                    type="text"
+                    id="nome"
+                    name="nome"
+                    class="form-control"
+                    maxlength="150"
+                    required
+                    autocomplete="off"
+                    placeholder="Exemplo: Recursos Humanos"
+                    value="{{ request.form.get('nome', setor.nome if setor else '') }}"
+                >
+
+                <small class="form-text">
+                    O nome do setor não pode se repetir dentro da mesma unidade.
+                </small>
+
+            </div>
+
+            <div class="form-actions">
+
+                <button type="button"
+                        class="btn btn-secondary"
+                        onclick="window.history.back();">
+                    Cancelar
+                </button>
+
+                <button type="submit"
+                        class="btn btn-primary">
+                    {% if setor %}
+                        Salvar alterações
+                    {% else %}
+                        Cadastrar setor
+                    {% endif %}
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const formulario = document.querySelector("form");
+    const unidade = document.getElementById("unidade_id");
+    const nome = document.getElementById("nome");
+
+    formulario.addEventListener("submit", function (event) {
+
+        const nomeSetor = nome.value.trim();
+
+        nome.value = nomeSetor;
+
+        if (!unidade.value) {
+            event.preventDefault();
+
+            alert("Selecione uma unidade.");
+
+            unidade.focus();
+
+            return;
+        }
+
+        if (!nomeSetor) {
+            event.preventDefault();
+
+            alert("Informe o nome do setor.");
+
+            nome.focus();
+
+            return;
+        }
+
+        if (nomeSetor.length < 2) {
+            event.preventDefault();
+
+            alert("O nome do setor deve possuir pelo menos 2 caracteres.");
+
+            nome.focus();
+        }
+
+    });
+
+});
+</script>
+
+{% endblock %}

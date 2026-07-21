@@ -1,0 +1,385 @@
+<script
+    src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"
+></script>
+
+<script id="dashboard-chart-data" type="application/json">
+{
+    "categorias": {
+        "labels": {{ por_categoria | map(attribute="categoria") | list | tojson }},
+        "dados": {{ por_categoria | map(attribute="total") | list | tojson }}
+    },
+    "criticidades": {
+        "labels": {{ por_criticidade | map(attribute="criticidade") | list | tojson }},
+        "dados": {{ por_criticidade | map(attribute="total") | list | tojson }}
+    },
+    "unidades": {
+        "labels": {{ por_unidade | map(attribute="unidade") | list | tojson }},
+        "dados": {{ por_unidade | map(attribute="total") | list | tojson }}
+    },
+    "setores": {
+        "labels": {{ por_setor | map(attribute="setor") | list | tojson }},
+        "dados": {{ por_setor | map(attribute="total") | list | tojson }}
+    },
+    "turnos": {
+        "labels": {{ por_turno | map(attribute="turno") | list | tojson }},
+        "dados": {{ por_turno | map(attribute="total") | list | tojson }}
+    }
+}
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const elementoDados = document.getElementById(
+        "dashboard-chart-data"
+    );
+
+    if (!elementoDados) {
+        console.error(
+            "Os dados dos gráficos não foram encontrados."
+        );
+
+        return;
+    }
+
+    if (typeof Chart === "undefined") {
+        console.error(
+            "A biblioteca Chart.js não foi carregada."
+        );
+
+        return;
+    }
+
+    let dadosDashboard;
+
+    try {
+        dadosDashboard = JSON.parse(
+            elementoDados.textContent
+        );
+    } catch (erro) {
+        console.error(
+            "Não foi possível interpretar os dados dos gráficos.",
+            erro
+        );
+
+        return;
+    }
+
+    function normalizarLabels(labels, valorPadrao) {
+        return (labels || []).map(function (label) {
+            if (
+                label === null ||
+                label === undefined ||
+                String(label).trim() === ""
+            ) {
+                return valorPadrao;
+            }
+
+            return String(label);
+        });
+    }
+
+    function normalizarDados(dados) {
+        return (dados || []).map(function (valor) {
+            const numero = Number(valor);
+
+            return Number.isFinite(numero)
+                ? numero
+                : 0;
+        });
+    }
+
+    function possuiDados(dados) {
+        return dados.some(function (valor) {
+            return Number(valor) > 0;
+        });
+    }
+
+    function exibirSemDados(
+        canvasId,
+        mensagemId
+    ) {
+        const canvas = document.getElementById(canvasId);
+        const mensagem = document.getElementById(mensagemId);
+
+        if (canvas) {
+            canvas.hidden = true;
+        }
+
+        if (mensagem) {
+            mensagem.hidden = false;
+        }
+    }
+
+    function criarGraficoBarra(
+        canvasId,
+        mensagemId,
+        labels,
+        dados,
+        titulo
+    ) {
+        const canvas = document.getElementById(canvasId);
+
+        if (!canvas) {
+            return;
+        }
+
+        if (!possuiDados(dados)) {
+            exibirSemDados(
+                canvasId,
+                mensagemId
+            );
+
+            return;
+        }
+
+        new Chart(canvas, {
+            type: "bar",
+
+            data: {
+                labels: labels,
+
+                datasets: [
+                    {
+                        label: titulo,
+                        data: dados,
+                        borderWidth: 1,
+                        borderRadius: 5,
+                        maxBarThickness: 48
+                    }
+                ]
+            },
+
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+
+                layout: {
+                    padding: {
+                        top: 10,
+                        right: 10,
+                        bottom: 5,
+                        left: 5
+                    }
+                },
+
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return "Total: " + context.raw;
+                            }
+                        }
+                    }
+                },
+
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        },
+
+                        ticks: {
+                            autoSkip: false,
+                            maxRotation: 25,
+                            minRotation: 0
+                        }
+                    },
+
+                    y: {
+                        beginAtZero: true,
+
+                        ticks: {
+                            precision: 0,
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function criarGraficoPizza(
+        canvasId,
+        mensagemId,
+        labels,
+        dados,
+        titulo
+    ) {
+        const canvas = document.getElementById(canvasId);
+
+        if (!canvas) {
+            return;
+        }
+
+        if (!possuiDados(dados)) {
+            exibirSemDados(
+                canvasId,
+                mensagemId
+            );
+
+            return;
+        }
+
+        const total = dados.reduce(function (
+            acumulado,
+            valor
+        ) {
+            return acumulado + Number(valor || 0);
+        }, 0);
+
+        new Chart(canvas, {
+            type: "doughnut",
+
+            data: {
+                labels: labels,
+
+                datasets: [
+                    {
+                        label: titulo,
+                        data: dados,
+                        borderWidth: 2,
+                        hoverOffset: 6
+                    }
+                ]
+            },
+
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: "55%",
+
+                layout: {
+                    padding: 10
+                },
+
+                plugins: {
+                    legend: {
+                        position: "bottom",
+
+                        labels: {
+                            boxWidth: 12,
+                            boxHeight: 12,
+                            padding: 14,
+                            usePointStyle: true
+                        }
+                    },
+
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                const valor = Number(
+                                    context.raw || 0
+                                );
+
+                                const percentual = total > 0
+                                    ? (
+                                        (valor / total) * 100
+                                    ).toFixed(1)
+                                    : "0.0";
+
+                                return (
+                                    context.label +
+                                    ": " +
+                                    valor +
+                                    " (" +
+                                    percentual +
+                                    "%)"
+                                );
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    const categoriasLabels = normalizarLabels(
+        dadosDashboard.categorias.labels,
+        "Não informada"
+    );
+
+    const categoriasDados = normalizarDados(
+        dadosDashboard.categorias.dados
+    );
+
+    const criticidadeLabels = normalizarLabels(
+        dadosDashboard.criticidades.labels,
+        "Não informada"
+    );
+
+    const criticidadeDados = normalizarDados(
+        dadosDashboard.criticidades.dados
+    );
+
+    const unidadeLabels = normalizarLabels(
+        dadosDashboard.unidades.labels,
+        "Não informada"
+    );
+
+    const unidadeDados = normalizarDados(
+        dadosDashboard.unidades.dados
+    );
+
+    const setorLabels = normalizarLabels(
+        dadosDashboard.setores.labels,
+        "Não informado"
+    );
+
+    const setorDados = normalizarDados(
+        dadosDashboard.setores.dados
+    );
+
+    const turnoLabels = normalizarLabels(
+        dadosDashboard.turnos.labels,
+        "Não informado"
+    );
+
+    const turnoDados = normalizarDados(
+        dadosDashboard.turnos.dados
+    );
+
+    criarGraficoPizza(
+        "graficoCategoria",
+        "semDadosCategoria",
+        categoriasLabels,
+        categoriasDados,
+        "Categorias"
+    );
+
+    criarGraficoPizza(
+        "graficoCriticidade",
+        "semDadosCriticidade",
+        criticidadeLabels,
+        criticidadeDados,
+        "Criticidades"
+    );
+
+    criarGraficoBarra(
+        "graficoUnidade",
+        "semDadosUnidade",
+        unidadeLabels,
+        unidadeDados,
+        "Unidades"
+    );
+
+    criarGraficoBarra(
+        "graficoSetor",
+        "semDadosSetor",
+        setorLabels,
+        setorDados,
+        "Setores"
+    );
+
+    criarGraficoBarra(
+        "graficoTurno",
+        "semDadosTurno",
+        turnoLabels,
+        turnoDados,
+        "Turnos"
+    );
+});
+</script>

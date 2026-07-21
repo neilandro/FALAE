@@ -1,0 +1,76 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>Canal de Denúncia</h2>
+    <p><strong>Empresa:</strong> {{ empresa.nome }}</p>
+
+    <p class="alerta">
+        Este canal permite o envio de denúncias de forma anônima.
+        Não informe seu nome, CPF, telefone ou qualquer dado pessoal se deseja permanecer anônimo.
+    </p>
+
+    <form method="POST">
+
+        <label>Unidade *</label>
+        <select name="unidade_id" required>
+            <option value="">Selecione a unidade</option>
+            {% for unidade in unidades %}
+                <option value="{{ unidade.id }}">{{ unidade.nome }}</option>
+            {% endfor %}
+        </select>
+
+        <label>Setor</label>
+        <select name="setor_id">
+            <option value="">Não informar setor</option>
+            {% for setor in setores %}
+                <option value="{{ setor.id }}">{{ setor.nome }}</option>
+            {% endfor %}
+        </select>
+
+        <label>Categoria *</label>
+        <select name="categoria" required>
+            <option value="">Selecione</option>
+            <option value="Assédio Moral">Assédio Moral</option>
+            <option value="Assédio Sexual">Assédio Sexual</option>
+            <option value="Discriminação">Discriminação</option>
+            <option value="Sobrecarga de Trabalho">Sobrecarga de Trabalho</option>
+            <option value="Conflitos Interpessoais">Conflitos Interpessoais</option>
+            <option value="Violência">Violência</option>
+            <option value="Condições de Trabalho">Condições de Trabalho</option>
+            <option value="Outro">Outro</option>
+        </select>
+
+        <label>Criticidade *</label>
+        <select name="criticidade" required>
+            <option value="">Selecione</option>
+            <option value="Baixa">Baixa</option>
+            <option value="Média">Média</option>
+            <option value="Alta">Alta</option>
+            <option value="Crítica">Crítica</option>
+        </select>
+
+        <label>Local da ocorrência</label>
+        <input type="text" name="local_ocorrencia" placeholder="Ex: sala, setor, turno, área externa">
+
+        <label>Data aproximada da ocorrência</label>
+        <input type="date" name="data_ocorrencia">
+
+        <label>Descrição da denúncia *</label>
+        <textarea name="descricao" rows="8" required placeholder="Descreva a situação com o máximo de detalhes possível, sem informar seus dados pessoais."></textarea>
+
+        <label>
+            <input type="checkbox" name="aceite_termo" value="1" required>
+            Declaro que as informações relatadas são verdadeiras, conforme meu conhecimento.
+        </label>
+
+        <label>
+            <input type="checkbox" name="aceite_lgpd" value="1" required>
+            Estou ciente de que este canal é anônimo e que não devo informar dados pessoais caso deseje manter o anonimato.
+        </label>
+
+
+        <button type="submit">Enviar denúncia</button>
+    </form>
+</div>
+{% endblock %}

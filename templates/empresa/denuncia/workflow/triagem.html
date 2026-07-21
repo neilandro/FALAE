@@ -1,0 +1,148 @@
+<section class="denuncia-tab-panel {% if denuncia.etapa_atual == 'TRIAGEM' %}ativo{% endif %}"
+         data-denuncia-panel="triagem">
+            <div class="card triagem-card">
+                <div class="triagem-header">
+                    <div>
+                        <h2>🧪 Triagem da Denúncia</h2>
+                        <p>Classifique a denúncia e defina o encaminhamento inicial.</p>
+                    </div>
+
+                    {% if denuncia.triagem_concluida_em %}
+                        <span class="triagem-status concluida">Triagem concluída</span>
+                    {% else %}
+                        <span class="triagem-status pendente">Aguardando triagem</span>
+                    {% endif %}
+                </div>
+
+                {% if denuncia.triagem_concluida_em and not modo_edicao_triagem %}
+                    <div class="triagem-resumo">
+                        <div>
+                            <span>Criticidade</span>
+                            <strong>{{ denuncia.criticidade or 'Não informada' }}</strong>
+                        </div>
+                        <div>
+                            <span>Prioridade</span>
+                            <strong>{{ denuncia.prioridade or 'Não informada' }}</strong>
+                        </div>
+                        <div>
+                            <span>Responsável</span>
+                            <strong>{{ denuncia.responsavel or 'Não atribuído' }}</strong>
+                        </div>
+                        <div>
+                            <span>Triador</span>
+                            <strong>{{ denuncia.triador or 'Não informado' }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="triagem-parecer">
+                        <h3>Parecer da triagem</h3>
+                        <p>{{ denuncia.parecer_triagem or 'Nenhum parecer registrado.' }}</p>
+                    </div>
+
+                    <div class="triagem-actions">
+
+                        <form
+                            method="POST"
+                            action="/empresa/denuncia/{{ denuncia.id }}/avancar-etapa">
+
+                            <input
+                                type="hidden"
+                                name="observacao_workflow"
+                                value="Triagem concluída. Avanço realizado pelo analista.">
+
+                            <button
+                                type="submit"
+                                class="btn-success">
+
+                                ➜ Avançar para Investigação
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                    <div class="acoes-triagem">
+                        <a
+                            href="{{ url_for(
+                                'denuncia.empresa_denuncia_detalhe',
+                                denuncia_id=denuncia.id,
+                                editar_triagem=1
+                            ) }}"
+                            class="btn btn-secondary"
+                        >
+                            ✏️ Editar Triagem
+                        </a>
+                    </div>
+
+
+                {% else %}
+                    <form method="POST" action="/empresa/denuncia/{{ denuncia.id }}/concluir-triagem" class="triagem-form">
+                        <div class="triagem-grid">
+                            <div class="triagem-field">
+                                <label>Criticidade *</label>
+                                <select name="criticidade" required>
+                                    <option value="">Selecione</option>
+                                    <option value="Baixa" {% if denuncia.criticidade == 'Baixa' %}selected{% endif %}>Baixa</option>
+                                    <option value="Média" {% if denuncia.criticidade in ['Média', 'Media'] %}selected{% endif %}>Média</option>
+                                    <option value="Alta" {% if denuncia.criticidade == 'Alta' %}selected{% endif %}>Alta</option>
+                                </select>
+                            </div>
+
+                            <div class="triagem-field">
+                                <label>Prioridade *</label>
+                                <select name="prioridade" required>
+                                    <option value="NORMAL" {% if denuncia.prioridade == 'NORMAL' %}selected{% endif %}>Normal</option>
+                                    <option value="ALTA" {% if denuncia.prioridade == 'ALTA' %}selected{% endif %}>Alta</option>
+                                    <option value="URGENTE" {% if denuncia.prioridade == 'URGENTE' %}selected{% endif %}>Urgente</option>
+                                </select>
+                            </div>
+
+                            <div class="triagem-field">
+                                <label>Categoria/Natureza *</label>
+                                <select name="categoria" required>
+                                    <option value="">Selecione</option>
+                                    <option value="Assédio Moral" {% if denuncia.categoria == 'Assédio Moral' %}selected{% endif %}>Assédio Moral</option>
+                                    <option value="Assédio Sexual" {% if denuncia.categoria == 'Assédio Sexual' %}selected{% endif %}>Assédio Sexual</option>
+                                    <option value="Discriminação" {% if denuncia.categoria == 'Discriminação' %}selected{% endif %}>Discriminação</option>
+                                    <option value="Fraude" {% if denuncia.categoria == 'Fraude' %}selected{% endif %}>Fraude</option>
+                                    <option value="Corrupção" {% if denuncia.categoria == 'Corrupção' %}selected{% endif %}>Corrupção</option>
+                                    <option value="SST" {% if denuncia.categoria == 'SST' %}selected{% endif %}>SST</option>
+                                    <option value="Ética" {% if denuncia.categoria == 'Ética' %}selected{% endif %}>Ética</option>
+                                    <option value="Outro" {% if denuncia.categoria == 'Outro' %}selected{% endif %}>Outro</option>
+                                </select>
+                            </div>
+
+                            <div class="triagem-field">
+                                <label>Responsável</label>
+                                <select name="responsavel_id">
+                                    <option value="">Não atribuído</option>
+                                    {% for investigador in investigadores %}
+                                        <option value="{{ investigador.id }}" {% if denuncia.responsavel_id == investigador.id %}selected{% endif %}>
+                                            {{ investigador.nome }} — {{ investigador.perfil }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="triagem-field triagem-field-full">
+                                <label>Necessita investigação? *</label>
+                                <select name="necessita_investigacao" required>
+                                    <option value="SIM" {% if denuncia.necessita_investigacao != 'NAO' %}selected{% endif %}>Sim, iniciar investigação</option>
+                                    <option value="NAO" {% if denuncia.necessita_investigacao == 'NAO' %}selected{% endif %}>Não, arquivar após triagem</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="triagem-field">
+                            <label>Parecer da triagem *</label>
+                            <textarea name="parecer_triagem" rows="6" required placeholder="Registre a análise inicial, justificativa da criticidade e próximos passos.">{{ denuncia.parecer_triagem or '' }}</textarea>
+                        </div>
+
+                        <div class="triagem-actions">
+                            <button type="submit">{% if modo_edicao_triagem %}Salvar Alterações{% else %}Concluir Triagem{% endif %}</button>
+                        </div>
+                    </form>
+                {% endif %}
+            </div>
+        </section>

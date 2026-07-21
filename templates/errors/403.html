@@ -1,0 +1,28 @@
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}Acesso Restrito | FALAE{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>🚫 Acesso Restrito</h1>
+    <p>Você não possui permissão para acessar esta funcionalidade.</p>
+</div>
+
+<div class="card">
+    <div class="triagem-header">
+        <div>
+            <h2>Permissão insuficiente</h2>
+            <p>
+                Esta área é restrita para determinados perfis de acesso.
+                Caso precise acessar este recurso, solicite liberação ao administrador da empresa.
+            </p>
+        </div>
+    </div>
+
+    <a href="/empresa/centro-controle" class="btn-secundario">
+        ← Voltar ao Centro de Controle
+    </a>
+</div>
+
+{% endblock %}

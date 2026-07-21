@@ -1,0 +1,106 @@
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}Dashboard Plataforma | FALAE{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>👑 FALAE Platform</h1>
+    <p>Visão executiva da operação geral da plataforma.</p>
+</div>
+
+<div class="metric-grid">
+    {% for card in cards_principais %}
+        {% include "components/card_metric.html" %}
+    {% endfor %}
+</div>
+
+<div class="metric-grid">
+    {% for card in cards_alertas %}
+        {% include "components/card_metric.html" %}
+    {% endfor %}
+</div>
+
+<div class="metric-grid">
+    {% set titulo = "🏥 Últimas Assessorias" %}
+    {% set descricao = "Assessorias cadastradas recentemente." %}
+    {% set itens = ultimas_assessorias %}
+    {% include "components/card_list.html" %}
+
+    {% set titulo = "🏢 Últimas Empresas" %}
+    {% set descricao = "Empresas cadastradas recentemente." %}
+    {% set itens = ultimas_empresas %}
+    {% include "components/card_list.html" %}
+
+    {% set titulo = "👥 Últimos Usuários" %}
+    {% set descricao = "Usuários cadastrados recentemente." %}
+    {% set itens = ultimos_usuarios %}
+    {% include "components/card_list.html" %}
+</div>
+
+<div class="card">
+    <div class="page-header">
+        <h2>⚡ Ações rápidas</h2>
+    </div>
+
+    <div class="metric-grid">
+
+        {% for acao in acoes_rapidas %}
+
+            {% include "components/card_action.html" %}
+
+        {% endfor %}
+
+    </div>
+{% if alertas_plataforma %}
+
+<div class="card">
+
+    <div class="page-header">
+        <h2>🚨 Alertas da Plataforma</h2>
+        <p>Situações que merecem atenção imediata.</p>
+    </div>
+
+    <div class="plano-lista">
+
+        {% for alerta in alertas_plataforma %}
+
+            <div class="plano-card">
+
+                <div>
+
+                    <h3>{{ alerta.icone }} {{ alerta.titulo }}</h3>
+
+                    <div class="plano-meta">
+
+                        <span>{{ alerta.descricao }}</span>
+
+                    </div>
+
+                </div>
+
+                <div class="card-actions">
+
+                    <a href="{{ alerta.url }}"
+                       class="btn-secundario">
+
+                        {{ alerta.acao }}
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endif %}
+  
+</div>
+</div>
+
+{% endblock %}

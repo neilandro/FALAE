@@ -1,0 +1,131 @@
+{#
+    =========================================================
+    FALAE — COMPONENTE METRIC CARD
+    =========================================================
+
+    Uso básico:
+
+    {{ metric_card(
+        "Total",
+        total,
+        "Denúncias registradas",
+        "megaphone",
+        "primary"
+    ) }}
+
+    Parâmetros:
+
+    label       Título do indicador
+    value       Valor principal
+    subtitle    Texto complementar
+    icon        Nome do ícone Lucide ou emoji
+    variant     primary, success, warning, danger, info, neutral
+    trend       Texto opcional de tendência
+    trend_type  positive, negative ou neutral
+    href        Link opcional
+#}
+
+
+{% macro metric_card(
+    label,
+    value,
+    subtitle="",
+    icon="chart-no-axes-column",
+    variant="primary",
+    trend="",
+    trend_type="neutral",
+    href=None
+) %}
+
+    {% if href %}
+        <a
+            href="{{ href }}"
+            class="metric-card metric-card--{{ variant }} metric-card--clickable"
+        >
+    {% else %}
+        <article class="metric-card metric-card--{{ variant }}">
+    {% endif %}
+
+        <div class="metric-card__header">
+
+            <div class="metric-card__content">
+
+                <span class="metric-card__label">
+                    {{ label }}
+                </span>
+
+                <strong class="metric-card__value">
+                    {{ value }}
+                </strong>
+
+            </div>
+
+            <div
+                class="metric-card__icon"
+                aria-hidden="true"
+            >
+                {#
+                    Compatibilidade temporária:
+
+                    - Nomes como "megaphone" carregam Lucide.
+                    - Valores iniciados por "emoji:" exibem emoji.
+                    - Emojis antigos também continuam funcionando.
+                #}
+
+                {% if icon.startswith("emoji:") %}
+                    <span class="metric-card__emoji">
+                        {{ icon.replace("emoji:", "") }}
+                    </span>
+
+                {% elif icon in ["📢", "📊", "⚠️", "✅", "📋", "🔍", "⏱️", "🚨"] %}
+                    <span class="metric-card__emoji">
+                        {{ icon }}
+                    </span>
+
+                {% else %}
+                    <i data-lucide="{{ icon }}"></i>
+                {% endif %}
+            </div>
+
+        </div>
+
+        {% if subtitle or trend %}
+            <div class="metric-card__footer">
+
+                {% if subtitle %}
+                    <span class="metric-card__subtitle">
+                        {{ subtitle }}
+                    </span>
+                {% endif %}
+
+                {% if trend %}
+                    <span
+                        class="
+                            metric-card__trend
+                            metric-card__trend--{{ trend_type }}
+                        "
+                    >
+                        {% if trend_type == "positive" %}
+                            <i data-lucide="trending-up"></i>
+
+                        {% elif trend_type == "negative" %}
+                            <i data-lucide="trending-down"></i>
+
+                        {% else %}
+                            <i data-lucide="minus"></i>
+                        {% endif %}
+
+                        {{ trend }}
+                    </span>
+                {% endif %}
+
+            </div>
+        {% endif %}
+
+    {% if href %}
+        </a>
+    {% else %}
+        </article>
+    {% endif %}
+
+{% endmacro %}

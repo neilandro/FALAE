@@ -1,0 +1,168 @@
+<div class="empresa-card">
+
+    <div class="empresa-card-topo">
+
+        <div class="empresa-identidade">
+
+            <div class="empresa-icone">
+                🏢
+            </div>
+
+            <div class="empresa-identidade-conteudo">
+
+                <div class="empresa-titulo">
+
+                    <h3>
+                        {{ empresa.nome }}
+                    </h3>
+
+                    <span class="empresa-plano">
+                        {{ empresa.plano or "Sem plano" }}
+                    </span>
+
+                </div>
+
+                <div class="empresa-dados">
+
+                    <div class="empresa-dado">
+
+                        <strong>CNPJ:</strong>
+                        {{ empresa.cnpj or "Não informado" }}
+
+                    </div>
+
+                    <div class="empresa-dado">
+
+                        <strong>Assessoria:</strong>
+                        {{ empresa.assessoria or "Sem assessoria" }}
+
+                    </div>
+
+                    <div class="empresa-dado">
+
+                        <strong>Local:</strong>
+
+                        {% if empresa.cidade or empresa.estado %}
+
+                            {{ empresa.cidade or "—" }}
+                            /
+                            {{ empresa.estado or "—" }}
+
+                        {% else %}
+
+                            Não informado
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class="empresa-dado">
+
+                        <strong>ID:</strong>
+                        {{ empresa.id }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% if empresa.ativa %}
+
+            <span
+                class="
+                    empresa-status
+                    empresa-status-ativa
+                "
+            >
+                Ativa
+            </span>
+
+        {% else %}
+
+            <span
+                class="
+                    empresa-status
+                    empresa-status-inativa
+                "
+            >
+                Inativa
+            </span>
+
+        {% endif %}
+
+    </div>
+
+    <div class="empresa-indicadores">
+
+        <div class="empresa-indicador">
+
+            <span class="empresa-indicador-label">
+                Usuários
+            </span>
+
+            <span class="empresa-indicador-valor">
+                {{ empresa.total_usuarios or 0 }}
+            </span>
+
+        </div>
+
+        <div class="empresa-indicador">
+
+            <span class="empresa-indicador-label">
+                Denúncias
+            </span>
+
+            <span class="empresa-indicador-valor">
+                {{ empresa.total_denuncias or 0 }}
+            </span>
+
+        </div>
+
+        <div
+            class="
+                empresa-indicador
+                empresa-indicador-critico
+            "
+        >
+
+            <span class="empresa-indicador-label">
+                Críticas
+            </span>
+
+            <span class="empresa-indicador-valor">
+                {{ empresa.total_criticas or 0 }}
+            </span>
+
+        </div>
+
+    </div>
+
+    <div class="empresa-acoes">
+
+        <a
+            href="/admin/empresas/{{ empresa.id }}/editar"
+            class="empresa-btn-alterar"
+        >
+            ✏️ Alterar
+        </a>
+
+        <a
+            href="/admin/empresas/{{ empresa.id }}"
+            class="empresa-btn-workspace"
+        >
+            🏢 Workspace
+        </a>
+
+        <a
+            href="/assessoria/empresas/{{ empresa.id }}/entrar"
+            class="empresa-btn-contexto"
+        >
+            🎯 Assumir Contexto
+        </a>
+
+    </div>
+
+</div>

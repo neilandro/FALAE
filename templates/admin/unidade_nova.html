@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>Nova Unidade</h2>
+
+    <form method="POST">
+        <label>Empresa *</label>
+        <select name="empresa_id" required>
+            <option value="">Selecione a empresa</option>
+            {% for empresa in empresas %}
+                <option value="{{ empresa.id }}">{{ empresa.nome }}</option>
+            {% endfor %}
+        </select>
+
+        <label>Nome da unidade *</label>
+        <input type="text" name="nome" required placeholder="Ex: Matriz, Filial Guarulhos, Unidade Campinas">
+
+        <button type="submit">Salvar Unidade</button>
+        <a href="/admin/unidades" class="btn-secundario">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,290 @@
+```html
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}
+Usuários | FALAE
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .usuario-acoes {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-resetar-senha {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 38px;
+        padding: 8px 13px;
+        border: 1px solid #d97706;
+        border-radius: 8px;
+        color: #9a3412;
+        font-size: 13px;
+        font-weight: 700;
+        background: #fff7ed;
+        cursor: pointer;
+        transition:
+            background 0.2s ease,
+            border-color 0.2s ease;
+    }
+
+    .btn-resetar-senha:hover {
+        border-color: #c2410c;
+        color: #7c2d12;
+        background: #ffedd5;
+    }
+
+    .senha-temporaria-chip {
+        display: inline-flex;
+        align-items: center;
+        margin-top: 8px;
+        padding: 5px 9px;
+        border-radius: 999px;
+        color: #9a3412;
+        font-size: 11px;
+        font-weight: 700;
+        background: #ffedd5;
+    }
+
+    .usuario-form-inline {
+        display: inline;
+        margin: 0;
+    }
+
+    @media (max-width: 720px) {
+        .usuario-acoes {
+            width: 100%;
+        }
+
+        .usuario-acoes a,
+        .usuario-acoes button {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .usuario-form-inline {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="page-header">
+
+    <h1>
+        👥 Usuários
+    </h1>
+
+    <p>
+        Gerencie os usuários autorizados a acessar a plataforma.
+    </p>
+
+</div>
+
+<div class="card">
+
+    <div class="triagem-header">
+
+        <div>
+
+            <h2>
+                Usuários da Empresa
+            </h2>
+
+            <p>
+                Controle os acessos, perfis e permissões
+                dos colaboradores.
+            </p>
+
+        </div>
+
+        <a
+            href="/empresa/usuarios/novo"
+            class="btn"
+        >
+            ➕ Novo Usuário
+        </a>
+
+    </div>
+
+    {% if usuarios %}
+
+        <div class="plano-lista">
+
+            {% for usuario in usuarios %}
+
+                <div class="plano-card">
+
+                    <div>
+
+                        <h3>
+                            👤 {{ usuario.nome }}
+                        </h3>
+
+                        <div class="plano-meta">
+
+                            <span>
+                                <strong>E-mail:</strong>
+                                {{ usuario.email }}
+                            </span>
+
+                            <span>
+                                <strong>Perfil:</strong>
+                                {{ usuario.perfil }}
+                            </span>
+
+                            <span>
+                                <strong>Criado em:</strong>
+
+                                {% if usuario.criado_em %}
+                                    {{
+                                        usuario.criado_em.strftime(
+                                            "%d/%m/%Y %H:%M"
+                                        )
+                                    }}
+                                {% else %}
+                                    Não informado
+                                {% endif %}
+                            </span>
+
+                        </div>
+
+                        {% if (
+                            usuario.trocar_senha_primeiro_acesso
+                            is defined
+                            and usuario.trocar_senha_primeiro_acesso
+                        ) %}
+
+                            <span class="senha-temporaria-chip">
+                                🔐 Troca de senha pendente
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                    {% if usuario.ativo %}
+
+                        <span
+                            class="
+                                status-chip
+                                status-concluido
+                            "
+                        >
+                            Ativo
+                        </span>
+
+                    {% else %}
+
+                        <span
+                            class="
+                                status-chip
+                                status-cancelado
+                            "
+                        >
+                            Inativo
+                        </span>
+
+                    {% endif %}
+
+                    <div class="usuario-acoes">
+
+                        <a
+                            href="/empresa/usuarios/{{ usuario.id }}/editar"
+                            class="btn-secundario"
+                        >
+                            ✏️ Editar
+                        </a>
+
+                        {% set pode_resetar = false %}
+
+                        {% if (
+                            usuario.id
+                            != session.usuario_id
+                        ) %}
+
+                            {% if session.perfil == "SUPER_ADMIN" %}
+
+                                {% set pode_resetar = true %}
+
+                            {% elif (
+                                session.perfil
+                                == "ADM_ASSESSORIA"
+                                and usuario.perfil
+                                not in [
+                                    "SUPER_ADMIN",
+                                    "ADM_ASSESSORIA"
+                                ]
+                            ) %}
+
+                                {% set pode_resetar = true %}
+
+                            {% elif (
+                                session.perfil
+                                == "ADMIN_EMPRESA"
+                                and usuario.perfil
+                                in [
+                                    "GESTOR",
+                                    "INVESTIGADOR",
+                                    "AUDITOR",
+                                    "VISUALIZADOR"
+                                ]
+                            ) %}
+
+                                {% set pode_resetar = true %}
+
+                            {% endif %}
+
+                        {% endif %}
+
+                        {% if pode_resetar %}
+
+                            <form
+                                method="POST"
+                                action="{{ url_for(
+                                    'admin.resetar_senha_usuario',
+                                    usuario_id=usuario.id
+                                ) }}"
+                                class="usuario-form-inline"
+                                onsubmit="
+                                    return confirm(
+                                        'Deseja redefinir a senha de {{ usuario.nome | e }}? Uma senha temporária será gerada e o usuário deverá alterá-la no próximo acesso.'
+                                    );
+                                "
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="btn-resetar-senha"
+                                >
+                                    🔑 Redefinir senha
+                                </button>
+
+                            </form>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-state">
+            Nenhum usuário cadastrado.
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
+```

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Denúncia Registrada | FALAE
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for(
+            'static',
+            filename='css/public.css'
+        ) }}"
+    >
+
+    <style>
+        .success-actions {
+            display: flex;
+            justify-content: center;
+            margin-top: 22px;
+        }
+
+        .success-actions .public-button {
+            width: 100%;
+            max-width: 320px;
+            cursor: pointer;
+        }
+
+        @media print {
+            .success-actions {
+                display: none;
+            }
+
+            body {
+                background: #ffffff;
+            }
+
+            .public-page {
+                min-height: auto;
+                padding: 0;
+            }
+
+            .public-card {
+                border: 0;
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="public-page">
+
+        <section class="public-card success-card">
+
+            <div class="public-header">
+
+                <div class="public-logo success-logo">
+                    ✅
+                </div>
+
+                <h1>
+                    Denúncia registrada
+                </h1>
+
+                <p>
+                    Sua denúncia foi recebida com sucesso e será
+                    tratada de forma confidencial.
+                </p>
+
+            </div>
+
+            <div class="save-warning">
+
+                <strong>
+                    ⚠️ Guarde seu protocolo
+                </strong>
+
+                <p>
+                    Você precisará dele para acompanhar sua
+                    denúncia futuramente.
+                </p>
+
+            </div>
+
+            <div class="protocol-box">
+
+                <span>
+                    Seu protocolo
+                </span>
+
+                <strong>
+                    {{ protocolo }}
+                </strong>
+
+            </div>
+
+            {% if aviso_anexo %}
+
+                <div class="upload-warning">
+
+                    <strong>
+                        Atenção sobre anexos:
+                    </strong>
+
+                    <p>
+                        {{ aviso_anexo }}
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+            <div class="success-actions">
+
+                <button
+                    type="button"
+                    class="public-button"
+                    onclick="window.print()"
+                >
+                    🖨️ Imprimir / Salvar PDF
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+
+</html>

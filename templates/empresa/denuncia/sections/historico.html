@@ -1,0 +1,46 @@
+<section class="denuncia-tab-panel" data-denuncia-panel="historico">
+            <div class="card denuncia-historico-completo">
+                <div class="denuncia-card-cabecalho">
+                    <div class="denuncia-card-icone">🕘</div>
+                    <div>
+                        <span>Auditoria</span>
+                        <h2>Histórico completo</h2>
+                        <p>Registro das ações realizadas nesta denúncia.</p>
+                    </div>
+                </div>
+
+                {% if timeline %}
+                    <div class="denuncia-auditoria-lista">
+                        {% for item in timeline %}
+                            <article class="denuncia-auditoria-item">
+                                <div class="denuncia-auditoria-marcador"></div>
+                                <div class="denuncia-auditoria-conteudo">
+                                    <div class="denuncia-auditoria-topo">
+                                        <strong>{{ item.acao|replace('_', ' ')|title }}</strong>
+                                        <time>{{ item.criado_em }}</time>
+                                    </div>
+
+                                    <p>Executado por <strong>{{ item.usuario or 'Sistema' }}</strong></p>
+
+                                    {% if item.valor_antigo or item.valor_novo %}
+                                        <details class="denuncia-auditoria-detalhes">
+                                            <summary>Ver alterações</summary>
+                                            <div>
+                                                <span>Valor anterior</span>
+                                                <pre>{{ item.valor_antigo or 'Não informado' }}</pre>
+                                            </div>
+                                            <div>
+                                                <span>Novo valor</span>
+                                                <pre>{{ item.valor_novo or 'Não informado' }}</pre>
+                                            </div>
+                                        </details>
+                                    {% endif %}
+                                </div>
+                            </article>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="denuncia-empty-inline">Nenhum evento registrado.</div>
+                {% endif %}
+            </div>
+        </section>

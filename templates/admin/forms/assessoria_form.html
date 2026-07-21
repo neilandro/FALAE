@@ -1,0 +1,151 @@
+{% extends "layouts/admin_base.html" %}
+
+{% block title %}
+    {% if modo == "novo" %}
+        Nova Assessoria | FALAE
+    {% else %}
+        Editar Assessoria | FALAE
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    {% if modo == "novo" %}
+        <h1>🏥 Nova Assessoria</h1>
+        <p>Cadastre uma assessoria parceira.</p>
+    {% else %}
+        <h1>🏥 Editar Assessoria</h1>
+        <p>Atualize os dados cadastrais da assessoria.</p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <form method="POST" class="form-card">
+
+        <h2>Dados principais</h2>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Nome *</label>
+                <input type="text" name="nome" required value="{{ assessoria.nome if assessoria else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>CNPJ</label>
+                <input type="text" name="cnpj" value="{{ assessoria.cnpj if assessoria else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>Responsável</label>
+                <input type="text" name="responsavel" value="{{ assessoria.responsavel if assessoria else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>E-mail principal</label>
+                <input type="email" name="email" value="{{ assessoria.email if assessoria else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>Telefone principal</label>
+                <input type="text" name="telefone" value="{{ assessoria.telefone if assessoria else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>Site</label>
+                <input type="text" name="site" value="{{ assessoria.site if assessoria else '' }}">
+            </div>
+
+            {% if modo == "editar" %}
+                <div class="form-group">
+                    <label>Status</label>
+                    <select name="ativa">
+                        <option value="1" {% if assessoria and assessoria.ativa %}selected{% endif %}>Ativa</option>
+                        <option value="0" {% if assessoria and not assessoria.ativa %}selected{% endif %}>Inativa</option>
+                    </select>
+                </div>
+            {% endif %}
+        </div>
+
+        <h2>Endereço</h2>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label>CEP</label>
+                <input type="text" name="cep" value="{{ assessoria.cep if assessoria else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>Endereço</label>
+                <input type="text" name="endereco" value="{{ assessoria.endereco if assessoria else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>Número</label>
+                <input type="text" name="numero" value="{{ assessoria.numero if assessoria else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>Complemento</label>
+                <input type="text" name="complemento" value="{{ assessoria.complemento if assessoria else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>Bairro</label>
+                <input type="text" name="bairro" value="{{ assessoria.bairro if assessoria else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>Cidade</label>
+                <input type="text" name="cidade" value="{{ assessoria.cidade if assessoria else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>Estado</label>
+                <input type="text" name="estado" maxlength="2" placeholder="SP" value="{{ assessoria.estado if assessoria else '' }}">
+            </div>
+        </div>
+
+        <h2>Contato Principal</h2>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Nome do contato</label>
+                <input type="text" name="contato_nome" value="{{ assessoria.contato_nome if assessoria else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>Cargo</label>
+                <input type="text" name="contato_cargo" value="{{ assessoria.contato_cargo if assessoria else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>E-mail</label>
+                <input type="email" name="contato_email" value="{{ assessoria.contato_email if assessoria else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>Telefone</label>
+                <input type="text" name="contato_telefone" value="{{ assessoria.contato_telefone if assessoria else '' }}">
+            </div>
+
+            <div class="form-group">
+                <label>WhatsApp</label>
+                <input type="text" name="contato_whatsapp" value="{{ assessoria.contato_whatsapp if assessoria else '' }}">
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn">
+                💾 Salvar Assessoria
+            </button>
+
+            <a href="/admin/assessorias" class="btn-secundario">
+                ← Voltar
+            </a>
+        </div>
+
+    </form>
+</div>
+
+{% endblock %}

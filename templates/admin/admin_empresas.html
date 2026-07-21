@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>Empresas cadastradas</h2>
+
+    <a href="/painel" class="btn-secundario">Voltar</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Empresa</th>
+                <th>CNPJ</th>
+                <th>Status</th>
+                <th>Link público</th>
+                <th>Denúncias</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for empresa in empresas %}
+            <tr>
+                <td>{{ empresa.nome }}</td>
+                <td>{{ empresa.cnpj }}</td>
+                <td>{{ 'Ativa' if empresa.ativa else 'Inativa' }}</td>
+                <td>
+                    <a href="/d/{{ empresa.token_publico }}" target="_blank">
+                        Abrir link
+                    </a>
+                </td>
+                <td>{{ empresa.total_denuncias }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

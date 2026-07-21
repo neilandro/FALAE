@@ -1,0 +1,60 @@
+<section class="denuncia-sidebar-card">
+
+    <div class="denuncia-sidebar-card-header">
+        <div class="denuncia-sidebar-icon">
+            🕘
+        </div>
+
+        <div>
+            <h3>Atividades recentes</h3>
+            <p>Histórico da ocorrência</p>
+        </div>
+    </div>
+
+    {% if timeline %}
+
+        <div class="denuncia-mini-timeline">
+
+            {% for item in timeline[:8] %}
+
+                <article class="denuncia-mini-timeline-item">
+
+                    <span class="denuncia-mini-timeline-ponto"></span>
+
+                    <div class="denuncia-mini-timeline-conteudo">
+
+                        <strong>
+                            {{ item.acao|replace('_', ' ')|title }}
+                        </strong>
+
+                        <p>
+                            {{ item.usuario or 'Sistema' }}
+                        </p>
+
+                        <time>
+                            {{ item.criado_em }}
+                        </time>
+
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+        {% if timeline|length > 8 %}
+            <div class="denuncia-timeline-total">
+                Exibindo 8 de {{ timeline|length }} movimentações.
+            </div>
+        {% endif %}
+
+    {% else %}
+
+        <div class="denuncia-empty-inline">
+            Nenhuma movimentação registrada.
+        </div>
+
+    {% endif %}
+
+</section>

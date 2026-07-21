@@ -1,0 +1,31 @@
+<div class="card ranking-card">
+
+    <h3>{{ titulo }}</h3>
+
+    {% if itens %}
+
+        {% for item in itens %}
+
+        <div class="ranking-item">
+
+            <div>
+
+                <strong>{{ loop.index }}º</strong>
+
+                {{ item.nome if item.nome else item.categoria }}
+
+            </div>
+
+            <span class="badge">{{ item.total }}</span>
+
+        </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p>Nenhum registro encontrado.</p>
+
+    {% endif %}
+
+</div>

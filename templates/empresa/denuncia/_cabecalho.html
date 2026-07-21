@@ -1,0 +1,98 @@
+<header class="denuncia-hero">
+
+    <div class="denuncia-hero-topo">
+
+        <div class="denuncia-hero-identificacao">
+
+            <a
+                href="{{ url_for('denuncia.empresa_denuncias') }}"
+                class="denuncia-voltar"
+                aria-label="Voltar para a lista de denúncias">
+                ← Voltar
+            </a>
+
+            <span class="denuncia-protocolo-label">
+                Protocolo
+            </span>
+
+            <h1 class="denuncia-protocolo">
+                {{ denuncia.protocolo }}
+            </h1>
+
+            <p class="denuncia-titulo">
+                {{ denuncia.categoria or denuncia.tipo or 'Denúncia sem classificação' }}
+            </p>
+
+        </div>
+
+        <div class="denuncia-hero-status">
+
+            {% set criticidade = denuncia.criticidade or 'Não informada' %}
+
+            <span class="
+                denuncia-badge
+                {% if criticidade == 'Alta' %}
+                    denuncia-badge-danger
+                {% elif criticidade in ['Média', 'Media'] %}
+                    denuncia-badge-warning
+                {% elif criticidade == 'Baixa' %}
+                    denuncia-badge-success
+                {% else %}
+                    denuncia-badge-neutral
+                {% endif %}
+            ">
+                {{ criticidade }}
+            </span>
+
+            <span class="denuncia-badge denuncia-badge-status">
+                {{ denuncia.status|replace('_', ' ')|title }}
+            </span>
+
+        </div>
+
+    </div>
+
+    <div class="denuncia-hero-metricas">
+
+        <div class="denuncia-hero-metrica">
+            <span>Etapa atual</span>
+            <strong>
+                {{ resumo_etapa.nome if resumo_etapa else denuncia.etapa_atual|replace('_', ' ')|title }}
+            </strong>
+        </div>
+
+        <div class="denuncia-hero-metrica">
+            <span>Responsável</span>
+            <strong>
+                {{ denuncia.responsavel or 'Não atribuído' }}
+            </strong>
+        </div>
+
+        <div class="denuncia-hero-metrica">
+            <span>Unidade</span>
+            <strong>
+                {{ denuncia.unidade or 'Não informada' }}
+            </strong>
+        </div>
+
+        <div class="denuncia-hero-metrica">
+            <span>Setor</span>
+            <strong>
+                {{ denuncia.setor or 'Não informado' }}
+            </strong>
+        </div>
+
+        <div class="denuncia-hero-metrica">
+            <span>Aberta em</span>
+            <strong>
+                {% if denuncia.criado_em %}
+                    {{ denuncia.criado_em.strftime('%d/%m/%Y %H:%M') if denuncia.criado_em.strftime is defined else denuncia.criado_em }}
+                {% else %}
+                    Não informado
+                {% endif %}
+            </strong>
+        </div>
+
+    </div>
+
+</header>

@@ -1,0 +1,25 @@
+<div class="card">
+    <div class="triagem-header">
+        <div>
+            <h2>{{ titulo }}</h2>
+            <p>{{ descricao }}</p>
+        </div>
+    </div>
+
+    {% if itens %}
+        <div class="plano-lista">
+            {% for item in itens %}
+                <div class="plano-card">
+                    <div>
+                        <h3>{{ item.nome }}</h3>
+                        <p>{{ item.criado_em }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            Nenhum registro encontrado.
+        </div>
+    {% endif %}
+</div>

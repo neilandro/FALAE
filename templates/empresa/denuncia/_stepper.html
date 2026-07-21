@@ -1,0 +1,71 @@
+<section class="denuncia-stepper-container">
+
+    <div class="denuncia-stepper-header">
+        <div>
+            <span class="denuncia-section-eyebrow">
+                Fluxo de tratamento
+            </span>
+
+            <h2>Andamento da denúncia</h2>
+        </div>
+
+        {% if resumo_etapa %}
+            <div class="denuncia-progresso-info">
+                <strong>{{ resumo_etapa.percentual_conclusao }}%</strong>
+                <span>concluído</span>
+            </div>
+        {% endif %}
+    </div>
+
+    {% if linha_do_tempo %}
+
+        <div class="denuncia-stepper">
+
+            {% for etapa in linha_do_tempo %}
+
+                <div class="
+                    denuncia-step
+                    denuncia-step-{{ etapa.status_visual }}
+                ">
+
+                    <div class="denuncia-step-indicador">
+
+                        <span class="denuncia-step-numero">
+                            {% if etapa.status_visual == 'concluida' %}
+                                ✓
+                            {% else %}
+                                {{ etapa.ordem }}
+                            {% endif %}
+                        </span>
+
+                        {% if not loop.last %}
+                            <span class="denuncia-step-linha"></span>
+                        {% endif %}
+
+                    </div>
+
+                    <div class="denuncia-step-conteudo">
+
+                        <strong>{{ etapa.nome }}</strong>
+
+                        <span>
+                            SLA: {{ etapa.sla_dias }} dia(s)
+                        </span>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="denuncia-empty-inline">
+            O fluxo da denúncia ainda não foi iniciado.
+        </div>
+
+    {% endif %}
+
+</section>
