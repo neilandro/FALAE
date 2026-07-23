@@ -591,3 +591,22 @@
     }
 
 }
+
+.sidebar-logout-form {
+    margin: 0;
+    padding: 0;
+}
+
+.sidebar-exit-button {
+    width: 100%;
+    border: 0;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    background: transparent;
+}
+
+.sidebar-exit-button {
+    display: flex;
+    align-items: center;
+}

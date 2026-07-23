@@ -314,19 +314,25 @@
                             Sair da Empresa
                         </span>
                     </a>
-
-                    <a
-                        href="/logout"
-                        class="sidebar-exit"
+                    <form
+                        method="POST"
+                        action="{{ url_for('auth.logout') }}"
+                        class="sidebar-logout-form"
                     >
-                        <span class="menu-icon" aria-hidden="true">
-                            <i data-lucide="log-out"></i>
-                        </span>
+                       
+                        <button
+                            type="submit"
+                            class="sidebar-exit sidebar-exit-button"
+                        >
+                            <span class="menu-icon" aria-hidden="true">
+                                <i data-lucide="log-out"></i>
+                            </span>
 
-                        <span class="menu-text">
-                            Encerrar Sessão
-                        </span>
-                    </a>
+                            <span class="menu-text">
+                                Encerrar Sessão
+                            </span>
+                        </button>
+                    </form>
 
                 </div>
 
@@ -338,24 +344,31 @@
                         Sistema
                     </span>
 
-                    <a
-                        href="/logout"
-                        class="sidebar-exit"
+                    <form
+                        method="POST"
+                        action="{{ url_for('auth.logout') }}"
+                        class="sidebar-logout-form"
                     >
-                        <span class="menu-icon" aria-hidden="true">
-                            <i data-lucide="log-out"></i>
-                        </span>
 
-                        <span class="menu-text">
-                            Encerrar Sessão
-                        </span>
-                    </a>
 
+                        <button
+                            type="submit"
+                            class="sidebar-exit sidebar-exit-button"
+                        >
+                            <span class="menu-icon" aria-hidden="true">
+                                <i data-lucide="log-out"></i>
+                            </span>
+
+                            <span class="menu-text">
+                                Encerrar Sessão
+                            </span>
+                        </button>
+                    </form>
                 </div>
 
-            {% endif %}
+                                {% endif %}
 
-        </nav>
+                            </nav>
 
 
     {# ======================================================
@@ -615,18 +628,25 @@
                         </span>
                     </a>
 
-                    <a
-                        href="/logout"
-                        class="sidebar-exit"
+                    <form
+                        method="POST"
+                        action="{{ url_for('auth.logout') }}"
+                        class="sidebar-logout-form"
                     >
-                        <span class="menu-icon" aria-hidden="true">
-                            <i data-lucide="log-out"></i>
-                        </span>
 
-                        <span class="menu-text">
-                            Encerrar Sessão
-                        </span>
-                    </a>
+                        <button
+                            type="submit"
+                            class="sidebar-exit sidebar-exit-button"
+                        >
+                            <span class="menu-icon" aria-hidden="true">
+                                <i data-lucide="log-out"></i>
+                            </span>
+
+                            <span class="menu-text">
+                                Encerrar Sessão
+                            </span>
+                        </button>
+                    </form>
 
                 </div>
 
@@ -638,18 +658,26 @@
                         Sistema
                     </span>
 
-                    <a
-                        href="/logout"
-                        class="sidebar-exit"
+                    <form
+                        method="POST"
+                        action="{{ url_for('auth.logout') }}"
+                        class="sidebar-logout-form"
                     >
-                        <span class="menu-icon" aria-hidden="true">
-                            <i data-lucide="log-out"></i>
-                        </span>
 
-                        <span class="menu-text">
-                            Encerrar Sessão
-                        </span>
-                    </a>
+
+                        <button
+                            type="submit"
+                            class="sidebar-exit sidebar-exit-button"
+                        >
+                            <span class="menu-icon" aria-hidden="true">
+                                <i data-lucide="log-out"></i>
+                            </span>
+
+                            <span class="menu-text">
+                                Encerrar Sessão
+                            </span>
+                        </button>
+                    </form>
 
                 </div>
 
@@ -697,19 +725,26 @@
                     Sistema
                 </span>
 
-                <a
-                    href="/logout"
-                    class="sidebar-exit"
+                <form
+                    method="POST"
+                    action="{{ url_for('auth.logout') }}"
+                    class="sidebar-logout-form"
                 >
-                    <span class="menu-icon" aria-hidden="true">
-                        <i data-lucide="log-out"></i>
-                    </span>
 
-                    <span class="menu-text">
-                        Encerrar Sessão
-                    </span>
-                </a>
 
+                    <button
+                        type="submit"
+                        class="sidebar-exit sidebar-exit-button"
+                    >
+                        <span class="menu-icon" aria-hidden="true">
+                            <i data-lucide="log-out"></i>
+                        </span>
+
+                        <span class="menu-text">
+                            Encerrar Sessão
+                        </span>
+                    </button>
+                </form>
             </div>
 
         </nav>
@@ -941,18 +976,25 @@
                     Sistema
                 </span>
 
-                <a
-                    href="/logout"
-                    class="sidebar-exit"
+                <form
+                    method="POST"
+                    action="{{ url_for('auth.logout') }}"
+                    class="sidebar-logout-form"
                 >
-                    <span class="menu-icon" aria-hidden="true">
-                        <i data-lucide="log-out"></i>
-                    </span>
 
-                    <span class="menu-text">
-                        Encerrar Sessão
-                    </span>
-                </a>
+                    <button
+                        type="submit"
+                        class="sidebar-exit sidebar-exit-button"
+                    >
+                        <span class="menu-icon" aria-hidden="true">
+                            <i data-lucide="log-out"></i>
+                        </span>
+
+                        <span class="menu-text">
+                            Encerrar Sessão
+                        </span>
+                    </button>
+                </form>
 
             </div>
 

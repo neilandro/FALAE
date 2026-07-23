@@ -1,11 +1,13 @@
 from uuid import uuid4
+from werkzeug.exceptions import HTTPException
 
 from flask import (
     Blueprint,
     redirect,
     render_template,
     request,
-    url_for
+    url_for,
+    current_app,
 )
 
 from db import get_connection
@@ -499,21 +501,20 @@ def canal_denunciar(slug):
         except ValueError as exc:
             erro = str(exc)
 
+        except HTTPException:
+            raise
+
         except Exception:
+            current_app.logger.exception(
+                "Erro inesperado ao registrar denúncia | "
+                "empresa_id=%s",
+                empresa_id
+            )
+
             erro = (
                 "Não foi possível registrar a denúncia. "
                 "Revise os dados e tente novamente."
             )
-
-    return render_template(
-        "public/denunciar.html",
-        empresa_id=empresa_id,
-        empresa=empresa,
-        personalizacao=personalizacao,
-        unidades=unidades,
-        turnos=turnos,
-        erro=erro
-    )
 
 
 @public_bp.route(

@@ -89,6 +89,40 @@ class UsuarioRepository:
 
         return self.cursor.fetchone()
 
+    def buscar_por_email_login(
+        self,
+        email
+    ):
+        self.cursor.execute(
+            """
+            SELECT
+                u.id,
+                u.nome,
+                u.email,
+                u.senha_hash,
+                u.perfil,
+                u.empresa_id,
+                u.assessoria_id,
+                u.trocar_senha_primeiro_acesso,
+                u.tentativas_login,
+                u.bloqueado_ate,
+                a.nome AS assessoria_nome
+            FROM usuarios u
+
+            LEFT JOIN assessorias a
+                ON a.id = u.assessoria_id
+
+            WHERE LOWER(TRIM(u.email))
+                = LOWER(TRIM(%s))
+            AND u.ativo = 1
+
+            LIMIT 1
+            """,
+            (email,)
+        )
+
+        return self.cursor.fetchone()
+
     def buscar_dados_seguranca(
         self,
         usuario_id
@@ -206,9 +240,14 @@ class UsuarioRepository:
                         ) + 1
                     )
                 WHERE id = %s
+                AND ativo = 1
                 """,
                 (usuario_id,)
             )
+
+            if self.cursor.rowcount == 0:
+                self.conn.rollback()
+                return 0
 
             self.conn.commit()
 

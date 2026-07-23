@@ -1,0 +1,10 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<section class="error-page">
+    <h1>405</h1>
+    <h2>Método não permitido</h2>
+    <p>A operação solicitada não está disponível nesta página.</p>
+    <a href="{{ url_for('main.index') }}">Voltar ao início</a>
+</section>
+{% endblock %}

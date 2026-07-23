@@ -1,0 +1,13 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<section class="error-page">
+    <h1>413</h1>
+    <h2>Arquivo muito grande</h2>
+    <p>
+        O arquivo ultrapassa o limite permitido de
+        {{ "%.0f"|format(limite_mb) }} MB.
+    </p>
+    <button type="button" onclick="history.back()">Voltar</button>
+</section>
+{% endblock %}
