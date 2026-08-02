@@ -90,6 +90,28 @@ class Config:
         default=APP_ENV == "production",
     )
 
+    SESSION_REFRESH_EACH_REQUEST = True
+    REMEMBER_COOKIE_HTTPONLY = True
+    REMEMBER_COOKIE_SECURE = SESSION_COOKIE_SECURE
+    REMEMBER_COOKIE_SAMESITE = SESSION_COOKIE_SAMESITE
+
+    WTF_CSRF_ENABLED = _as_bool(
+        os.getenv("WTF_CSRF_ENABLED"),
+        default=True,
+    )
+
+    WTF_CSRF_CHECK_DEFAULT = True
+
+    WTF_CSRF_TIME_LIMIT = _as_int(
+        "WTF_CSRF_TIME_LIMIT_SECONDS",
+        60 * 60 * 2,
+    )
+
+    WTF_CSRF_SSL_STRICT = _as_bool(
+        os.getenv("WTF_CSRF_SSL_STRICT"),
+        default=APP_ENV == "production",
+    )
+
     TRUST_PROXY_HEADERS = _as_bool(
         os.getenv(
             "TRUST_PROXY_HEADERS",
@@ -137,6 +159,16 @@ class Config:
             if not cls.SESSION_COOKIE_SECURE:
                 raise RuntimeError(
                     "SESSION_COOKIE_SECURE deve ser true em produção."
+                )
+
+            if not cls.WTF_CSRF_ENABLED:
+                raise RuntimeError(
+                    "WTF_CSRF_ENABLED deve ser true em produção."
+                )
+
+            if not cls.WTF_CSRF_SSL_STRICT:
+                raise RuntimeError(
+                    "WTF_CSRF_SSL_STRICT deve ser true em produção."
                 )
 
         Path(cls.UPLOAD_FOLDER).mkdir(

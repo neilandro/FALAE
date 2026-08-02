@@ -16,3 +16,44 @@ a {
     text-decoration: none;
     color: inherit;
 }
+
+/* =========================================================
+   MENSAGENS FLASH
+========================================================= */
+
+.flash-container {
+    margin-bottom: 20px;
+}
+
+.flash-message {
+    padding: 14px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid transparent;
+}
+
+.flash-success {
+    background-color: #ecfdf3;
+    border-color: #abefc6;
+    color: #067647;
+}
+
+.flash-danger,
+.flash-error {
+    background-color: #fef3f2;
+    border-color: #fecdca;
+    color: #b42318;
+}
+
+.flash-warning {
+    background-color: #fffaeb;
+    border-color: #fedf89;
+    color: #b54708;
+}
+
+.flash-info {
+    background-color: #eff8ff;
+    border-color: #b2ddff;
+    color: #175cd3;
+}

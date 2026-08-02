@@ -5,10 +5,22 @@ from falae.services.context_service import ContextService
 
 
 class UnidadeService:
+    """Regras de negócio relacionadas ao cadastro de unidades."""
+
+    @staticmethod
+    def _obter_empresa_id() -> int:
+        empresa_id = ContextService.empresa()
+
+        if not empresa_id:
+            raise ValueError(
+                "Nenhuma empresa ativa foi identificada."
+            )
+
+        return int(empresa_id)
 
     @staticmethod
     def listar():
-        empresa_id = ContextService.empresa()
+        empresa_id = UnidadeService._obter_empresa_id()
         repo = UnidadeRepository()
 
         try:
@@ -18,7 +30,7 @@ class UnidadeService:
 
     @staticmethod
     def obter(unidade_id):
-        empresa_id = ContextService.empresa()
+        empresa_id = UnidadeService._obter_empresa_id()
         repo = UnidadeRepository()
 
         try:
@@ -31,10 +43,15 @@ class UnidadeService:
 
     @staticmethod
     def criar(form):
-        empresa_id = ContextService.empresa()
-        dados = UnidadeService._montar_dados_formulario(form)
+        empresa_id = UnidadeService._obter_empresa_id()
 
-        validacao = UnidadeService._validar_dados(dados)
+        dados = UnidadeService._montar_dados_formulario(
+            form
+        )
+
+        validacao = UnidadeService._validar_dados(
+            dados
+        )
 
         if not validacao["sucesso"]:
             return validacao
@@ -42,16 +59,19 @@ class UnidadeService:
         repo = UnidadeRepository()
 
         try:
-            if repo.existe_nome(
+            unidade_existente = repo.existe_nome(
                 empresa_id=empresa_id,
                 nome=dados["nome"]
-            ):
+            )
+
+            if unidade_existente:
                 return {
                     "sucesso": False,
-                    "mensagem": "Já existe uma unidade com esse nome."
+                    "mensagem": (
+                        "Já existe uma unidade com esse nome."
+                    )
                 }
 
-           
             unidade_id = repo.criar(
                 empresa_id=empresa_id,
                 dados=dados
@@ -59,18 +79,26 @@ class UnidadeService:
 
             return {
                 "sucesso": True,
-                "mensagem": "Unidade cadastrada com sucesso.",
+                "mensagem": (
+                    "Unidade cadastrada com sucesso."
+                ),
                 "unidade_id": unidade_id
             }
+
         finally:
             repo.close()
 
     @staticmethod
     def editar(unidade_id, form):
-        empresa_id = ContextService.empresa()
-        dados = UnidadeService._montar_dados_formulario(form)
+        empresa_id = UnidadeService._obter_empresa_id()
 
-        validacao = UnidadeService._validar_dados(dados)
+        dados = UnidadeService._montar_dados_formulario(
+            form
+        )
+
+        validacao = UnidadeService._validar_dados(
+            dados
+        )
 
         if not validacao["sucesso"]:
             return validacao
@@ -86,27 +114,53 @@ class UnidadeService:
             if not unidade:
                 return {
                     "sucesso": False,
-                    "mensagem": "Unidade não encontrada."
+                    "mensagem": (
+                        "Unidade não encontrada ou sem "
+                        "permissão para edição."
+                    )
                 }
-        
 
+            unidade_duplicada = repo.existe_nome(
+                empresa_id=empresa_id,
+                nome=dados["nome"],
+                unidade_id=unidade_id
+            )
 
-            repo.atualizar(
+            if unidade_duplicada:
+                return {
+                    "sucesso": False,
+                    "mensagem": (
+                        "Já existe outra unidade com esse nome."
+                    )
+                }
+
+            atualizado = repo.atualizar(
                 unidade_id=unidade_id,
                 empresa_id=empresa_id,
                 dados=dados
             )
 
+            if not atualizado:
+                return {
+                    "sucesso": False,
+                    "mensagem": (
+                        "Não foi possível atualizar a unidade."
+                    )
+                }
+
             return {
                 "sucesso": True,
-                "mensagem": "Unidade atualizada com sucesso."
+                "mensagem": (
+                    "Unidade atualizada com sucesso."
+                )
             }
+
         finally:
             repo.close()
 
     @staticmethod
     def alterar_status(unidade_id, ativa):
-        empresa_id = ContextService.empresa()
+        empresa_id = UnidadeService._obter_empresa_id()
 
         try:
             ativa = int(ativa)
@@ -133,14 +187,26 @@ class UnidadeService:
             if not unidade:
                 return {
                     "sucesso": False,
-                    "mensagem": "Unidade não encontrada."
+                    "mensagem": (
+                        "Unidade não encontrada ou sem "
+                        "permissão para alteração."
+                    )
                 }
 
-            repo.alterar_status(
+            atualizado = repo.alterar_status(
                 unidade_id=unidade_id,
                 empresa_id=empresa_id,
                 ativa=ativa
             )
+
+            if not atualizado:
+                return {
+                    "sucesso": False,
+                    "mensagem": (
+                        "Não foi possível alterar o status "
+                        "da unidade."
+                    )
+                }
 
             return {
                 "sucesso": True,
@@ -150,11 +216,16 @@ class UnidadeService:
                     else "Unidade inativada com sucesso."
                 )
             }
+
         finally:
             repo.close()
 
     @staticmethod
     def _montar_dados_formulario(form):
+        nome = UnidadeService._normalizar_texto(
+            form.get("nome")
+        )
+
         cnpj = UnidadeService._somente_numeros(
             form.get("cnpj", "")
         )
@@ -163,10 +234,14 @@ class UnidadeService:
             form.get("cep", "")
         )
 
-        estado = (form.get("estado") or "").strip().upper()[:2]
+        estado = (
+            form.get("estado") or ""
+        ).strip().upper()[:2]
 
         try:
-            ativa = int(form.get("ativa", 1))
+            ativa = int(
+                form.get("ativa", 1)
+            )
         except (TypeError, ValueError):
             ativa = 1
 
@@ -174,14 +249,34 @@ class UnidadeService:
             ativa = 1
 
         return {
-            "nome": (form.get("nome") or "").strip(),
+            "nome": nome,
             "cnpj": cnpj or None,
             "cep": cep or None,
-            "endereco": (form.get("endereco") or "").strip() or None,
-            "numero": (form.get("numero") or "").strip() or None,
-            "complemento": (form.get("complemento") or "").strip() or None,
-            "bairro": (form.get("bairro") or "").strip() or None,
-            "cidade": (form.get("cidade") or "").strip() or None,
+            "endereco": (
+                UnidadeService._normalizar_texto(
+                    form.get("endereco")
+                ) or None
+            ),
+            "numero": (
+                UnidadeService._normalizar_texto(
+                    form.get("numero")
+                ) or None
+            ),
+            "complemento": (
+                UnidadeService._normalizar_texto(
+                    form.get("complemento")
+                ) or None
+            ),
+            "bairro": (
+                UnidadeService._normalizar_texto(
+                    form.get("bairro")
+                ) or None
+            ),
+            "cidade": (
+                UnidadeService._normalizar_texto(
+                    form.get("cidade")
+                ) or None
+            ),
             "estado": estado or None,
             "ativa": ativa
         }
@@ -194,24 +289,55 @@ class UnidadeService:
                 "mensagem": "Informe o nome da unidade."
             }
 
-        if dados["cnpj"] and not UnidadeService._cnpj_valido(
+        if len(dados["nome"]) < 2:
+            return {
+                "sucesso": False,
+                "mensagem": (
+                    "O nome da unidade deve possuir "
+                    "pelo menos 2 caracteres."
+                )
+            }
+
+        if len(dados["nome"]) > 150:
+            return {
+                "sucesso": False,
+                "mensagem": (
+                    "O nome da unidade deve possuir "
+                    "no máximo 150 caracteres."
+                )
+            }
+
+        if (
             dados["cnpj"]
+            and not UnidadeService._cnpj_valido(
+                dados["cnpj"]
+            )
         ):
             return {
                 "sucesso": False,
                 "mensagem": "Informe um CNPJ válido."
             }
 
-        if dados["cep"] and len(dados["cep"]) != 8:
+        if (
+            dados["cep"]
+            and len(dados["cep"]) != 8
+        ):
             return {
                 "sucesso": False,
-                "mensagem": "Informe um CEP válido com 8 números."
+                "mensagem": (
+                    "Informe um CEP válido com 8 números."
+                )
             }
 
-        if dados["estado"] and len(dados["estado"]) != 2:
+        if (
+            dados["estado"]
+            and len(dados["estado"]) != 2
+        ):
             return {
                 "sucesso": False,
-                "mensagem": "Informe a sigla do estado com 2 letras."
+                "mensagem": (
+                    "Informe a sigla do estado com 2 letras."
+                )
             }
 
         return {
@@ -219,12 +345,24 @@ class UnidadeService:
         }
 
     @staticmethod
+    def _normalizar_texto(valor):
+        return " ".join(
+            (valor or "").strip().split()
+        )
+
+    @staticmethod
     def _somente_numeros(valor):
-        return re.sub(r"\D", "", valor or "")
+        return re.sub(
+            r"\D",
+            "",
+            valor or ""
+        )
 
     @staticmethod
     def _cnpj_valido(cnpj):
-        cnpj = UnidadeService._somente_numeros(cnpj)
+        cnpj = UnidadeService._somente_numeros(
+            cnpj
+        )
 
         if len(cnpj) != 14:
             return False
@@ -235,21 +373,39 @@ class UnidadeService:
         def calcular_digito(base, pesos):
             soma = sum(
                 int(numero) * peso
-                for numero, peso in zip(base, pesos)
+                for numero, peso in zip(
+                    base,
+                    pesos
+                )
             )
 
             resto = soma % 11
 
-            return "0" if resto < 2 else str(11 - resto)
+            return (
+                "0"
+                if resto < 2
+                else str(11 - resto)
+            )
 
         primeiro_digito = calcular_digito(
             cnpj[:12],
-            [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
+            [
+                5, 4, 3, 2,
+                9, 8, 7, 6,
+                5, 4, 3, 2
+            ]
         )
 
         segundo_digito = calcular_digito(
             cnpj[:12] + primeiro_digito,
-            [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
+            [
+                6, 5, 4, 3, 2,
+                9, 8, 7, 6,
+                5, 4, 3, 2
+            ]
         )
 
-        return cnpj[-2:] == primeiro_digito + segundo_digito
+        return (
+            cnpj[-2:]
+            == primeiro_digito + segundo_digito
+        )

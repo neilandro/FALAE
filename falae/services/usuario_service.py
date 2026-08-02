@@ -9,13 +9,19 @@ from falae.repositories.usuario_repository import (
     UsuarioRepository
 )
 from falae.services.audit_service import AuditService
+from falae.services.context_service import ContextService
 
 
 class UsuarioService:
 
     TAMANHO_MINIMO_SENHA = 8
-
     CARACTERES_ESPECIAIS = "@#$%&*!_-"
+
+    PERFIS_OPERACIONAIS = {
+        "GESTOR",
+        "INVESTIGADOR",
+        "VISUALIZADOR"
+    }
 
     MENSAGEM_SENHA_FORTE = (
         "A senha deve possuir no mínimo 8 caracteres, "
@@ -23,129 +29,50 @@ class UsuarioService:
         "número e caractere especial."
     )
 
-    @staticmethod
-    def listar_usuarios():
-        perfil = session.get("perfil")
+    # =========================================================
+    # NORMALIZAÇÃO
+    # =========================================================
 
-        repo = UsuarioRepository()
+    @staticmethod
+    def _normalizar_texto(valor):
+        if valor is None:
+            return None
+
+        texto = str(valor).strip()
+
+        if not texto:
+            return None
+
+        return " ".join(texto.split())
+
+    @staticmethod
+    def _normalizar_email(email):
+        return str(email or "").strip().lower()
+
+    @staticmethod
+    def _normalizar_id(valor):
+        if valor in (None, ""):
+            return None
 
         try:
-            if perfil == "SUPER_ADMIN":
-                return repo.listar_usuarios_global()
+            valor = int(valor)
+        except (TypeError, ValueError):
+            return None
 
-            if perfil == "ADM_ASSESSORIA":
-                return repo.listar_usuarios_por_assessoria(
-                    session.get("assessoria_id")
-                )
-
-            if perfil == "ADMIN_EMPRESA":
-                return repo.listar_usuarios_por_empresa(
-                    session.get("empresa_id")
-                )
-
-            return []
-
-        finally:
-            repo.close()
+        return valor if valor > 0 else None
 
     @staticmethod
-    def pode_acessar_usuario(usuario):
-        perfil_logado = session.get("perfil")
-
-        if not usuario:
-            return False
-
-        if perfil_logado == "SUPER_ADMIN":
-            return True
-
-        if usuario.get("perfil") == "SUPER_ADMIN":
-            return False
-
-        if perfil_logado == "ADM_ASSESSORIA":
-            return (
-                usuario.get("assessoria_id")
-                == session.get("assessoria_id")
-                or usuario.get("empresa_id")
-                in UsuarioService._empresas_da_assessoria_logada()
-            )
-
-        if perfil_logado == "ADMIN_EMPRESA":
-            return (
-                usuario.get("empresa_id")
-                == session.get("empresa_id")
-                and usuario.get("perfil") in [
-                    "GESTOR",
-                    "INVESTIGADOR",
-                    "VISUALIZADOR"
-                ]
-            )
-
-        return False
-
-    @staticmethod
-    def _empresas_da_assessoria_logada():
-        repo = UsuarioRepository()
-
+    def _normalizar_ativo(valor):
         try:
-            empresas = repo.listar_empresas()
-            assessoria_id = session.get(
-                "assessoria_id"
-            )
+            valor = int(valor)
+        except (TypeError, ValueError):
+            return 1
 
-            return [
-                empresa["id"]
-                for empresa in empresas
-                if empresa.get("assessoria_id")
-                == assessoria_id
-            ]
-
-        finally:
-            repo.close()
+        return valor if valor in (0, 1) else 1
 
     @staticmethod
-    def obter_usuario(usuario_id):
-        repo = UsuarioRepository()
-
-        try:
-            return repo.obter_usuario(
-                usuario_id
-            )
-
-        finally:
-            repo.close()
-
-    @staticmethod
-    def preparar_formulario_usuario():
-        repo = UsuarioRepository()
-
-        try:
-            return {
-                "empresas": repo.listar_empresas(),
-                "assessorias": repo.listar_assessorias(),
-                "perfis": UsuarioService._perfis_disponiveis()
-            }
-
-        finally:
-            repo.close()
-
-    @staticmethod
-    def criar_usuario(dados_form):
-        perfil_logado = session.get("perfil")
-
-        senha = (
-            dados_form.get("senha") or ""
-        )
-
-        validacao_senha = (
-            UsuarioService.validar_senha_forte(
-                senha
-            )
-        )
-
-        if not validacao_senha["sucesso"]:
-            return validacao_senha
-
-        dados = {
+    def _montar_dados_usuario(dados_form):
+        return {
             "nome": UsuarioService._normalizar_texto(
                 dados_form.get("nome")
             ),
@@ -158,42 +85,295 @@ class UsuarioService:
             "whatsapp": UsuarioService._normalizar_texto(
                 dados_form.get("whatsapp")
             ),
-            "perfil": dados_form.get("perfil"),
-            "empresa_id": (
+            "perfil": UsuarioService._normalizar_texto(
+                dados_form.get("perfil")
+            ),
+            "empresa_id": UsuarioService._normalizar_id(
                 dados_form.get("empresa_id")
-                or None
             ),
-            "assessoria_id": (
+            "assessoria_id": UsuarioService._normalizar_id(
                 dados_form.get("assessoria_id")
-                or None
             ),
-            "ativo": dados_form.get(
-                "ativo",
-                1
-            ),
-            "senha_hash": (
-                bcrypt.generate_password_hash(
-                    senha
-                ).decode("utf-8")
+            "ativo": UsuarioService._normalizar_ativo(
+                dados_form.get("ativo", 1)
             )
         }
 
-        validacao = (
-            UsuarioService._validar_criacao_usuario(
-                perfil_logado=perfil_logado,
-                dados=dados
+    # =========================================================
+    # LISTAGEM E CONSULTA
+    # =========================================================
+
+    @staticmethod
+    def listar_usuarios():
+        perfil = session.get("perfil")
+        repo = UsuarioRepository()
+
+        try:
+            if perfil == "SUPER_ADMIN":
+                return repo.listar_usuarios_global()
+
+            if perfil == "ADM_ASSESSORIA":
+                assessoria_id = UsuarioService._normalizar_id(
+                    session.get("assessoria_id")
+                )
+
+                if not assessoria_id:
+                    return []
+
+                return repo.listar_usuarios_por_assessoria(
+                    assessoria_id
+                )
+
+            if perfil == "ADMIN_EMPRESA":
+                empresa_id = ContextService.empresa()
+
+                if not empresa_id:
+                    return []
+
+                return repo.listar_usuarios_por_empresa(
+                    empresa_id
+                )
+
+            return []
+
+        finally:
+            repo.close()
+
+    @staticmethod
+    def pode_acessar_usuario(usuario):
+        if not usuario:
+            return False
+
+        perfil_logado = session.get("perfil")
+
+        if perfil_logado == "SUPER_ADMIN":
+            return True
+
+        if usuario.get("perfil") == "SUPER_ADMIN":
+            return False
+
+        if perfil_logado == "ADM_ASSESSORIA":
+            assessoria_id = UsuarioService._normalizar_id(
+                session.get("assessoria_id")
             )
+
+            if not assessoria_id:
+                return False
+
+            if (
+                usuario.get("perfil") == "ADM_ASSESSORIA"
+                and usuario.get("assessoria_id") == assessoria_id
+                and usuario.get("empresa_id") is None
+            ):
+                return True
+
+            empresa_id = UsuarioService._normalizar_id(
+                usuario.get("empresa_id")
+            )
+
+            return (
+                empresa_id
+                in UsuarioService._empresas_da_assessoria_logada()
+            )
+
+        if perfil_logado == "ADMIN_EMPRESA":
+            empresa_id = ContextService.empresa()
+
+            return (
+                usuario.get("empresa_id") == empresa_id
+                and usuario.get("perfil")
+                in UsuarioService.PERFIS_OPERACIONAIS
+            )
+
+        return False
+
+    @staticmethod
+    def _empresas_da_assessoria_logada():
+        assessoria_id = UsuarioService._normalizar_id(
+            session.get("assessoria_id")
+        )
+
+        if not assessoria_id:
+            return []
+
+        repo = UsuarioRepository()
+
+        try:
+            empresas = repo.listar_empresas_por_assessoria(
+                assessoria_id
+            )
+
+            return [
+                empresa["id"]
+                for empresa in empresas
+            ]
+
+        finally:
+            repo.close()
+
+    @staticmethod
+    def obter_usuario(usuario_id):
+        usuario_id = UsuarioService._normalizar_id(
+            usuario_id
+        )
+
+        if not usuario_id:
+            return None
+
+        perfil = session.get("perfil")
+        repo = UsuarioRepository()
+
+        try:
+            if perfil == "SUPER_ADMIN":
+                return repo.buscar_por_id_global(
+                    usuario_id
+                )
+
+            if perfil == "ADM_ASSESSORIA":
+                assessoria_id = UsuarioService._normalizar_id(
+                    session.get("assessoria_id")
+                )
+
+                if not assessoria_id:
+                    return None
+
+                return repo.buscar_por_id_assessoria(
+                    usuario_id=usuario_id,
+                    assessoria_id=assessoria_id
+                )
+
+            if perfil == "ADMIN_EMPRESA":
+                empresa_id = ContextService.empresa()
+
+                if not empresa_id:
+                    return None
+
+                usuario = repo.buscar_por_id(
+                    usuario_id=usuario_id,
+                    empresa_id=empresa_id
+                )
+
+                if (
+                    usuario
+                    and usuario.get("perfil")
+                    in UsuarioService.PERFIS_OPERACIONAIS
+                ):
+                    return usuario
+
+            return None
+
+        finally:
+            repo.close()
+
+    @staticmethod
+    def preparar_formulario_usuario():
+        perfil = session.get("perfil")
+        repo = UsuarioRepository()
+
+        try:
+            empresas = []
+            assessorias = []
+
+            if perfil == "SUPER_ADMIN":
+                empresas = repo.listar_empresas()
+                assessorias = repo.listar_assessorias()
+
+            elif perfil == "ADM_ASSESSORIA":
+                assessoria_id = UsuarioService._normalizar_id(
+                    session.get("assessoria_id")
+                )
+
+                if assessoria_id:
+                    empresas = (
+                        repo.listar_empresas_por_assessoria(
+                            assessoria_id
+                        )
+                    )
+
+                    assessoria = repo.buscar_assessoria_ativa(
+                        assessoria_id
+                    )
+
+                    if assessoria:
+                        assessorias = [assessoria]
+
+            elif perfil == "ADMIN_EMPRESA":
+                empresa_id = ContextService.empresa()
+
+                if empresa_id:
+                    empresa = repo.buscar_empresa_ativa(
+                        empresa_id
+                    )
+
+                    if empresa:
+                        empresas = [empresa]
+
+            return {
+                "empresas": empresas,
+                "assessorias": assessorias,
+                "perfis": UsuarioService._perfis_disponiveis()
+            }
+
+        finally:
+            repo.close()
+
+    # =========================================================
+    # CRIAÇÃO
+    # =========================================================
+
+    @staticmethod
+    def criar_usuario(dados_form):
+        perfil_logado = session.get("perfil")
+        senha = dados_form.get("senha") or ""
+
+        validacao_senha = UsuarioService.validar_senha_forte(
+            senha
+        )
+
+        if not validacao_senha["sucesso"]:
+            return validacao_senha
+
+        dados = UsuarioService._montar_dados_usuario(
+            dados_form
+        )
+
+        validacao = UsuarioService._validar_dados_usuario(
+            perfil_logado=perfil_logado,
+            dados=dados
         )
 
         if not validacao["sucesso"]:
             return validacao
 
+        dados["senha_hash"] = (
+            bcrypt.generate_password_hash(
+                senha
+            ).decode("utf-8")
+        )
+
         repo = UsuarioRepository()
 
         try:
-            usuario_id = repo.criar_usuario(
-                dados
+            if repo.existe_email(dados["email"]):
+                return {
+                    "sucesso": False,
+                    "mensagem": (
+                        "Já existe um usuário cadastrado "
+                        "com este e-mail."
+                    )
+                }
+
+            validacao_vinculo = (
+                UsuarioService._validar_vinculos_no_banco(
+                    repo=repo,
+                    dados=dados
+                )
             )
+
+            if not validacao_vinculo["sucesso"]:
+                return validacao_vinculo
+
+            usuario_id = repo.criar_usuario(dados)
 
             AuditService.registrar(
                 modulo="usuarios",
@@ -212,23 +392,32 @@ class UsuarioService:
 
             return {
                 "sucesso": True,
+                "mensagem": "Usuário cadastrado com sucesso.",
                 "usuario_id": usuario_id
             }
 
         finally:
             repo.close()
 
-    @staticmethod
-    def editar_usuario(
-        usuario_id,
-        dados_form
-    ):
-        perfil_logado = session.get("perfil")
+    # =========================================================
+    # EDIÇÃO
+    # =========================================================
 
-        usuario_atual = (
-            UsuarioService.obter_usuario(
-                usuario_id
-            )
+    @staticmethod
+    def editar_usuario(usuario_id, dados_form):
+        usuario_id = UsuarioService._normalizar_id(
+            usuario_id
+        )
+
+        if not usuario_id:
+            return {
+                "sucesso": False,
+                "mensagem": "Usuário inválido."
+            }
+
+        perfil_logado = session.get("perfil")
+        usuario_atual = UsuarioService.obter_usuario(
+            usuario_id
         )
 
         if not UsuarioService.pode_acessar_usuario(
@@ -240,96 +429,112 @@ class UsuarioService:
                     "Acesso não autorizado para editar este usuário."
                 )
             }
-        
-        editando_proprio_usuario = (
-            int(usuario_id)
-            == int(
-                session.get(
-                    "usuario_id",
-                    0
-                )
-            )
+
+        dados = UsuarioService._montar_dados_usuario(
+            dados_form
         )
 
-
-        dados = {
-            "nome": UsuarioService._normalizar_texto(
-                dados_form.get("nome")
-            ),
-            "email": UsuarioService._normalizar_email(
-                dados_form.get("email")
-            ),
-            "celular": UsuarioService._normalizar_texto(
-                dados_form.get("celular")
-            ),
-            "whatsapp": UsuarioService._normalizar_texto(
-                dados_form.get("whatsapp")
-            ),
-            "perfil": dados_form.get("perfil"),
-            "empresa_id": (
-                dados_form.get("empresa_id")
-                or None
-            ),
-            "assessoria_id": (
-                dados_form.get("assessoria_id")
-                or None
-            ),
-            "ativo": dados_form.get(
-                "ativo",
-                1
-            )
-        }
-
-        editando_proprio_usuario = (
-            int(usuario_id)
-            == int(
-                session.get(
-                    "usuario_id",
-                    0
-                )
-            )
-        )
-
-        validacao = (
-            UsuarioService._validar_criacao_usuario(
-                perfil_logado=perfil_logado,
-                dados=dados
-            )
+        validacao = UsuarioService._validar_dados_usuario(
+            perfil_logado=perfil_logado,
+            dados=dados
         )
 
         if not validacao["sucesso"]:
             return validacao
 
+        usuario_sessao_id = UsuarioService._normalizar_id(
+            session.get("usuario_id")
+        )
+
         if (
-            perfil_logado != "SUPER_ADMIN"
-            and dados["perfil"] == "SUPER_ADMIN"
+            usuario_sessao_id == usuario_id
+            and dados["ativo"] == 0
         ):
             return {
                 "sucesso": False,
                 "mensagem": (
-                    "Você não pode atribuir o perfil SUPER_ADMIN."
+                    "Você não pode desativar o próprio usuário."
                 )
             }
 
         repo = UsuarioRepository()
 
         try:
-            atualizado = repo.atualizar_usuario(
-                usuario_id,
-                dados
+            if repo.existe_email(
+                email=dados["email"],
+                usuario_id=usuario_id
+            ):
+                return {
+                    "sucesso": False,
+                    "mensagem": (
+                        "Já existe outro usuário cadastrado "
+                        "com este e-mail."
+                    )
+                }
+
+            validacao_vinculo = (
+                UsuarioService._validar_vinculos_no_banco(
+                    repo=repo,
+                    dados=dados
+                )
             )
 
-            if not atualizado:
-                usuario_existente = (
-                    repo.obter_usuario(
-                        usuario_id
+            if not validacao_vinculo["sucesso"]:
+                return validacao_vinculo
+
+            if perfil_logado == "SUPER_ADMIN":
+                atualizado = repo.atualizar_usuario_global(
+                    usuario_id=usuario_id,
+                    dados=dados
+                )
+
+            elif perfil_logado == "ADM_ASSESSORIA":
+                atualizado = (
+                    repo.atualizar_usuario_por_assessoria(
+                        usuario_id=usuario_id,
+                        assessoria_id=session.get(
+                            "assessoria_id"
+                        ),
+                        dados=dados
                     )
+                )
+
+            elif perfil_logado == "ADMIN_EMPRESA":
+                atualizado = (
+                    repo.atualizar_usuario_por_empresa(
+                        usuario_id=usuario_id,
+                        empresa_id=ContextService.empresa(),
+                        dados=dados
+                    )
+                )
+
+            else:
+                atualizado = False
+
+            if not atualizado:
+                usuario_existente = repo.buscar_por_id_global(
+                    usuario_id
                 )
 
                 if not usuario_existente:
                     return {
                         "sucesso": False,
                         "mensagem": "Usuário não encontrado."
+                    }
+
+                # rowcount pode ser zero quando os dados enviados
+                # são exatamente iguais aos valores atuais.
+                dados_iguais = UsuarioService._dados_iguais(
+                    usuario_existente,
+                    dados
+                )
+
+                if not dados_iguais:
+                    return {
+                        "sucesso": False,
+                        "mensagem": (
+                            "Não foi possível atualizar o usuário."
+                        )
                     }
 
             AuditService.registrar(
@@ -340,118 +545,53 @@ class UsuarioService:
                     "nome": usuario_atual.get("nome"),
                     "email": usuario_atual.get("email"),
                     "perfil": usuario_atual.get("perfil"),
-                    "empresa_id": usuario_atual.get("empresa_id"),
+                    "empresa_id": usuario_atual.get(
+                        "empresa_id"
+                    ),
                     "assessoria_id": usuario_atual.get(
                         "assessoria_id"
                     ),
                     "ativo": usuario_atual.get("ativo")
                 },
-                valor_novo=dados
+                valor_novo={
+                    "nome": dados["nome"],
+                    "email": dados["email"],
+                    "perfil": dados["perfil"],
+                    "empresa_id": dados["empresa_id"],
+                    "assessoria_id": dados["assessoria_id"],
+                    "ativo": dados["ativo"]
+                }
             )
 
             return {
-                "sucesso": True
+                "sucesso": True,
+                "mensagem": "Usuário atualizado com sucesso."
             }
 
         finally:
             repo.close()
 
     @staticmethod
-    def validar_senha_forte(
-        senha: str | None
-    ) -> dict:
-        senha_normalizada = (
-            senha or ""
+    def _dados_iguais(usuario, dados):
+        campos = (
+            "nome",
+            "email",
+            "celular",
+            "whatsapp",
+            "perfil",
+            "empresa_id",
+            "assessoria_id",
+            "ativo"
         )
 
-        if len(
-            senha_normalizada
-        ) < UsuarioService.TAMANHO_MINIMO_SENHA:
-            return {
-                "sucesso": False,
-                "mensagem": (
-                    UsuarioService.MENSAGEM_SENHA_FORTE
-                )
-            }
-
-        if not re.search(
-            r"[A-Z]",
-            senha_normalizada
-        ):
-            return {
-                "sucesso": False,
-                "mensagem": (
-                    UsuarioService.MENSAGEM_SENHA_FORTE
-                )
-            }
-
-        if not re.search(
-            r"[a-z]",
-            senha_normalizada
-        ):
-            return {
-                "sucesso": False,
-                "mensagem": (
-                    UsuarioService.MENSAGEM_SENHA_FORTE
-                )
-            }
-
-        if not re.search(
-            r"\d",
-            senha_normalizada
-        ):
-            return {
-                "sucesso": False,
-                "mensagem": (
-                    UsuarioService.MENSAGEM_SENHA_FORTE
-                )
-            }
-
-        padrao_especial = (
-            "["
-            + re.escape(
-                UsuarioService.CARACTERES_ESPECIAIS
-            )
-            + "]"
+        return all(
+            usuario.get(campo) == dados.get(campo)
+            for campo in campos
         )
 
-        if not re.search(
-            padrao_especial,
-            senha_normalizada
-        ):
-            return {
-                "sucesso": False,
-                "mensagem": (
-                    UsuarioService.MENSAGEM_SENHA_FORTE
-                )
-            }
-
-        return {
-            "sucesso": True
-        }
-
-    @staticmethod
-    def _normalizar_texto(
-        valor
-    ):
-        if valor is None:
-            return None
-
-        return str(
-            valor
-        ).strip()
-
-    @staticmethod
-    def _normalizar_email(
-        email
-    ):
-        return (
-            str(
-                email or ""
-            )
-            .strip()
-            .lower()
-        )
+    # =========================================================
+    # VALIDAÇÕES
+    # =========================================================
 
     @staticmethod
     def _perfis_disponiveis():
@@ -485,16 +625,19 @@ class UsuarioService:
         return []
 
     @staticmethod
-    def _validar_criacao_usuario(
-        perfil_logado,
-        dados
-    ):
-        perfil_novo = dados.get("perfil")
-
+    def _validar_dados_usuario(perfil_logado, dados):
         if not dados.get("nome"):
             return {
                 "sucesso": False,
                 "mensagem": "Informe o nome do usuário."
+            }
+
+        if len(dados["nome"]) > 150:
+            return {
+                "sucesso": False,
+                "mensagem": (
+                    "O nome deve possuir no máximo 150 caracteres."
+                )
             }
 
         if not dados.get("email"):
@@ -502,6 +645,25 @@ class UsuarioService:
                 "sucesso": False,
                 "mensagem": "Informe o e-mail do usuário."
             }
+
+        if len(dados["email"]) > 255:
+            return {
+                "sucesso": False,
+                "mensagem": (
+                    "O e-mail deve possuir no máximo 255 caracteres."
+                )
+            }
+
+        if not re.fullmatch(
+            r"[^@\s]+@[^@\s]+\.[^@\s]+",
+            dados["email"]
+        ):
+            return {
+                "sucesso": False,
+                "mensagem": "Informe um endereço de e-mail válido."
+            }
+
+        perfil_novo = dados.get("perfil")
 
         if perfil_novo not in UsuarioService._perfis_disponiveis():
             return {
@@ -513,81 +675,176 @@ class UsuarioService:
             }
 
         if perfil_logado == "SUPER_ADMIN":
-            if (
-                perfil_novo == "ADM_ASSESSORIA"
-                and not dados.get("assessoria_id")
-            ):
-                return {
-                    "sucesso": False,
-                    "mensagem": (
-                        "Informe a assessoria para usuários "
-                        "ADM_ASSESSORIA."
-                    )
-                }
-
-            if (
-                perfil_novo in [
-                    "ADMIN_EMPRESA",
-                    "GESTOR",
-                    "INVESTIGADOR",
-                    "VISUALIZADOR"
-                ]
-                and not dados.get("empresa_id")
-            ):
-                return {
-                    "sucesso": False,
-                    "mensagem": (
-                        "Informe a empresa para este perfil "
-                        "de usuário."
-                    )
-                }
-
-            return {
-                "sucesso": True
-            }
+            return UsuarioService._aplicar_vinculos_super_admin(
+                dados
+            )
 
         if perfil_logado == "ADM_ASSESSORIA":
-            if perfil_novo not in [
-                "ADMIN_EMPRESA",
-                "GESTOR",
-                "INVESTIGADOR",
-                "VISUALIZADOR"
-            ]:
+            return UsuarioService._aplicar_vinculos_assessoria(
+                dados
+            )
+
+        if perfil_logado == "ADMIN_EMPRESA":
+            return UsuarioService._aplicar_vinculos_empresa(
+                dados
+            )
+
+        return {
+            "sucesso": False,
+            "mensagem": (
+                "Você não possui permissão para gerenciar usuários."
+            )
+        }
+
+    # Mantido para compatibilidade com referências anteriores.
+    @staticmethod
+    def _validar_criacao_usuario(perfil_logado, dados):
+        return UsuarioService._validar_dados_usuario(
+            perfil_logado=perfil_logado,
+            dados=dados
+        )
+
+    @staticmethod
+    def _aplicar_vinculos_super_admin(dados):
+        perfil_novo = dados.get("perfil")
+
+        if perfil_novo == "SUPER_ADMIN":
+            dados["empresa_id"] = None
+            dados["assessoria_id"] = None
+
+        elif perfil_novo == "ADM_ASSESSORIA":
+            if not dados.get("assessoria_id"):
                 return {
                     "sucesso": False,
                     "mensagem": (
-                        "Perfil não permitido para ADM_ASSESSORIA."
+                        "Informe a assessoria para o usuário."
                     )
                 }
 
+            dados["empresa_id"] = None
+
+        else:
             if not dados.get("empresa_id"):
                 return {
                     "sucesso": False,
                     "mensagem": (
-                        "Informe a empresa do usuário."
+                        "Informe a empresa para este perfil."
                     )
                 }
 
-            empresas_permitidas = (
-                UsuarioService._empresas_da_assessoria_logada()
+            dados["assessoria_id"] = None
+
+        return {"sucesso": True}
+
+    @staticmethod
+    def _aplicar_vinculos_assessoria(dados):
+        if dados.get("perfil") not in {
+            "ADMIN_EMPRESA",
+            "GESTOR",
+            "INVESTIGADOR",
+            "VISUALIZADOR"
+        }:
+            return {
+                "sucesso": False,
+                "mensagem": (
+                    "Perfil não permitido para ADM_ASSESSORIA."
+                )
+            }
+
+        if not dados.get("empresa_id"):
+            return {
+                "sucesso": False,
+                "mensagem": "Informe a empresa do usuário."
+            }
+
+        empresas_permitidas = (
+            UsuarioService._empresas_da_assessoria_logada()
+        )
+
+        if dados["empresa_id"] not in empresas_permitidas:
+            return {
+                "sucesso": False,
+                "mensagem": (
+                    "A empresa selecionada não pertence "
+                    "à assessoria logada."
+                )
+            }
+
+        dados["assessoria_id"] = None
+        return {"sucesso": True}
+
+    @staticmethod
+    def _aplicar_vinculos_empresa(dados):
+        if dados.get("perfil") not in (
+            UsuarioService.PERFIS_OPERACIONAIS
+        ):
+            return {
+                "sucesso": False,
+                "mensagem": (
+                    "Perfil não permitido para ADMIN_EMPRESA."
+                )
+            }
+
+        empresa_id = ContextService.empresa()
+
+        if not empresa_id:
+            return {
+                "sucesso": False,
+                "mensagem": (
+                    "Nenhuma empresa ativa foi identificada."
+                )
+            }
+
+        dados["empresa_id"] = empresa_id
+        dados["assessoria_id"] = None
+
+        return {"sucesso": True}
+
+    @staticmethod
+    def _validar_vinculos_no_banco(repo, dados):
+        perfil = dados.get("perfil")
+
+        if perfil == "SUPER_ADMIN":
+            return {"sucesso": True}
+
+        if perfil == "ADM_ASSESSORIA":
+            assessoria = repo.buscar_assessoria_ativa(
+                dados.get("assessoria_id")
             )
 
-            try:
-                empresa_id = int(
-                    dados["empresa_id"]
-                )
-            except (
-                TypeError,
-                ValueError
-            ):
+            if not assessoria:
                 return {
                     "sucesso": False,
                     "mensagem": (
-                        "A empresa selecionada é inválida."
+                        "A assessoria selecionada não existe "
+                        "ou está inativa."
                     )
                 }
 
-            if empresa_id not in empresas_permitidas:
+            return {"sucesso": True}
+
+        empresa = repo.buscar_empresa_ativa(
+            dados.get("empresa_id")
+        )
+
+        if not empresa:
+            return {
+                "sucesso": False,
+                "mensagem": (
+                    "A empresa selecionada não existe "
+                    "ou está inativa."
+                )
+            }
+
+        if session.get("perfil") == "ADM_ASSESSORIA":
+            assessoria_id = UsuarioService._normalizar_id(
+                session.get("assessoria_id")
+            )
+
+            if not repo.empresa_pertence_assessoria(
+                empresa_id=dados["empresa_id"],
+                assessoria_id=assessoria_id
+            ):
                 return {
                     "sucesso": False,
                     "mensagem": (
@@ -596,45 +853,61 @@ class UsuarioService:
                     )
                 }
 
-            dados["empresa_id"] = empresa_id
+        return {"sucesso": True}
 
-            # Usuários vinculados a uma empresa recebem o vínculo
-            # pela própria empresa. Não precisam de assessoria_id direto.
-            dados["assessoria_id"] = None
+    # =========================================================
+    # SENHAS
+    # =========================================================
 
+    @staticmethod
+    def validar_senha_forte(senha: str | None) -> dict:
+        senha_normalizada = senha or ""
+
+        if (
+            len(senha_normalizada)
+            < UsuarioService.TAMANHO_MINIMO_SENHA
+        ):
             return {
-                "sucesso": True
+                "sucesso": False,
+                "mensagem": UsuarioService.MENSAGEM_SENHA_FORTE
             }
 
-        if perfil_logado == "ADMIN_EMPRESA":
-            if perfil_novo not in [
-                "GESTOR",
-                "INVESTIGADOR",
-                "VISUALIZADOR"
-            ]:
-                return {
-                    "sucesso": False,
-                    "mensagem": (
-                        "Perfil não permitido para ADMIN_EMPRESA."
-                    )
-                }
-
-            dados["empresa_id"] = session.get(
-                "empresa_id"
-            )
-
-            dados["assessoria_id"] = None
-
+        if not re.search(r"[A-Z]", senha_normalizada):
             return {
-                "sucesso": True
+                "sucesso": False,
+                "mensagem": UsuarioService.MENSAGEM_SENHA_FORTE
             }
 
-        return {
-            "sucesso": False,
-            "mensagem": (
-                "Você não possui permissão para criar usuários."
+        if not re.search(r"[a-z]", senha_normalizada):
+            return {
+                "sucesso": False,
+                "mensagem": UsuarioService.MENSAGEM_SENHA_FORTE
+            }
+
+        if not re.search(r"\d", senha_normalizada):
+            return {
+                "sucesso": False,
+                "mensagem": UsuarioService.MENSAGEM_SENHA_FORTE
+            }
+
+        padrao_especial = (
+            "["
+            + re.escape(
+                UsuarioService.CARACTERES_ESPECIAIS
             )
-        }
+            + "]"
+        )
+
+        if not re.search(
+            padrao_especial,
+            senha_normalizada
+        ):
+            return {
+                "sucesso": False,
+                "mensagem": UsuarioService.MENSAGEM_SENHA_FORTE
+            }
+
+        return {"sucesso": True}
 
     @staticmethod
     def alterar_senha_obrigatoria(
@@ -642,13 +915,12 @@ class UsuarioService:
         nova_senha,
         confirmar_senha
     ):
-        """
-        Permite que o usuário autenticado substitua a senha
-        temporária por uma senha pessoal e definitiva.
-        """
+        usuario_sessao_id = UsuarioService._normalizar_id(
+            session.get("usuario_id")
+        )
 
-        usuario_sessao_id = session.get(
-            "usuario_id"
+        usuario_id = UsuarioService._normalizar_id(
+            usuario_id
         )
 
         if not usuario_sessao_id:
@@ -660,19 +932,7 @@ class UsuarioService:
                 )
             }
 
-        try:
-            usuario_id = int(
-                usuario_id
-            )
-
-            usuario_sessao_id = int(
-                usuario_sessao_id
-            )
-
-        except (
-            TypeError,
-            ValueError
-        ):
+        if not usuario_id:
             return {
                 "sucesso": False,
                 "mensagem": (
@@ -701,10 +961,8 @@ class UsuarioService:
                 )
             }
 
-        validacao = (
-            UsuarioService.validar_senha_forte(
-                nova_senha
-            )
+        validacao = UsuarioService.validar_senha_forte(
+            nova_senha
         )
 
         if not validacao["sucesso"]:
@@ -713,34 +971,24 @@ class UsuarioService:
         repo = UsuarioRepository()
 
         try:
-            dados_seguranca = (
-                repo.buscar_dados_seguranca(
-                    usuario_id
-                )
+            dados_seguranca = repo.buscar_dados_seguranca(
+                usuario_id
             )
 
             if not dados_seguranca:
                 return {
                     "sucesso": False,
-                    "mensagem": (
-                        "Usuário não encontrado."
-                    )
+                    "mensagem": "Usuário não encontrado."
                 }
 
-            if not dados_seguranca.get(
-                "ativo"
-            ):
+            if not dados_seguranca.get("ativo"):
                 return {
                     "sucesso": False,
-                    "mensagem": (
-                        "Este usuário está inativo."
-                    )
+                    "mensagem": "Este usuário está inativo."
                 }
 
-            senha_atual_hash = (
-                dados_seguranca.get(
-                    "senha_hash"
-                )
+            senha_atual_hash = dados_seguranca.get(
+                "senha_hash"
             )
 
             if (
@@ -761,16 +1009,12 @@ class UsuarioService:
             nova_senha_hash = (
                 bcrypt.generate_password_hash(
                     nova_senha
-                ).decode(
-                    "utf-8"
-                )
+                ).decode("utf-8")
             )
 
-            atualizado = (
-                repo.atualizar_senha_definitiva(
-                    usuario_id=usuario_id,
-                    senha_hash=nova_senha_hash
-                )
+            atualizado = repo.atualizar_senha_definitiva(
+                usuario_id=usuario_id,
+                senha_hash=nova_senha_hash
             )
 
             if not atualizado:
@@ -800,51 +1044,42 @@ class UsuarioService:
 
             return {
                 "sucesso": True,
-                "mensagem": (
-                    "Senha atualizada com sucesso."
-                )
+                "mensagem": "Senha atualizada com sucesso."
             }
 
         finally:
             repo.close()
 
     @staticmethod
-    def resetar_senha(
-        usuario_id
-    ):
-        """
-        Redefine administrativamente a senha de um usuário.
+    def resetar_senha(usuario_id):
+        usuario_id = UsuarioService._normalizar_id(
+            usuario_id
+        )
 
-        A senha gerada é temporária e deverá ser substituída
-        obrigatoriamente no próximo login.
-        """
+        if not usuario_id:
+            return {
+                "sucesso": False,
+                "mensagem": "Usuário inválido."
+            }
 
         repo = UsuarioRepository()
 
         try:
-            usuario = (
-                repo.buscar_por_id_global(
-                    usuario_id
-                )
+            usuario = repo.buscar_por_id_global(
+                usuario_id
             )
 
             if not usuario:
                 return {
                     "sucesso": False,
-                    "mensagem": (
-                        "Usuário não encontrado."
-                    )
+                    "mensagem": "Usuário não encontrado."
                 }
 
-            if (
-                int(usuario.get("id"))
-                == int(
-                    session.get(
-                        "usuario_id",
-                        0
-                    )
-                )
-            ):
+            usuario_sessao_id = UsuarioService._normalizar_id(
+                session.get("usuario_id")
+            )
+
+            if usuario_id == usuario_sessao_id:
                 return {
                     "sucesso": False,
                     "mensagem": (
@@ -864,21 +1099,16 @@ class UsuarioService:
                     )
                 }
 
-            perfil_logado = session.get(
-                "perfil"
-            )
-
-            perfil_usuario = usuario.get(
-                "perfil"
-            )
+            perfil_logado = session.get("perfil")
+            perfil_usuario = usuario.get("perfil")
 
             if (
                 perfil_logado == "ADM_ASSESSORIA"
                 and perfil_usuario
-                in [
+                in {
                     "SUPER_ADMIN",
                     "ADM_ASSESSORIA"
-                ]
+                }
             ):
                 return {
                     "sucesso": False,
@@ -891,12 +1121,7 @@ class UsuarioService:
             if (
                 perfil_logado == "ADMIN_EMPRESA"
                 and perfil_usuario
-                not in [
-                    "GESTOR",
-                    "INVESTIGADOR",
-                    "VISUALIZADOR",
-                    "AUDITOR"
-                ]
+                not in UsuarioService.PERFIS_OPERACIONAIS
             ):
                 return {
                     "sucesso": False,
@@ -907,16 +1132,13 @@ class UsuarioService:
                 }
 
             senha_temporaria = (
-                UsuarioService
-                ._gerar_senha_temporaria()
+                UsuarioService._gerar_senha_temporaria()
             )
 
             senha_hash = (
                 bcrypt.generate_password_hash(
                     senha_temporaria
-                ).decode(
-                    "utf-8"
-                )
+                ).decode("utf-8")
             )
 
             atualizado = repo.atualizar_senha(
@@ -938,18 +1160,12 @@ class UsuarioService:
                 acao="resetar_senha",
                 registro_id=usuario_id,
                 valor_antigo={
-                    "usuario": usuario.get(
-                        "nome"
-                    ),
-                    "email": usuario.get(
-                        "email"
-                    ),
+                    "usuario": usuario.get("nome"),
+                    "email": usuario.get("email"),
                     "perfil": perfil_usuario
                 },
                 valor_novo={
-                    "resetado_por": session.get(
-                        "usuario_id"
-                    ),
+                    "resetado_por": usuario_sessao_id,
                     "senha_temporaria": True,
                     "troca_obrigatoria": True,
                     "bloqueio_removido": True
@@ -966,24 +1182,21 @@ class UsuarioService:
             repo.close()
 
     @staticmethod
-    def _gerar_senha_temporaria(
-        tamanho=10
-    ):
+    def _gerar_senha_temporaria(tamanho=10):
+        try:
+            tamanho = int(tamanho)
+        except (TypeError, ValueError):
+            tamanho = 10
+
         tamanho_final = max(
-            int(tamanho),
+            tamanho,
             UsuarioService.TAMANHO_MINIMO_SENHA
         )
 
         caracteres_obrigatorios = [
-            secrets.choice(
-                string.ascii_uppercase
-            ),
-            secrets.choice(
-                string.ascii_lowercase
-            ),
-            secrets.choice(
-                string.digits
-            ),
+            secrets.choice(string.ascii_uppercase),
+            secrets.choice(string.ascii_lowercase),
+            secrets.choice(string.digits),
             secrets.choice(
                 UsuarioService.CARACTERES_ESPECIAIS
             )
@@ -996,9 +1209,7 @@ class UsuarioService:
         )
 
         caracteres_restantes = [
-            secrets.choice(
-                conjunto_completo
-            )
+            secrets.choice(conjunto_completo)
             for _ in range(
                 tamanho_final
                 - len(caracteres_obrigatorios)
@@ -1014,6 +1225,4 @@ class UsuarioService:
             caracteres_senha
         )
 
-        return "".join(
-            caracteres_senha
-        )
+        return "".join(caracteres_senha)

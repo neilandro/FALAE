@@ -230,8 +230,9 @@ def _turno_pertence_empresa(
 
 
 def _registrar_denuncia(
-    empresa_id: int
-) -> tuple[str, str | None]:
+    empresa_id: int,
+    arquivos_validados=None
+) -> str:
     protocolo = (
         f"FALAE-{uuid4().hex[:10].upper()}"
     )
@@ -400,23 +401,14 @@ def _registrar_denuncia(
         cursor.close()
         conn.close()
 
-    aviso_anexo = None
+    AnexoService.salvar_anexos(
+        arquivos=None,
+        denuncia_id=denuncia_id,
+        empresa_id=empresa_id,
+        arquivos_validados=arquivos_validados
+    )
 
-    try:
-        arquivos = request.files.getlist(
-            "anexos"
-        )
-
-        AnexoService.salvar_anexos(
-            arquivos=arquivos,
-            denuncia_id=denuncia_id,
-            empresa_id=empresa_id
-        )
-
-    except Exception as erro:
-        aviso_anexo = str(erro)
-
-    return protocolo, aviso_anexo
+    return protocolo
 
 
 @public_bp.route(
@@ -484,16 +476,25 @@ def canal_denunciar(slug):
 
     if request.method == "POST":
         try:
-            protocolo, aviso_anexo = (
-                _registrar_denuncia(
-                    empresa_id=empresa_id
+            arquivos = request.files.getlist(
+                "anexos"
+            )
+
+            arquivos_validados = (
+                AnexoService.validar_anexos(
+                    arquivos
                 )
+            )
+
+            protocolo = _registrar_denuncia(
+                empresa_id=empresa_id,
+                arquivos_validados=arquivos_validados
             )
 
             return render_template(
                 "public/denuncia_sucesso.html",
                 protocolo=protocolo,
-                aviso_anexo=aviso_anexo,
+                aviso_anexo=None,
                 empresa=empresa,
                 personalizacao=personalizacao
             )
@@ -515,6 +516,17 @@ def canal_denunciar(slug):
                 "Não foi possível registrar a denúncia. "
                 "Revise os dados e tente novamente."
             )
+
+
+    return render_template(
+        "public/denunciar.html",
+        empresa_id=empresa_id,
+        empresa=empresa,
+        personalizacao=personalizacao,
+        unidades=unidades,
+        turnos=turnos,
+        erro=erro
+    )
 
 
 @public_bp.route(

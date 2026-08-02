@@ -1,0 +1,99 @@
+/*
+==========================================================
+FALAE Enterprise
+Componente: Loading
+Versão: 1.0.0
+==========================================================
+*/
+
+
+/* ========================================================
+   SPINNER
+======================================================== */
+
+.spinner {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.45rem;
+
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+
+    vertical-align: -0.15rem;
+
+    animation: falae-spin 0.7s linear infinite;
+}
+
+
+/* ========================================================
+   BOTÕES EM PROCESSAMENTO
+======================================================== */
+
+button.is-loading,
+.btn.is-loading,
+input[type="submit"].is-loading {
+    position: relative;
+    cursor: wait;
+    pointer-events: none;
+    opacity: 0.78;
+}
+
+button.is-loading .spinner,
+.btn.is-loading .spinner {
+    flex-shrink: 0;
+}
+
+
+/* ========================================================
+   ELEMENTOS DESABILITADOS
+======================================================== */
+
+button:disabled,
+.btn:disabled,
+input[type="submit"]:disabled {
+    cursor: not-allowed;
+    opacity: 0.68;
+}
+
+
+/* ========================================================
+   FORMULÁRIO EM PROCESSAMENTO
+======================================================== */
+
+form.is-submitting {
+    cursor: progress;
+}
+
+form.is-submitting input,
+form.is-submitting select,
+form.is-submitting textarea {
+    cursor: progress;
+}
+
+
+/* ========================================================
+   ACESSIBILIDADE
+======================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .spinner {
+        animation-duration: 1.5s;
+    }
+}
+
+
+/* ========================================================
+   ANIMAÇÃO
+======================================================== */
+
+@keyframes falae-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}

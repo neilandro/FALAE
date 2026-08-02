@@ -440,6 +440,11 @@
                         id="form-alterar-senha"
                         autocomplete="off"
                     >
+                        <input
+                                type="hidden"
+                                name="csrf_token"
+                                value="{{ csrf_token() }}"
+                        >
 
                         <div class="senha-campo">
 

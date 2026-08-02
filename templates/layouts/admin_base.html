@@ -3,58 +3,134 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}FALAE Enterprise{% endblock %}</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/core/variables.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/cards.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/buttons.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/tables.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/badges.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <meta
+        name="csrf-token"
+        content="{{ csrf_token() }}"
+    >
+
+    <title>
+        {% block title %}FALAE Enterprise{% endblock %}
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/core/variables.css') }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/base.css') }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/layout.css') }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/sidebar.css') }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/cards.css') }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/buttons.css') }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/tables.css') }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/badges.css') }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/dashboard.css') }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/loading.css') }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/toast.css') }}"
+    >
 
     {% block extra_css %}{% endblock %}
 
-    <!-- ========================================================
-     LUCIDE ICONS
-========================================================= -->
-<script src="https://unpkg.com/lucide@latest"></script>
+    <script
+        src="https://unpkg.com/lucide@latest"
+    ></script>
 
 </head>
+
 <body>
 
 <div class="app-layout">
+
     {% include "components/layout/sidebar.html" %}
 
     <main class="content">
 
         {% include "components/context_bar.html" %}
 
+        {% with mensagens = get_flashed_messages(with_categories=true) %}
+
+            {% if mensagens %}
+
+                <div class="flash-container">
+
+                    {% for categoria, mensagem in mensagens %}
+
+                        <div
+                            class="flash-message flash-{{ categoria }}"
+                        >
+                            {{ mensagem }}
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+        {% endwith %}
+
         {% block content %}{% endblock %}
 
     </main>
+
 </div>
+
+<script
+    src="{{ url_for('static', filename='js/modules/toast.js') }}"
+></script>
+
+<script
+    src="{{ url_for('static', filename='js/modules/masks.js') }}"
+></script>
+
+<script
+    src="{{ url_for('static', filename='js/modules/viacep.js') }}"
+></script>
+
+<script
+    src="{{ url_for('static', filename='js/falae.js') }}"
+></script>
 
 {% block extra_js %}{% endblock %}
 
-<!-- ========================================================
-     INICIALIZAÇÃO DOS ÍCONES LUCIDE
-========================================================= -->
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        if (typeof lucide !== "undefined") {
-            lucide.createIcons({
-                attrs: {
-                    "aria-hidden": "true",
-                    "focusable": "false"
-                }
-            });
-        } else {
-            console.error("Não foi possível carregar a biblioteca Lucide Icons.");
-        }
-    });
-</script>
 </body>
 </html>

@@ -3,16 +3,41 @@ from db import get_connection
 
 class EmpresaRepository:
 
+    LIMITE_PADRAO = 10
+    LIMITE_MAXIMO = 100
+
     @staticmethod
-    def listar_por_assessoria(
-        assessoria_id
-    ):
-        conn = get_connection()
-        cursor = conn.cursor(
-            dictionary=True
+    def _normalizar_limite(limite):
+        try:
+            limite = int(limite)
+        except (TypeError, ValueError):
+            limite = EmpresaRepository.LIMITE_PADRAO
+
+        return max(
+            1,
+            min(
+                limite,
+                EmpresaRepository.LIMITE_MAXIMO
+            )
         )
 
+    @staticmethod
+    def _fechar_recursos(cursor=None, conn=None):
+        if cursor is not None:
+            cursor.close()
+
+        if conn is not None:
+            conn.close()
+
+    @staticmethod
+    def listar_por_assessoria(assessoria_id):
+        conn = None
+        cursor = None
+
         try:
+            conn = get_connection()
+            cursor = conn.cursor(dictionary=True)
+
             cursor.execute(
                 """
                 SELECT
@@ -89,7 +114,7 @@ class EmpresaRepository:
                     e.ativa,
                     e.criado_em
 
-                ORDER BY e.nome
+                ORDER BY e.nome ASC
                 """,
                 (assessoria_id,)
             )
@@ -97,19 +122,20 @@ class EmpresaRepository:
             return cursor.fetchall()
 
         finally:
-            cursor.close()
-            conn.close()
+            EmpresaRepository._fechar_recursos(
+                cursor,
+                conn
+            )
 
     @staticmethod
-    def obter_resumo_dashboard_assessoria(
-        assessoria_id
-    ):
-        conn = get_connection()
-        cursor = conn.cursor(
-            dictionary=True
-        )
+    def obter_resumo_dashboard_assessoria(assessoria_id):
+        conn = None
+        cursor = None
 
         try:
+            conn = get_connection()
+            cursor = conn.cursor(dictionary=True)
+
             cursor.execute(
                 """
                 SELECT
@@ -185,32 +211,47 @@ class EmpresaRepository:
                 (assessoria_id,)
             )
 
-            resultado = cursor.fetchone()
+            resultado = cursor.fetchone() or {}
 
-            return resultado or {
-                "total_empresas": 0,
-                "total_denuncias": 0,
-                "total_usuarios": 0,
-                "total_investigadores": 0,
-                "denuncias_abertas": 0,
-                "denuncias_criticas": 0,
-                "denuncias_encerradas": 0
+            return {
+                "total_empresas": int(
+                    resultado.get("total_empresas") or 0
+                ),
+                "total_denuncias": int(
+                    resultado.get("total_denuncias") or 0
+                ),
+                "total_usuarios": int(
+                    resultado.get("total_usuarios") or 0
+                ),
+                "total_investigadores": int(
+                    resultado.get("total_investigadores") or 0
+                ),
+                "denuncias_abertas": int(
+                    resultado.get("denuncias_abertas") or 0
+                ),
+                "denuncias_criticas": int(
+                    resultado.get("denuncias_criticas") or 0
+                ),
+                "denuncias_encerradas": int(
+                    resultado.get("denuncias_encerradas") or 0
+                )
             }
 
         finally:
-            cursor.close()
-            conn.close()
+            EmpresaRepository._fechar_recursos(
+                cursor,
+                conn
+            )
 
     @staticmethod
-    def listar_investigadores_assessoria(
-        assessoria_id
-    ):
-        conn = get_connection()
-        cursor = conn.cursor(
-            dictionary=True
-        )
+    def listar_investigadores_assessoria(assessoria_id):
+        conn = None
+        cursor = None
 
         try:
+            conn = get_connection()
+            cursor = conn.cursor(dictionary=True)
+
             cursor.execute(
                 """
                 SELECT
@@ -226,11 +267,10 @@ class EmpresaRepository:
 
                     COUNT(
                         DISTINCT CASE
-                            WHEN d.responsavel_id = u.id
-                             AND d.status NOT IN (
+                            WHEN d.status NOT IN (
                                 'CONCLUIDA',
                                 'ARQUIVADA'
-                             )
+                            )
                             THEN d.id
                             ELSE NULL
                         END
@@ -238,8 +278,7 @@ class EmpresaRepository:
 
                     COUNT(
                         DISTINCT CASE
-                            WHEN d.responsavel_id = u.id
-                             AND d.criticidade = 'Alta'
+                            WHEN d.criticidade = 'Alta'
                              AND d.status NOT IN (
                                 'CONCLUIDA',
                                 'ARQUIVADA'
@@ -253,13 +292,13 @@ class EmpresaRepository:
 
                 INNER JOIN empresas e
                     ON e.id = u.empresa_id
+                   AND e.assessoria_id = %s
 
                 LEFT JOIN denuncias d
-                    ON d.empresa_id = e.id
+                    ON d.empresa_id = u.empresa_id
                    AND d.responsavel_id = u.id
 
-                WHERE e.assessoria_id = %s
-                  AND u.ativo = 1
+                WHERE u.ativo = 1
                   AND u.perfil IN (
                       'ADMIN_EMPRESA',
                       'GESTOR',
@@ -278,8 +317,8 @@ class EmpresaRepository:
                     e.nome
 
                 ORDER BY
-                    e.nome,
-                    u.nome
+                    e.nome ASC,
+                    u.nome ASC
                 """,
                 (assessoria_id,)
             )
@@ -287,45 +326,34 @@ class EmpresaRepository:
             return cursor.fetchall()
 
         finally:
-            cursor.close()
-            conn.close()
+            EmpresaRepository._fechar_recursos(
+                cursor,
+                conn
+            )
 
     @staticmethod
     def listar_denuncias_recentes_assessoria(
         assessoria_id,
         limite=10
     ):
-        conn = get_connection()
-        cursor = conn.cursor(
-            dictionary=True
-        )
+        conn = None
+        cursor = None
 
         try:
-            try:
-                limite = int(
-                    limite
-                )
+            conn = get_connection()
+            cursor = conn.cursor(dictionary=True)
 
-            except (
-                TypeError,
-                ValueError
-            ):
-                limite = 10
-
-            limite = max(
-                1,
-                min(
-                    limite,
-                    100
-                )
+            limite = EmpresaRepository._normalizar_limite(
+                limite
             )
 
             cursor.execute(
-                f"""
+                """
                 SELECT
                     d.id,
                     d.protocolo,
                     d.tipo,
+
                     COALESCE(
                         NULLIF(
                             TRIM(d.categoria),
@@ -337,6 +365,7 @@ class EmpresaRepository:
                         ),
                         'Não informada'
                     ) AS categoria,
+
                     COALESCE(
                         NULLIF(
                             TRIM(d.criticidade),
@@ -344,13 +373,16 @@ class EmpresaRepository:
                         ),
                         'Não informada'
                     ) AS criticidade,
+
                     d.status,
-                    d.etapa_atual,
+                    COALESCE(
+                        d.etapa_atual,
+                        'TRIAGEM'
+                    ) AS etapa_atual,
                     d.criado_em,
                     d.empresa_id,
 
                     e.nome AS empresa_nome,
-
                     u.nome AS unidade_nome,
 
                     COALESCE(
@@ -369,6 +401,7 @@ class EmpresaRepository:
 
                 INNER JOIN empresas e
                     ON e.id = d.empresa_id
+                   AND e.assessoria_id = %s
 
                 LEFT JOIN unidades u
                     ON u.id = d.unidade_id
@@ -376,6 +409,7 @@ class EmpresaRepository:
 
                 LEFT JOIN setores s
                     ON s.id = d.setor_id
+                   AND s.empresa_id = d.empresa_id
 
                 LEFT JOIN turnos t
                     ON t.id = d.turno_id
@@ -385,32 +419,36 @@ class EmpresaRepository:
                     ON responsavel.id = d.responsavel_id
                    AND responsavel.empresa_id = d.empresa_id
 
-                WHERE e.assessoria_id = %s
-
                 ORDER BY d.criado_em DESC
 
-                LIMIT {limite}
+                LIMIT %s
                 """,
-                (assessoria_id,)
+                (
+                    assessoria_id,
+                    limite
+                )
             )
 
             return cursor.fetchall()
 
         finally:
-            cursor.close()
-            conn.close()
+            EmpresaRepository._fechar_recursos(
+                cursor,
+                conn
+            )
 
     @staticmethod
     def buscar_por_id_assessoria(
         empresa_id,
         assessoria_id
     ):
-        conn = get_connection()
-        cursor = conn.cursor(
-            dictionary=True
-        )
+        conn = None
+        cursor = None
 
         try:
+            conn = get_connection()
+            cursor = conn.cursor(dictionary=True)
+
             cursor.execute(
                 """
                 SELECT
@@ -442,8 +480,160 @@ class EmpresaRepository:
             return cursor.fetchone()
 
         finally:
-            cursor.close()
-            conn.close()
+            EmpresaRepository._fechar_recursos(
+                cursor,
+                conn
+            )
+
+    @staticmethod
+    def buscar_por_slug(
+        slug,
+        ignorar_empresa_id=None
+    ):
+        conn = None
+        cursor = None
+
+        try:
+            conn = get_connection()
+            cursor = conn.cursor(dictionary=True)
+
+            if ignorar_empresa_id is None:
+                cursor.execute(
+                    """
+                    SELECT
+                        id,
+                        assessoria_id,
+                        nome,
+                        slug
+
+                    FROM empresas
+
+                    WHERE slug = %s
+
+                    LIMIT 1
+                    """,
+                    (slug,)
+                )
+
+            else:
+                cursor.execute(
+                    """
+                    SELECT
+                        id,
+                        assessoria_id,
+                        nome,
+                        slug
+
+                    FROM empresas
+
+                    WHERE slug = %s
+                      AND id <> %s
+
+                    LIMIT 1
+                    """,
+                    (
+                        slug,
+                        ignorar_empresa_id
+                    )
+                )
+
+            return cursor.fetchone()
+
+        finally:
+            EmpresaRepository._fechar_recursos(
+                cursor,
+                conn
+            )
+
+    @staticmethod
+    def buscar_por_cnpj(
+        assessoria_id,
+        cnpj,
+        ignorar_empresa_id=None
+    ):
+        conn = None
+        cursor = None
+
+        try:
+            conn = get_connection()
+            cursor = conn.cursor(dictionary=True)
+
+            if ignorar_empresa_id is None:
+                cursor.execute(
+                    """
+                    SELECT
+                        id,
+                        assessoria_id,
+                        nome,
+                        cnpj
+
+                    FROM empresas
+
+                    WHERE assessoria_id = %s
+                        AND cnpj = %s
+
+                    LIMIT 1
+                    """,
+                    (assessoria_id,
+                     cnpj)
+                )
+
+            else:
+                cursor.execute(
+                    """
+                    SELECT
+                        id,
+                        assessoria_id,
+                        nome,
+                        cnpj
+
+                    FROM empresas
+
+                    WHERE assessoria_id = %s
+                        AND cnpj = %s
+                        AND id <> %s
+
+                    LIMIT 1
+                    """,
+                    (
+                       assessoria_id,
+                       cnpj,
+                       ignorar_empresa_id
+                    )
+                )
+
+            return cursor.fetchone()
+
+        finally:
+            EmpresaRepository._fechar_recursos(
+                cursor,
+                conn
+            )
+
+    @staticmethod
+    def existe_slug(
+        slug,
+        ignorar_empresa_id=None
+    ):
+        return EmpresaRepository.buscar_por_slug(
+            slug,
+            ignorar_empresa_id
+        ) is not None
+
+    @staticmethod
+    def existe_cnpj(
+        assessoria_id,
+        cnpj,
+        ignorar_empresa_id=None
+    ):
+        return (
+            EmpresaRepository.buscar_por_cnpj(
+                assessoria_id,
+                cnpj,
+                ignorar_empresa_id
+            )
+            is not None
+        )
 
     @staticmethod
     def criar_para_assessoria(
@@ -454,10 +644,13 @@ class EmpresaRepository:
         plano,
         token_publico
     ):
-        conn = get_connection()
-        cursor = conn.cursor()
+        conn = None
+        cursor = None
 
         try:
+            conn = get_connection()
+            cursor = conn.cursor()
+
             cursor.execute(
                 """
                 INSERT INTO empresas (
@@ -496,12 +689,16 @@ class EmpresaRepository:
             return empresa_id
 
         except Exception:
-            conn.rollback()
+            if conn is not None:
+                conn.rollback()
+
             raise
 
         finally:
-            cursor.close()
-            conn.close()
+            EmpresaRepository._fechar_recursos(
+                cursor,
+                conn
+            )
 
     @staticmethod
     def atualizar_por_assessoria(
@@ -513,10 +710,13 @@ class EmpresaRepository:
         plano,
         ativa
     ):
-        conn = get_connection()
-        cursor = conn.cursor()
+        conn = None
+        cursor = None
 
         try:
+            conn = get_connection()
+            cursor = conn.cursor()
+
             cursor.execute(
                 """
                 UPDATE empresas
@@ -543,28 +743,33 @@ class EmpresaRepository:
                 )
             )
 
+            atualizado = cursor.rowcount > 0
+
             conn.commit()
 
-            return cursor.rowcount > 0
+            return atualizado
 
         except Exception:
-            conn.rollback()
+            if conn is not None:
+                conn.rollback()
+
             raise
 
         finally:
-            cursor.close()
-            conn.close()
+            EmpresaRepository._fechar_recursos(
+                cursor,
+                conn
+            )
 
     @staticmethod
-    def buscar_por_id_global(
-        empresa_id
-    ):
-        conn = get_connection()
-        cursor = conn.cursor(
-            dictionary=True
-        )
+    def buscar_por_id_super_admin(empresa_id):
+        conn = None
+        cursor = None
 
         try:
+            conn = get_connection()
+            cursor = conn.cursor(dictionary=True)
+
             cursor.execute(
                 """
                 SELECT
@@ -576,7 +781,9 @@ class EmpresaRepository:
                     logo,
                     plano,
                     ativa,
-                    token_publico
+                    token_publico,
+                    criado_em,
+                    atualizado_em
 
                 FROM empresas
 
@@ -590,5 +797,326 @@ class EmpresaRepository:
             return cursor.fetchone()
 
         finally:
-            cursor.close()
-            conn.close()
+            EmpresaRepository._fechar_recursos(
+                cursor,
+                conn
+            )
+
+    @staticmethod
+    def buscar_por_id_global(empresa_id):
+        """
+        Compatibilidade com chamadas existentes.
+
+        Este método não aplica escopo de assessoria e deve ser chamado
+        somente por fluxos previamente protegidos para SUPER_ADMIN.
+        """
+        return EmpresaRepository.buscar_por_id_super_admin(
+            empresa_id
+        )
+
+
+    @staticmethod
+    def listar_global():
+        conn = None
+        cursor = None
+
+        try:
+            conn = get_connection()
+            cursor = conn.cursor(dictionary=True)
+
+            cursor.execute(
+                """
+                SELECT
+                    e.id,
+                    e.assessoria_id,
+                    e.nome,
+                    e.slug,
+                    e.cnpj,
+                    e.logo,
+                    e.plano,
+                    e.ativa,
+                    e.cidade,
+                    e.estado,
+                    e.criado_em,
+                    e.atualizado_em,
+                    a.nome AS assessoria,
+                    COUNT(DISTINCT CASE WHEN u.ativo = 1 THEN u.id END) AS total_usuarios,
+                    COUNT(DISTINCT d.id) AS total_denuncias,
+                    COUNT(
+                        DISTINCT CASE
+                            WHEN d.criticidade = 'Alta'
+                             AND d.status NOT IN ('CONCLUIDA', 'ARQUIVADA')
+                            THEN d.id
+                        END
+                    ) AS total_criticas
+                FROM empresas e
+                LEFT JOIN assessorias a
+                    ON a.id = e.assessoria_id
+                LEFT JOIN usuarios u
+                    ON u.empresa_id = e.id
+                LEFT JOIN denuncias d
+                    ON d.empresa_id = e.id
+                GROUP BY
+                    e.id,
+                    e.assessoria_id,
+                    e.nome,
+                    e.slug,
+                    e.cnpj,
+                    e.logo,
+                    e.plano,
+                    e.ativa,
+                    e.cidade,
+                    e.estado,
+                    e.criado_em,
+                    e.atualizado_em,
+                    a.nome
+                ORDER BY e.nome ASC
+                """
+            )
+
+            return cursor.fetchall()
+
+        finally:
+            EmpresaRepository._fechar_recursos(cursor, conn)
+
+    @staticmethod
+    def listar_assessorias_ativas():
+        conn = None
+        cursor = None
+
+        try:
+            conn = get_connection()
+            cursor = conn.cursor(dictionary=True)
+
+            cursor.execute(
+                """
+                SELECT id, nome
+                FROM assessorias
+                WHERE ativa = 1
+                ORDER BY nome ASC
+                """
+            )
+
+            return cursor.fetchall()
+
+        finally:
+            EmpresaRepository._fechar_recursos(cursor, conn)
+
+    @staticmethod
+    def buscar_dados_completos_global(empresa_id):
+        conn = None
+        cursor = None
+
+        try:
+            conn = get_connection()
+            cursor = conn.cursor(dictionary=True)
+
+            cursor.execute(
+                """
+                SELECT
+                    e.*,
+                    a.nome AS assessoria
+                FROM empresas e
+                LEFT JOIN assessorias a
+                    ON a.id = e.assessoria_id
+                WHERE e.id = %s
+                LIMIT 1
+                """,
+                (empresa_id,)
+            )
+
+            return cursor.fetchone()
+
+        finally:
+            EmpresaRepository._fechar_recursos(cursor, conn)
+
+    @staticmethod
+    def criar_global(dados):
+        conn = None
+        cursor = None
+
+        try:
+            conn = get_connection()
+            cursor = conn.cursor()
+
+            cursor.execute(
+                """
+                INSERT INTO empresas (
+                    assessoria_id,
+                    nome,
+                    slug,
+                    cnpj,
+                    endereco,
+                    numero,
+                    complemento,
+                    bairro,
+                    cidade,
+                    estado,
+                    cep,
+                    contato_nome,
+                    contato_cargo,
+                    contato_email,
+                    contato_telefone,
+                    contato_whatsapp,
+                    plano,
+                    token_publico,
+                    ativa
+                )
+                VALUES (
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s,
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                )
+                """,
+                (
+                    dados.get("assessoria_id"),
+                    dados.get("nome"),
+                    dados.get("slug"),
+                    dados.get("cnpj"),
+                    dados.get("endereco"),
+                    dados.get("numero"),
+                    dados.get("complemento"),
+                    dados.get("bairro"),
+                    dados.get("cidade"),
+                    dados.get("estado"),
+                    dados.get("cep"),
+                    dados.get("contato_nome"),
+                    dados.get("contato_cargo"),
+                    dados.get("contato_email"),
+                    dados.get("contato_telefone"),
+                    dados.get("contato_whatsapp"),
+                    dados.get("plano"),
+                    dados.get("token_publico"),
+                    dados.get("ativa", 1)
+                )
+            )
+
+            empresa_id = cursor.lastrowid
+            conn.commit()
+            return empresa_id
+
+        except Exception:
+            if conn is not None:
+                conn.rollback()
+            raise
+
+        finally:
+            EmpresaRepository._fechar_recursos(cursor, conn)
+
+    @staticmethod
+    def atualizar_global(empresa_id, dados):
+        conn = None
+        cursor = None
+
+        try:
+            conn = get_connection()
+            cursor = conn.cursor()
+
+            cursor.execute(
+                """
+                UPDATE empresas
+                SET
+                    assessoria_id = %s,
+                    nome = %s,
+                    slug = %s,
+                    cnpj = %s,
+                    endereco = %s,
+                    numero = %s,
+                    complemento = %s,
+                    bairro = %s,
+                    cidade = %s,
+                    estado = %s,
+                    cep = %s,
+                    contato_nome = %s,
+                    contato_cargo = %s,
+                    contato_email = %s,
+                    contato_telefone = %s,
+                    contato_whatsapp = %s,
+                    plano = %s,
+                    ativa = %s,
+                    atualizado_em = NOW()
+                WHERE id = %s
+                """,
+                (
+                    dados.get("assessoria_id"),
+                    dados.get("nome"),
+                    dados.get("slug"),
+                    dados.get("cnpj"),
+                    dados.get("endereco"),
+                    dados.get("numero"),
+                    dados.get("complemento"),
+                    dados.get("bairro"),
+                    dados.get("cidade"),
+                    dados.get("estado"),
+                    dados.get("cep"),
+                    dados.get("contato_nome"),
+                    dados.get("contato_cargo"),
+                    dados.get("contato_email"),
+                    dados.get("contato_telefone"),
+                    dados.get("contato_whatsapp"),
+                    dados.get("plano"),
+                    dados.get("ativa", 1),
+                    empresa_id
+                )
+            )
+
+            atualizado = cursor.rowcount > 0
+            conn.commit()
+            return atualizado
+
+        except Exception:
+            if conn is not None:
+                conn.rollback()
+            raise
+
+        finally:
+            EmpresaRepository._fechar_recursos(cursor, conn)
+
+    @staticmethod
+    def obter_totais_global(empresa_id):
+        conn = None
+        cursor = None
+
+        try:
+            conn = get_connection()
+            cursor = conn.cursor(dictionary=True)
+
+            cursor.execute(
+                """
+                SELECT
+                    (
+                        SELECT COUNT(*)
+                        FROM usuarios
+                        WHERE empresa_id = %s
+                          AND ativo = 1
+                          AND perfil <> 'SUPER_ADMIN'
+                    ) AS total_usuarios,
+                    (
+                        SELECT COUNT(*)
+                        FROM unidades
+                        WHERE empresa_id = %s
+                          AND ativa = 1
+                    ) AS total_unidades,
+                    (
+                        SELECT COUNT(*)
+                        FROM setores
+                        WHERE empresa_id = %s
+                          AND ativo = 1
+                    ) AS total_setores,
+                    (
+                        SELECT COUNT(*)
+                        FROM denuncias
+                        WHERE empresa_id = %s
+                    ) AS total_denuncias
+                """,
+                (empresa_id, empresa_id, empresa_id, empresa_id)
+            )
+
+            return cursor.fetchone() or {
+                "total_usuarios": 0,
+                "total_unidades": 0,
+                "total_setores": 0,
+                "total_denuncias": 0
+            }
+
+        finally:
+            EmpresaRepository._fechar_recursos(cursor, conn)

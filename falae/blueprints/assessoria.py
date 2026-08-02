@@ -1,5 +1,6 @@
 from flask import (
     Blueprint,
+    current_app,
     redirect,
     render_template,
     request,
@@ -31,23 +32,13 @@ def dashboard():
     """
     Painel consolidado da assessoria.
 
-    Deve exibir exclusivamente dados das empresas vinculadas
-    à assessoria do usuário autenticado. 
+    Exibe exclusivamente dados das empresas vinculadas
+    à assessoria do usuário autenticado.
     """
-
-    print(
-        "DEBUG ASSESSORIA_ID:",
-        session.get("assessoria_id")
-    )
 
     resultado = (
         EmpresaService
         .obter_dashboard_assessoria()
-    )
-
-    print(
-        "DEBUG DASHBOARD ASSESSORIA:",
-        resultado
     )
 
     return render_template(
@@ -143,6 +134,10 @@ def empresa_nova():
             erro = str(exc)
 
         except Exception:
+            current_app.logger.exception(
+                "Erro ao cadastrar empresa pela assessoria."
+            )
+
             erro = (
                 "Não foi possível cadastrar a empresa."
             )
@@ -208,9 +203,21 @@ def empresa_editar(
             erro = str(exc)
 
         except Exception:
+            current_app.logger.exception(
+                "Erro ao atualizar empresa %s pela assessoria.",
+                empresa_id
+            )
+
             erro = (
                 "Não foi possível atualizar a empresa."
             )
+
+        empresa = (
+            EmpresaService
+            .obter_empresa_assessoria(
+                empresa_id
+            )
+        )
 
     return render_template(
         "assessoria/empresa_editar.html",
@@ -229,42 +236,58 @@ def empresa_editar(
 def entrar_empresa(
     empresa_id
 ):
-    empresa = (
-        EmpresaService
-        .obter_empresa_global(
-            empresa_id
-        )
-    )
-
-    if not empresa:
-        return (
-            "Empresa não encontrada."
-        ), 404
-
     perfil = session.get(
         "perfil"
     )
 
-    if perfil == "ADM_ASSESSORIA":
-        assessoria_usuario = session.get(
-            "assessoria_id"
+    if perfil == "SUPER_ADMIN":
+        empresa = (
+            EmpresaService
+            .obter_empresa_global(
+                empresa_id
+            )
         )
 
-        assessoria_empresa = empresa.get(
-            "assessoria_id"
+    elif perfil == "ADM_ASSESSORIA":
+        empresa = (
+            EmpresaService
+            .obter_empresa_assessoria(
+                empresa_id
+            )
         )
 
-        if (
-            not assessoria_usuario
-            or assessoria_empresa
-            != assessoria_usuario
-        ):
-            return (
-                "Acesso não autorizado."
-            ), 403
+    else:
+        return (
+            "Acesso não autorizado."
+        ), 403
+
+    if not empresa:
+        return (
+            "Empresa não encontrada ou acesso "
+            "não autorizado."
+        ), 404
+
+    if not empresa.get(
+        "ativa"
+    ):
+        return (
+            "Não é possível acessar uma empresa inativa."
+        ), 403
 
     session["empresa_ativa"] = empresa["id"]
     session["empresa_ativa_nome"] = empresa["nome"]
+
+    if empresa.get(
+        "slug"
+    ):
+        session["empresa_ativa_slug"] = empresa["slug"]
+    else:
+        session.pop(
+            "empresa_ativa_slug",
+            None
+        )
+
+    session.modified = True
 
     return redirect(
         url_for(
@@ -290,6 +313,13 @@ def sair_empresa():
         "empresa_ativa_nome",
         None
     )
+
+    session.pop(
+        "empresa_ativa_slug",
+        None
+    )
+
+    session.modified = True
 
     if session.get(
         "perfil"

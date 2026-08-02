@@ -590,6 +590,7 @@
         animation-iteration-count: 1 !important;
     }
 
+
 }
 
 .sidebar-logout-form {
@@ -609,4 +610,74 @@
 .sidebar-exit-button {
     display: flex;
     align-items: center;
+}
+
+/* =========================================================
+   AÇÕES DE SAÍDA DA SIDEBAR
+========================================================= */
+
+.sidebar-logout-form {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.sidebar-exit-button {
+    width: 100%;
+    border: 0;
+    outline: 0;
+    font: inherit;
+    text-align: left;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+}
+
+.sidebar-exit,
+.sidebar-exit-button {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 44px;
+    padding: 11px 14px;
+    border-radius: 9px;
+    color: #cbd5e1;
+    background: transparent;
+    text-decoration: none;
+    transition:
+        color 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.sidebar-exit:hover,
+.sidebar-exit-button:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-exit:focus-visible,
+.sidebar-exit-button:focus-visible {
+    outline: 2px solid rgba(147, 197, 253, 0.85);
+    outline-offset: 2px;
+}
+
+.sidebar-exit .menu-icon,
+.sidebar-exit-button .menu-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+}
+
+.sidebar-exit .menu-icon svg,
+.sidebar-exit-button .menu-icon svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2;
+}
+
+.sidebar-exit .menu-text,
+.sidebar-exit-button .menu-text {
+    color: inherit;
 }

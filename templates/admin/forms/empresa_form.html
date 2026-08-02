@@ -10,146 +10,623 @@
 
 {% block content %}
 
-<div class="page-header">
-    {% if modo == "novo" %}
-        <h1>🏢 Nova Empresa</h1>
-        <p>Cadastre uma empresa na plataforma.</p>
-    {% else %}
-        <h1>🏢 Editar Empresa</h1>
-        <p>Atualize os dados cadastrais da empresa.</p>
-    {% endif %}
-</div>
+<div class="empresa-form-page">
 
-<div class="card">
-    <form method="POST" class="form-card">
+    <header class="empresa-form-header">
+        <div>
+            <span class="empresa-form-eyebrow">Cadastro administrativo</span>
 
-        <h2>Dados principais</h2>
-
-        <div class="form-grid">
-            <div class="form-group">
-                <label>Nome *</label>
-                <input type="text" name="nome" required value="{{ empresa.nome if empresa else '' }}">
-            </div>
-
-            <div class="form-group">
-                <label>CNPJ</label>
-                <input type="text" name="cnpj" value="{{ empresa.cnpj if empresa else '' }}">
-            </div>
-
-            <div class="form-group">
-                <label>Plano</label>
-                <select name="plano">
-                    {% for plano in ["BASICO", "PROFISSIONAL", "ENTERPRISE"] %}
-                        <option value="{{ plano }}" {% if empresa and empresa.plano == plano %}selected{% endif %}>
-                            {{ plano }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Assessoria</label>
-                <select name="assessoria_id">
-                    <option value="">Nenhuma</option>
-                    {% for assessoria in assessorias %}
-                        <option value="{{ assessoria.id }}"
-                            {% if empresa and empresa.assessoria_id == assessoria.id %}selected{% endif %}>
-                            {{ assessoria.nome }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            {% if modo == "editar" %}
-                <div class="form-group">
-                    <label>Status</label>
-                    <select name="ativa">
-                        <option value="1" {% if empresa and empresa.ativa %}selected{% endif %}>Ativa</option>
-                        <option value="0" {% if empresa and not empresa.ativa %}selected{% endif %}>Inativa</option>
-                    </select>
-                </div>
+            {% if modo == "novo" %}
+                <h1>🏢 Nova Empresa</h1>
+                <p>Cadastre uma nova empresa e vincule-a à assessoria responsável.</p>
+            {% else %}
+                <h1>🏢 Editar Empresa</h1>
+                <p>Atualize os dados cadastrais, o plano e o status da empresa.</p>
             {% endif %}
         </div>
 
-        <h2>Endereço</h2>
+        <a
+            href="{{ url_for('admin.empresas') }}"
+            class="btn-empresa btn-empresa-secundario"
+        >
+            <span aria-hidden="true">←</span>
+            Voltar para empresas
+        </a>
+    </header>
 
-        <div class="form-grid">
-            <div class="form-group">
-                <label>CEP</label>
-                <input type="text" name="cep" value="{{ empresa.cep if empresa else '' }}">
+    <form method="POST" class="empresa-form" novalidate>
+
+        <section class="empresa-form-card">
+            <div class="empresa-form-card-header">
+                <div class="empresa-form-card-icon" aria-hidden="true">🏢</div>
+                <div>
+                    <h2>Dados da empresa</h2>
+                    <p>Informações principais utilizadas na identificação e gestão da empresa.</p>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label>Endereço</label>
-                <input type="text" name="endereco" value="{{ empresa.endereco if empresa else '' }}">
+            <div class="empresa-form-grid empresa-form-grid-2">
+                <div class="empresa-form-group empresa-form-span-2">
+                    <label for="nome">
+                        Nome da empresa
+                        <span class="campo-obrigatorio" aria-label="obrigatório">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="nome"
+                        name="nome"
+                        maxlength="150"
+                        autocomplete="organization"
+                        required
+                        value="{{ empresa.nome if empresa else '' }}"
+                        placeholder="Informe a razão social ou nome de identificação"
+                    >
+                </div>
+
+                <div class="empresa-form-group">
+                    <label for="cnpj">
+                        CNPJ
+                        <span class="campo-obrigatorio" aria-label="obrigatório">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="cnpj"
+                        name="cnpj"
+                        data-mask="cnpj"
+                        maxlength="18"
+                        inputmode="numeric"
+                        autocomplete="off"
+                        required
+                        value="{{ empresa.cnpj if empresa else '' }}"
+                        placeholder="00.000.000/0000-00"
+                    >
+                    <small>O CNPJ deve ser único dentro da assessoria selecionada.</small>
+                </div>
+
+                <div class="empresa-form-group">
+                    <label for="assessoria_id">Assessoria responsável</label>
+                    <select id="assessoria_id" name="assessoria_id">
+                        <option value="">Nenhuma assessoria</option>
+
+                        {% for assessoria in assessorias %}
+                            <option
+                                value="{{ assessoria.id }}"
+                                {% if empresa and empresa.assessoria_id|string == assessoria.id|string %}selected{% endif %}
+                            >
+                                {{ assessoria.nome }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="empresa-form-group">
+                    <label for="plano">
+                        Plano
+                        <span class="campo-obrigatorio" aria-label="obrigatório">*</span>
+                    </label>
+                    <select id="plano" name="plano" required>
+                        {% for plano in ["BASICO", "PROFISSIONAL", "ENTERPRISE"] %}
+                            <option
+                                value="{{ plano }}"
+                                {% if empresa and empresa.plano == plano %}selected{% endif %}
+                            >
+                                {% if plano == "BASICO" %}
+                                    Básico
+                                {% elif plano == "PROFISSIONAL" %}
+                                    Profissional
+                                {% else %}
+                                    Enterprise
+                                {% endif %}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                {% if modo == "editar" %}
+                    <div class="empresa-form-group">
+                        <label for="ativa">Status</label>
+                        <select id="ativa" name="ativa">
+                            <option
+                                value="1"
+                                {% if empresa and empresa.ativa|string == '1' %}selected{% endif %}
+                            >
+                                Ativa
+                            </option>
+                            <option
+                                value="0"
+                                {% if empresa and empresa.ativa|string == '0' %}selected{% endif %}
+                            >
+                                Inativa
+                            </option>
+                        </select>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <section class="empresa-form-card">
+            <div class="empresa-form-card-header">
+                <div class="empresa-form-card-icon" aria-hidden="true">📍</div>
+                <div>
+                    <h2>Endereço</h2>
+                    <p>Dados utilizados para identificação territorial e contato institucional.</p>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label>Número</label>
-                <input type="text" name="numero" value="{{ empresa.numero if empresa else '' }}">
+            <div class="empresa-form-grid empresa-form-grid-12">
+                <div class="empresa-form-group empresa-col-3">
+                    <label for="cep">CEP</label>
+                    <input
+                        type="text"
+                        id="cep"
+                        name="cep"
+                        data-mask="cep"
+                        maxlength="9"
+                        inputmode="numeric"
+                        autocomplete="postal-code"
+                        value="{{ empresa.cep if empresa else '' }}"
+                        placeholder="00000-000"
+                    >
+                </div>
+
+                <div class="empresa-form-group empresa-col-7">
+                    <label for="endereco">Endereço</label>
+                    <input
+                        type="text"
+                        id="endereco"
+                        name="endereco"
+                        maxlength="255"
+                        autocomplete="street-address"
+                        value="{{ empresa.endereco if empresa else '' }}"
+                        placeholder="Rua, avenida ou logradouro"
+                    >
+                </div>
+
+                <div class="empresa-form-group empresa-col-2">
+                    <label for="numero">Número</label>
+                    <input
+                        type="text"
+                        id="numero"
+                        name="numero"
+                        maxlength="30"
+                        value="{{ empresa.numero if empresa else '' }}"
+                        placeholder="Nº"
+                    >
+                </div>
+
+                <div class="empresa-form-group empresa-col-4">
+                    <label for="complemento">Complemento</label>
+                    <input
+                        type="text"
+                        id="complemento"
+                        name="complemento"
+                        maxlength="120"
+                        value="{{ empresa.complemento if empresa else '' }}"
+                        placeholder="Sala, bloco, andar..."
+                    >
+                </div>
+
+                <div class="empresa-form-group empresa-col-4">
+                    <label for="bairro">Bairro</label>
+                    <input
+                        type="text"
+                        id="bairro"
+                        name="bairro"
+                        maxlength="120"
+                        value="{{ empresa.bairro if empresa else '' }}"
+                        placeholder="Informe o bairro"
+                    >
+                </div>
+
+                <div class="empresa-form-group empresa-col-3">
+                    <label for="cidade">Cidade</label>
+                    <input
+                        type="text"
+                        id="cidade"
+                        name="cidade"
+                        maxlength="120"
+                        autocomplete="address-level2"
+                        value="{{ empresa.cidade if empresa else '' }}"
+                        placeholder="Informe a cidade"
+                    >
+                </div>
+
+                <div class="empresa-form-group empresa-col-1">
+                    <label for="estado">UF</label>
+                    <input
+                        type="text"
+                        id="estado"
+                        name="estado"
+                        data-mask="uf"
+                        maxlength="2"
+                        autocomplete="address-level1"
+                        value="{{ empresa.estado if empresa else '' }}"
+                        placeholder="UF"
+                    >
+                </div>
+            </div>
+        </section>
+
+        <section class="empresa-form-card">
+            <div class="empresa-form-card-header">
+                <div class="empresa-form-card-icon" aria-hidden="true">👤</div>
+                <div>
+                    <h2>Contato principal</h2>
+                    <p>Dados da pessoa responsável pelo relacionamento com a plataforma.</p>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label>Complemento</label>
-                <input type="text" name="complemento" value="{{ empresa.complemento if empresa else '' }}">
+            <div class="empresa-form-grid empresa-form-grid-2">
+                <div class="empresa-form-group">
+                    <label for="contato_nome">Nome do contato</label>
+                    <input
+                        type="text"
+                        id="contato_nome"
+                        name="contato_nome"
+                        maxlength="150"
+                        autocomplete="name"
+                        value="{{ empresa.contato_nome if empresa else '' }}"
+                        placeholder="Nome completo"
+                    >
+                </div>
+
+                <div class="empresa-form-group">
+                    <label for="contato_cargo">Cargo</label>
+                    <input
+                        type="text"
+                        id="contato_cargo"
+                        name="contato_cargo"
+                        maxlength="120"
+                        autocomplete="organization-title"
+                        value="{{ empresa.contato_cargo if empresa else '' }}"
+                        placeholder="Cargo ou função"
+                    >
+                </div>
+
+                <div class="empresa-form-group empresa-form-span-2">
+                    <label for="contato_email">E-mail</label>
+                    <input
+                        type="email"
+                        id="contato_email"
+                        name="contato_email"
+                        maxlength="150"
+                        autocomplete="email"
+                        value="{{ empresa.contato_email if empresa else '' }}"
+                        placeholder="contato@empresa.com.br"
+                    >
+                </div>
+
+                <div class="empresa-form-group">
+                    <label for="contato_telefone">Telefone</label>
+                    <input
+                        type="text"
+                        id="contato_telefone"
+                        name="contato_telefone"
+                        maxlength="30"
+                        inputmode="tel"
+                        autocomplete="tel"
+                        value="{{ empresa.contato_telefone if empresa else '' }}"
+                        placeholder="(00) 0000-0000"
+                    >
+                </div>
+
+                <div class="empresa-form-group">
+                    <label for="contato_whatsapp">WhatsApp</label>
+                    <input
+                        type="text"
+                        id="contato_whatsapp"
+                        name="contato_whatsapp"
+                        maxlength="30"
+                        inputmode="tel"
+                        value="{{ empresa.contato_whatsapp if empresa else '' }}"
+                        placeholder="(00) 00000-0000"
+                    >
+                </div>
             </div>
+        </section>
 
-            <div class="form-group">
-                <label>Bairro</label>
-                <input type="text" name="bairro" value="{{ empresa.bairro if empresa else '' }}">
-            </div>
-
-            <div class="form-group">
-                <label>Cidade</label>
-                <input type="text" name="cidade" value="{{ empresa.cidade if empresa else '' }}">
-            </div>
-
-            <div class="form-group">
-                <label>Estado</label>
-                <input type="text" name="estado" maxlength="2" value="{{ empresa.estado if empresa else '' }}">
-            </div>
-        </div>
-
-        <h2>Contato Principal</h2>
-
-        <div class="form-grid">
-            <div class="form-group">
-                <label>Nome do contato</label>
-                <input type="text" name="contato_nome" value="{{ empresa.contato_nome if empresa else '' }}">
-            </div>
-
-            <div class="form-group">
-                <label>Cargo</label>
-                <input type="text" name="contato_cargo" value="{{ empresa.contato_cargo if empresa else '' }}">
-            </div>
-
-            <div class="form-group">
-                <label>E-mail</label>
-                <input type="email" name="contato_email" value="{{ empresa.contato_email if empresa else '' }}">
-            </div>
-
-            <div class="form-group">
-                <label>Telefone</label>
-                <input type="text" name="contato_telefone" value="{{ empresa.contato_telefone if empresa else '' }}">
-            </div>
-
-            <div class="form-group">
-                <label>WhatsApp</label>
-                <input type="text" name="contato_whatsapp" value="{{ empresa.contato_whatsapp if empresa else '' }}">
-            </div>
-        </div>
-
-        <div class="form-actions">
-            <button type="submit" class="btn">
-                💾 Salvar Empresa
-            </button>
-
-            <a href="/admin/empresas" class="btn-secundario">
-                ← Voltar
+        <div class="empresa-form-actions">
+            <a
+                href="{{ url_for('admin.empresas') }}"
+                class="btn-empresa btn-empresa-secundario"
+            >
+                <span aria-hidden="true">←</span>
+                Cancelar
             </a>
+
+            <button
+                type="submit"
+                class="btn-empresa btn-empresa-primario"
+                id="btn-salvar-empresa"
+            >
+                <span aria-hidden="true">💾</span>
+                {% if modo == "novo" %}
+                    Salvar empresa
+                {% else %}
+                    Salvar alterações
+                {% endif %}
+            </button>
         </div>
 
     </form>
 </div>
+
+<style>
+    .empresa-form-page {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        width: 100%;
+    }
+
+    .empresa-form-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        padding: 24px 28px;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 16px;
+        background: var(--card-bg, #ffffff);
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    }
+
+    .empresa-form-eyebrow {
+        display: inline-block;
+        margin-bottom: 6px;
+        color: var(--primary-color, #2563eb);
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .empresa-form-header h1 {
+        margin: 0;
+        color: var(--text-primary, #111827);
+        font-size: clamp(1.55rem, 2vw, 2rem);
+        line-height: 1.2;
+    }
+
+    .empresa-form-header p {
+        margin: 8px 0 0;
+        color: var(--text-secondary, #6b7280);
+        line-height: 1.55;
+    }
+
+    .empresa-form {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+    }
+
+    .empresa-form-card {
+        overflow: hidden;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 16px;
+        background: var(--card-bg, #ffffff);
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+    }
+
+    .empresa-form-card-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--border-color, #e5e7eb);
+        background: var(--section-bg, #f8fafc);
+    }
+
+    .empresa-form-card-icon {
+        display: grid;
+        flex: 0 0 44px;
+        width: 44px;
+        height: 44px;
+        place-items: center;
+        border-radius: 12px;
+        background: var(--primary-soft, #eaf2ff);
+        font-size: 1.2rem;
+    }
+
+    .empresa-form-card-header h2 {
+        margin: 0;
+        color: var(--text-primary, #111827);
+        font-size: 1.05rem;
+    }
+
+    .empresa-form-card-header p {
+        margin: 4px 0 0;
+        color: var(--text-secondary, #6b7280);
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+
+    .empresa-form-grid {
+        display: grid;
+        gap: 20px;
+        padding: 24px;
+    }
+
+    .empresa-form-grid-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .empresa-form-grid-12 {
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+
+    .empresa-form-span-2 {
+        grid-column: span 2;
+    }
+
+    .empresa-col-1 { grid-column: span 1; }
+    .empresa-col-2 { grid-column: span 2; }
+    .empresa-col-3 { grid-column: span 3; }
+    .empresa-col-4 { grid-column: span 4; }
+    .empresa-col-7 { grid-column: span 7; }
+
+    .empresa-form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        min-width: 0;
+    }
+
+    .empresa-form-group label {
+        color: var(--text-primary, #374151);
+        font-size: 0.88rem;
+        font-weight: 700;
+    }
+
+    .campo-obrigatorio {
+        color: #dc2626;
+    }
+
+    .empresa-form-group input,
+    .empresa-form-group select {
+        width: 100%;
+        min-height: 44px;
+        padding: 10px 12px;
+        border: 1px solid var(--input-border, #d1d5db);
+        border-radius: 10px;
+        outline: none;
+        background: var(--input-bg, #ffffff);
+        color: var(--text-primary, #111827);
+        font: inherit;
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease,
+            background-color 0.2s ease;
+    }
+
+    .empresa-form-group input::placeholder {
+        color: #9ca3af;
+    }
+
+    .empresa-form-group input:focus,
+    .empresa-form-group select:focus {
+        border-color: var(--primary-color, #2563eb);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    .empresa-form-group small {
+        color: var(--text-secondary, #6b7280);
+        font-size: 0.78rem;
+        line-height: 1.4;
+    }
+
+    .empresa-form-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 12px;
+        padding: 20px 24px;
+        border: 1px solid var(--border-color, #e5e7eb);
+        border-radius: 16px;
+        background: var(--card-bg, #ffffff);
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+    }
+
+    .btn-empresa {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 42px;
+        padding: 10px 16px;
+        border: 1px solid transparent;
+        border-radius: 10px;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 750;
+        line-height: 1;
+        transition:
+            transform 0.15s ease,
+            box-shadow 0.2s ease,
+            background-color 0.2s ease,
+            border-color 0.2s ease;
+    }
+
+    .btn-empresa:hover {
+        transform: translateY(-1px);
+        text-decoration: none;
+    }
+
+    .btn-empresa-primario {
+        border-color: var(--primary-color, #2563eb);
+        background: var(--primary-color, #2563eb);
+        color: #ffffff;
+        box-shadow: 0 8px 16px rgba(37, 99, 235, 0.2);
+    }
+
+    .btn-empresa-primario:hover {
+        background: var(--primary-hover, #1d4ed8);
+        border-color: var(--primary-hover, #1d4ed8);
+    }
+
+    .btn-empresa-secundario {
+        border-color: var(--border-color, #d1d5db);
+        background: var(--card-bg, #ffffff);
+        color: var(--text-primary, #374151);
+    }
+
+    .btn-empresa-secundario:hover {
+        border-color: var(--primary-color, #2563eb);
+        color: var(--primary-color, #2563eb);
+    }
+
+    @media (max-width: 900px) {
+        .empresa-form-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .empresa-form-grid-12 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .empresa-col-1,
+        .empresa-col-2,
+        .empresa-col-3,
+        .empresa-col-4,
+        .empresa-col-7 {
+            grid-column: span 1;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .empresa-form-header,
+        .empresa-form-grid,
+        .empresa-form-card-header,
+        .empresa-form-actions {
+            padding-left: 18px;
+            padding-right: 18px;
+        }
+
+        .empresa-form-grid-2,
+        .empresa-form-grid-12 {
+            grid-template-columns: 1fr;
+        }
+
+        .empresa-form-span-2,
+        .empresa-col-1,
+        .empresa-col-2,
+        .empresa-col-3,
+        .empresa-col-4,
+        .empresa-col-7 {
+            grid-column: span 1;
+        }
+
+        .empresa-form-actions {
+            align-items: stretch;
+            flex-direction: column-reverse;
+        }
+
+        .btn-empresa {
+            width: 100%;
+        }
+    }
+</style>
 
 {% endblock %}

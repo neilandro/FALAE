@@ -148,11 +148,17 @@ class SetorService:
                     )
                 }
 
-            repo.atualizar(
+            atualizado = repo.atualizar(
                 setor_id=setor_id,
                 empresa_id=empresa_id,
                 dados=dados
             )
+
+            if not atualizado:
+                return {
+                    "sucesso": False,
+                    "mensagem": "Nenhuma alteração foi realizada."
+                }
 
             return {
                 "sucesso": True,

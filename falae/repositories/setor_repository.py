@@ -4,11 +4,20 @@ from db import get_connection
 class SetorRepository:
 
     def __init__(self):
-        self.conn = get_connection()
-        self.cursor = self.conn.cursor(dictionary=True)
+        self.conn = None
+        self.cursor = None
+
+        try:
+            self.conn = get_connection()
+            self.cursor = self.conn.cursor(dictionary=True)
+
+        except Exception:
+            self.close()
+            raise
 
     def listar_por_empresa(self, empresa_id):
-        self.cursor.execute("""
+        self.cursor.execute(
+            """
             SELECT
                 s.id,
                 s.empresa_id,
@@ -26,12 +35,15 @@ class SetorRepository:
             ORDER BY
                 u.nome,
                 s.nome
-        """, (empresa_id,))
+            """,
+            (empresa_id,)
+        )
 
         return self.cursor.fetchall()
 
     def obter_por_id(self, setor_id, empresa_id):
-        self.cursor.execute("""
+        self.cursor.execute(
+            """
             SELECT
                 id,
                 empresa_id,
@@ -44,15 +56,18 @@ class SetorRepository:
             WHERE id = %s
               AND empresa_id = %s
             LIMIT 1
-        """, (
-            setor_id,
-            empresa_id
-        ))
+            """,
+            (
+                setor_id,
+                empresa_id
+            )
+        )
 
         return self.cursor.fetchone()
 
     def listar_unidades_ativas(self, empresa_id):
-        self.cursor.execute("""
+        self.cursor.execute(
+            """
             SELECT
                 id,
                 nome
@@ -60,53 +75,73 @@ class SetorRepository:
             WHERE empresa_id = %s
               AND ativa = 1
             ORDER BY nome
-        """, (empresa_id,))
+            """,
+            (empresa_id,)
+        )
 
         return self.cursor.fetchall()
 
     def criar(self, empresa_id, dados):
-        self.cursor.execute("""
-            INSERT INTO setores (
-                empresa_id,
-                unidade_id,
-                nome,
-                descricao,
-                ativo
+        try:
+            self.cursor.execute(
+                """
+                INSERT INTO setores (
+                    empresa_id,
+                    unidade_id,
+                    nome,
+                    descricao,
+                    ativo
+                )
+                VALUES (%s, %s, %s, %s, 1)
+                """,
+                (
+                    empresa_id,
+                    dados.get("unidade_id"),
+                    dados.get("nome"),
+                    dados.get("descricao")
+                )
             )
-            VALUES (%s, %s, %s, %s, 1)
-        """, (
-            empresa_id,
-            dados.get("unidade_id"),
-            dados.get("nome"),
-            dados.get("descricao")
-        ))
 
-        self.conn.commit()
+            setor_id = self.cursor.lastrowid
+            self.conn.commit()
 
-        return self.cursor.lastrowid
+            return setor_id
+
+        except Exception:
+            self.conn.rollback()
+            raise
 
     def atualizar(self, setor_id, empresa_id, dados):
-        self.cursor.execute("""
-            UPDATE setores
-            SET
-                unidade_id = %s,
-                nome = %s,
-                descricao = %s,
-                ativo = %s
-            WHERE id = %s
-              AND empresa_id = %s
-        """, (
-            dados.get("unidade_id"),
-            dados.get("nome"),
-            dados.get("descricao"),
-            dados.get("ativo"),
-            setor_id,
-            empresa_id
-        ))
+        try:
+            self.cursor.execute(
+                """
+                UPDATE setores
+                SET
+                    unidade_id = %s,
+                    nome = %s,
+                    descricao = %s,
+                    ativo = %s
+                WHERE id = %s
+                  AND empresa_id = %s
+                """,
+                (
+                    dados.get("unidade_id"),
+                    dados.get("nome"),
+                    dados.get("descricao"),
+                    dados.get("ativo"),
+                    setor_id,
+                    empresa_id
+                )
+            )
 
-        self.conn.commit()
+            atualizado = self.cursor.rowcount > 0
+            self.conn.commit()
 
-        return self.cursor.rowcount
+            return atualizado
+
+        except Exception:
+            self.conn.rollback()
+            raise
 
     def existe_nome(
         self,
@@ -147,20 +182,38 @@ class SetorRepository:
         return self.cursor.fetchone()
 
     def unidade_pertence_empresa(self, unidade_id, empresa_id):
-        self.cursor.execute("""
+        self.cursor.execute(
+            """
             SELECT id
             FROM unidades
             WHERE id = %s
               AND empresa_id = %s
               AND ativa = 1
             LIMIT 1
-        """, (
-            unidade_id,
-            empresa_id
-        ))
+            """,
+            (
+                unidade_id,
+                empresa_id
+            )
+        )
 
         return self.cursor.fetchone()
 
     def close(self):
-        self.cursor.close()
-        self.conn.close()
+        cursor = getattr(self, "cursor", None)
+        conn = getattr(self, "conn", None)
+
+        self.cursor = None
+        self.conn = None
+
+        if cursor is not None:
+            try:
+                cursor.close()
+            except Exception:
+                pass
+
+        if conn is not None:
+            try:
+                conn.close()
+            except Exception:
+                pass

@@ -7,7 +7,6 @@ from flask import (
     url_for,
 )
 
-from db import get_connection
 from extensions import bcrypt
 from falae.repositories.usuario_repository import (
     UsuarioRepository,
@@ -46,45 +45,46 @@ class LoginService:
                 ),
             }
 
-        usuario = (
-            LoginService
-            ._buscar_usuario_por_email(
-                email_normalizado
-            )
-        )
-
-        if not usuario:
-            current_app.logger.warning(
-                (
-                    "AUTENTICACAO_USUARIO_NAO_LOCALIZADO | "
-                    "REQUEST=%s | "
-                    "IP=%s"
-                ),
-                getattr(
-                    g,
-                    "request_id",
-                    None,
-                ),
-                LoginService._obter_ip_usuario(),
-            )
-
-            return {
-                "sucesso": False,
-                "mensagem": (
-                    LoginService
-                    .MENSAGEM_CREDENCIAIS_INVALIDAS
-                ),
-            }
-
-        usuario_id = usuario["id"]
-        bloqueado_ate = usuario.get(
-            "bloqueado_ate"
-        )
-        agora = datetime.now()
-
         repo = UsuarioRepository()
 
         try:
+            usuario = (
+                repo.buscar_por_email_login(
+                    email_normalizado
+                )
+            )
+
+            if not usuario:
+                current_app.logger.warning(
+                    (
+                        "AUTENTICACAO_USUARIO_NAO_LOCALIZADO | "
+                        "REQUEST=%s | "
+                        "IP=%s"
+                    ),
+                    getattr(
+                        g,
+                        "request_id",
+                        None,
+                    ),
+                    LoginService._obter_ip_usuario(),
+                )
+
+                return {
+                    "sucesso": False,
+                    "mensagem": (
+                        LoginService
+                        .MENSAGEM_CREDENCIAIS_INVALIDAS
+                    ),
+                }
+
+            usuario_id = usuario["id"]
+
+            bloqueado_ate = usuario.get(
+                "bloqueado_ate"
+            )
+
+            agora = datetime.now()
+
             if (
                 bloqueado_ate
                 and bloqueado_ate > agora
@@ -121,16 +121,46 @@ class LoginService:
                     usuario_id
                 )
 
-                usuario["tentativas_login"] = 0
-                usuario["bloqueado_ate"] = None
+                usuario[
+                    "tentativas_login"
+                ] = 0
 
-            senha_valida = (
-                bcrypt
-                .check_password_hash(
-                    usuario["senha_hash"],
-                    senha_informada,
-                )
+                usuario[
+                    "bloqueado_ate"
+                ] = None
+
+            senha_hash = usuario.get(
+                "senha_hash"
             )
+
+            senha_valida = False
+
+            if senha_hash:
+                try:
+                    senha_valida = (
+                        bcrypt
+                        .check_password_hash(
+                            senha_hash,
+                            senha_informada,
+                        )
+                    )
+
+                except (ValueError, TypeError):
+                    current_app.logger.error(
+                        (
+                            "AUTENTICACAO_HASH_INVALIDO | "
+                            "REQUEST=%s | "
+                            "USUARIO=%s"
+                        ),
+                        getattr(
+                            g,
+                            "request_id",
+                            None,
+                        ),
+                        usuario_id,
+                    )
+
+                    senha_valida = False
 
             if not senha_valida:
                 tentativas = (
@@ -203,83 +233,39 @@ class LoginService:
                 ip=LoginService._obter_ip_usuario(),
             )
 
-        finally:
-            repo.close()
-
-        current_app.logger.info(
-            (
-                "AUTENTICACAO_VALIDADA | "
-                "REQUEST=%s | "
-                "USUARIO=%s | "
-                "PERFIL=%s | "
-                "IP=%s"
-            ),
-            getattr(
-                g,
-                "request_id",
-                None,
-            ),
-            usuario_id,
-            usuario.get(
-                "perfil"
-            ),
-            LoginService._obter_ip_usuario(),
-        )
-
-        return {
-            "sucesso": True,
-            "usuario": usuario,
-            "destino": (
-                LoginService
-                .redirecionar_pos_login(
-                    usuario
-                )
-            ),
-        }
-
-    @staticmethod
-    def _buscar_usuario_por_email(
-        email: str,
-    ) -> dict[str, Any] | None:
-        conn = get_connection()
-        cursor = conn.cursor(
-            dictionary=True
-        )
-
-        try:
-            cursor.execute(
-                """
-                SELECT
-                    u.id,
-                    u.nome,
-                    u.email,
-                    u.senha_hash,
-                    u.perfil,
-                    u.empresa_id,
-                    u.assessoria_id,
-                    u.trocar_senha_primeiro_acesso,
-                    u.tentativas_login,
-                    u.bloqueado_ate,
-                    a.nome AS assessoria_nome
-                FROM usuarios u
-
-                LEFT JOIN assessorias a
-                    ON a.id = u.assessoria_id
-
-                WHERE LOWER(TRIM(u.email))
-                    = LOWER(TRIM(%s))
-                  AND u.ativo = 1
-
-                LIMIT 1
-                """,
-                (email,),
+            current_app.logger.info(
+                (
+                    "AUTENTICACAO_VALIDADA | "
+                    "REQUEST=%s | "
+                    "USUARIO=%s | "
+                    "PERFIL=%s | "
+                    "IP=%s"
+                ),
+                getattr(
+                    g,
+                    "request_id",
+                    None,
+                ),
+                usuario_id,
+                usuario.get(
+                    "perfil"
+                ),
+                LoginService._obter_ip_usuario(),
             )
 
-            return cursor.fetchone()
+            return {
+                "sucesso": True,
+                "usuario": usuario,
+                "destino": (
+                    LoginService
+                    .redirecionar_pos_login(
+                        usuario
+                    )
+                ),
+            }
 
         finally:
-            cursor.close()
-            conn.close()
+            repo.close()
 
     @staticmethod
     def _obter_ip_usuario() -> str | None:
@@ -292,7 +278,7 @@ class LoginService:
         if not ip:
             return None
 
-        return str(ip)[:45]
+        return str(ip).strip()[:45]
 
     @staticmethod
     def redirecionar_pos_login(

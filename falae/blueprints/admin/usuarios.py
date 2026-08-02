@@ -2,7 +2,9 @@ from flask import (
     redirect,
     render_template,
     request,
-    url_for
+    url_for,
+    current_app,
+    session,
 )
 
 from . import admin_bp
@@ -11,24 +13,19 @@ from falae.decorators import perfil_required
 from falae.services.usuario_service import UsuarioService
 
 
-@admin_bp.route(
-    "/usuarios"
-)
+@admin_bp.route("/usuarios")
 @perfil_required(
     "SUPER_ADMIN",
     "ADM_ASSESSORIA",
     "ADMIN_EMPRESA"
 )
 def usuarios():
-    lista_usuarios = (
-        UsuarioService.listar_usuarios()
-    )
+    lista_usuarios = UsuarioService.listar_usuarios()
 
     return render_template(
         "admin/usuarios.html",
         usuarios=lista_usuarios
     )
-
 
 @admin_bp.route(
     "/usuarios/novo",

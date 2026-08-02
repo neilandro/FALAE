@@ -426,7 +426,12 @@
             enctype="multipart/form-data"
             class="public-form"
             id="form-denuncia"
-        >
+        >   
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+            >
 
             <section class="form-section">
                 <h2>1. Sobre a denúncia</h2>
