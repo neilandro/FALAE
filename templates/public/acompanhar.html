@@ -18,6 +18,11 @@
         </div>
 
         <form method="POST" class="public-form">
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}">
+                
             <label>Protocolo *</label>
             <input
                 type="text"
