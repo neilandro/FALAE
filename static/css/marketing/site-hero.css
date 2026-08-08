@@ -1,0 +1,1131 @@
+/* ==========================================================
+   FALAE
+
+   Arquivo:
+      site-hero.css
+
+   Domínio:
+      Site Institucional
+
+   Componente:
+      Hero
+
+   Responsabilidade:
+      Definir a apresentação visual da primeira dobra da
+      Landing Page e da prévia executiva da plataforma.
+
+   Dependências:
+      site-variables.css
+      site-base.css
+      site-typography.css
+      site-buttons.css
+
+   Sprint:
+      20.1 — Produção Landing Page
+========================================================== */
+
+
+/* ==========================================================
+   PROTEÇÃO DE SVG
+========================================================== */
+
+.site-hero svg {
+    display: block;
+    width: 1em;
+    height: 1em;
+    max-width: 100%;
+    max-height: 100%;
+
+    flex: 0 0 auto;
+}
+
+
+/* ==========================================================
+   SEÇÃO
+========================================================== */
+
+.site-hero {
+    position: relative;
+
+    overflow: hidden;
+
+    padding:
+        clamp(4.5rem, 7vw, 7rem)
+        0
+        clamp(5rem, 8vw, 7.5rem);
+
+    background:
+        radial-gradient(
+            circle at 84% 18%,
+            rgba(37, 99, 235, 0.1),
+            transparent 30rem
+        ),
+        linear-gradient(
+            180deg,
+            var(--site-color-white) 0%,
+            var(--site-color-neutral-25) 100%
+        );
+}
+
+.site-hero::before {
+    position: absolute;
+    inset: 0;
+
+    background-image:
+        linear-gradient(
+            rgba(15, 39, 71, 0.025) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(15, 39, 71, 0.025) 1px,
+            transparent 1px
+        );
+
+    background-size: 4rem 4rem;
+
+    content: "";
+
+    pointer-events: none;
+
+    mask-image:
+        linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.4),
+            transparent 78%
+        );
+}
+
+
+/* ==========================================================
+   GRID PRINCIPAL
+========================================================== */
+
+.site-hero__grid {
+    position: relative;
+    z-index: var(--site-z-content);
+
+    display: grid;
+    grid-template-columns:
+        minmax(0, 0.94fr)
+        minmax(32rem, 1.06fr);
+
+    align-items: start;
+
+    gap: clamp(
+        var(--site-space-12),
+        5vw,
+        var(--site-space-20)
+    );
+}
+
+
+/* ==========================================================
+   CONTEÚDO
+========================================================== */
+
+.site-hero__content {
+    max-width: 40rem;
+}
+
+.site-hero__eyebrow {
+    display: inline-flex;
+    align-items: center;
+
+    gap: var(--site-space-2);
+
+    margin-bottom: var(--site-space-6);
+    padding:
+        var(--site-space-2)
+        var(--site-space-4);
+
+    border:
+        var(--site-border-width)
+        solid
+        rgba(37, 99, 235, 0.16);
+
+    border-radius: var(--site-radius-pill);
+
+    background-color: var(--site-color-accent-soft);
+    color: var(--site-color-accent-hover);
+
+    font-size: var(--site-font-size-sm);
+    font-weight: var(--site-font-weight-semibold);
+    line-height: var(--site-line-height-snug);
+}
+
+.site-hero__eyebrow-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 1.125rem;
+    height: 1.125rem;
+
+    flex: 0 0 auto;
+}
+
+.site-hero__eyebrow-icon svg {
+    width: 1.125rem;
+    height: 1.125rem;
+}
+
+.site-hero__title {
+    max-width: 15ch;
+
+    margin:
+        0
+        0
+        var(--site-space-6);
+
+    color: var(--site-color-heading);
+
+    font-size:
+        clamp(
+            2.75rem,
+            4.6vw,
+            4rem
+        );
+
+    font-weight: var(--site-font-weight-extrabold);
+    line-height: 1.06;
+    letter-spacing: var(--site-letter-spacing-tightest);
+
+    text-wrap: balance;
+}
+
+.site-hero__description {
+    max-width: 37rem;
+
+    margin:
+        0
+        0
+        var(--site-space-8);
+
+    color: var(--site-color-text-secondary);
+
+    font-size: var(--site-font-size-lg);
+    line-height: var(--site-line-height-relaxed);
+
+    text-wrap: pretty;
+}
+
+
+/* ==========================================================
+   AÇÕES
+========================================================== */
+
+.site-hero__actions {
+    margin-bottom: var(--site-space-8);
+}
+
+
+/* ==========================================================
+   BENEFÍCIOS
+========================================================== */
+
+.site-hero__benefits {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+
+    gap:
+        var(--site-space-3)
+        var(--site-space-6);
+
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+}
+
+.site-hero__benefit {
+    display: inline-flex;
+    align-items: center;
+
+    gap: var(--site-space-2);
+
+    color: var(--site-color-text-secondary);
+
+    font-size: var(--site-font-size-sm);
+    font-weight: var(--site-font-weight-medium);
+}
+
+.site-hero__benefit-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 1.5rem;
+    height: 1.5rem;
+
+    border-radius: 50%;
+
+    background-color: var(--site-color-success-soft);
+    color: var(--site-color-success);
+
+    flex: 0 0 auto;
+}
+
+.site-hero__benefit-icon svg {
+    width: 0.95rem;
+    height: 0.95rem;
+}
+
+
+/* ==========================================================
+   ÁREA VISUAL
+========================================================== */
+
+.site-hero__visual {
+    position: relative;
+
+    min-width: 0;
+
+    padding:
+        0
+        0
+        var(--site-space-10)
+        var(--site-space-6);
+}
+
+.site-hero__browser {
+    margin-top: 0;
+}
+
+.site-hero__glow {
+    position: absolute;
+    top: 50%;
+    left: 52%;
+
+    width: 86%;
+    aspect-ratio: 1;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(37, 99, 235, 0.2),
+            rgba(37, 99, 235, 0.06) 46%,
+            transparent 72%
+        );
+
+    filter: blur(1rem);
+
+    pointer-events: none;
+
+    transform: translate(-50%, -50%);
+}
+
+
+/* ==========================================================
+   JANELA DA PLATAFORMA
+========================================================== */
+
+.site-hero__browser {
+    position: relative;
+    z-index: 2;
+
+    overflow: hidden;
+
+    border:
+        var(--site-border-width)
+        solid
+        rgba(15, 39, 71, 0.13);
+
+    border-radius: var(--site-radius-xl);
+
+    background-color: var(--site-color-white);
+
+    box-shadow:
+        var(--site-shadow-lg),
+        0 0 0 0.5rem rgba(255, 255, 255, 0.72);
+}
+
+
+/* ==========================================================
+   CABEÇALHO DO NAVEGADOR
+========================================================== */
+
+.site-hero__browser-header {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+
+    min-height: 3rem;
+    padding-inline: var(--site-space-4);
+
+    border-bottom:
+        var(--site-border-width)
+        solid
+        var(--site-color-border);
+
+    background-color: var(--site-color-neutral-50);
+}
+
+.site-hero__browser-controls {
+    display: flex;
+    align-items: center;
+
+    gap: 0.375rem;
+}
+
+.site-hero__browser-controls span {
+    width: 0.625rem;
+    height: 0.625rem;
+
+    border-radius: 50%;
+
+    background-color: var(--site-color-neutral-300);
+}
+
+.site-hero__browser-controls span:nth-child(1) {
+    background-color: #F87171;
+}
+
+.site-hero__browser-controls span:nth-child(2) {
+    background-color: #FBBF24;
+}
+
+.site-hero__browser-controls span:nth-child(3) {
+    background-color: #34D399;
+}
+
+.site-hero__browser-address {
+    display: inline-flex;
+    align-items: center;
+    justify-self: center;
+
+    gap: var(--site-space-2);
+
+    min-width: 9rem;
+    padding:
+        0.375rem
+        var(--site-space-4);
+
+    border:
+        var(--site-border-width)
+        solid
+        var(--site-color-border);
+
+    border-radius: var(--site-radius-pill);
+
+    background-color: var(--site-color-white);
+    color: var(--site-color-text-muted);
+
+    font-size: 0.6875rem;
+    font-weight: var(--site-font-weight-medium);
+}
+
+.site-hero__browser-lock {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 0.8125rem;
+    height: 0.8125rem;
+
+    color: var(--site-color-success);
+}
+
+.site-hero__browser-lock svg {
+    width: 0.8125rem;
+    height: 0.8125rem;
+}
+
+
+/* ==========================================================
+   DASHBOARD
+========================================================== */
+
+.site-hero__dashboard {
+    display: grid;
+    grid-template-columns: 4.25rem minmax(0, 1fr);
+
+    min-height: 26rem;
+
+    background-color: var(--site-color-neutral-50);
+}
+
+
+/* ==========================================================
+   SIDEBAR
+========================================================== */
+
+.site-hero__sidebar {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    padding:
+        var(--site-space-5)
+        var(--site-space-3);
+
+    background:
+        linear-gradient(
+            180deg,
+            var(--site-color-primary) 0%,
+            var(--site-color-primary-active) 100%
+        );
+}
+
+.site-hero__sidebar-brand {
+    margin-bottom: var(--site-space-8);
+
+    color: var(--site-color-white);
+
+    font-size: 0.625rem;
+    font-weight: var(--site-font-weight-bold);
+    letter-spacing: var(--site-letter-spacing-wide);
+}
+
+.site-hero__sidebar-menu {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    gap: var(--site-space-4);
+
+    width: 100%;
+}
+
+.site-hero__sidebar-menu span {
+    width: 1.875rem;
+    height: 1.875rem;
+
+    border-radius: var(--site-radius-sm);
+
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
+.site-hero__sidebar-menu span.is-active {
+    background-color: rgba(255, 255, 255, 0.94);
+
+    box-shadow:
+        0 0.25rem 0.75rem
+        rgba(0, 0, 0, 0.14);
+}
+
+
+/* ==========================================================
+   WORKSPACE
+========================================================== */
+
+.site-hero__workspace {
+    min-width: 0;
+
+    padding: var(--site-space-6);
+}
+
+.site-hero__workspace-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: var(--site-space-4);
+
+    margin-bottom: var(--site-space-6);
+}
+
+.site-hero__workspace-label {
+    display: block;
+
+    margin-bottom: var(--site-space-1);
+
+    color: var(--site-color-text-muted);
+
+    font-size: 0.6875rem;
+    font-weight: var(--site-font-weight-semibold);
+}
+
+.site-hero__workspace-title {
+    display: block;
+
+    color: var(--site-color-heading);
+
+    font-size: var(--site-font-size-lg);
+    line-height: var(--site-line-height-snug);
+}
+
+.site-hero__workspace-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 2.125rem;
+    height: 2.125rem;
+
+    border-radius: 50%;
+
+    background-color: var(--site-color-primary-soft);
+    color: var(--site-color-primary);
+
+    font-size: 0.625rem;
+    font-weight: var(--site-font-weight-bold);
+}
+
+
+/* ==========================================================
+   MÉTRICAS
+========================================================== */
+
+.site-hero__metrics {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    gap: var(--site-space-3);
+
+    margin-bottom: var(--site-space-4);
+}
+
+.site-hero__metric {
+    min-width: 0;
+
+    padding: var(--site-space-4);
+
+    border:
+        var(--site-border-width)
+        solid
+        var(--site-color-border);
+
+    border-radius: var(--site-radius-md);
+
+    background-color: var(--site-color-white);
+
+    box-shadow: var(--site-shadow-xs);
+}
+
+.site-hero__metric-label,
+.site-hero__metric-detail {
+    display: block;
+
+    color: var(--site-color-text-muted);
+
+    font-size: 0.625rem;
+    line-height: var(--site-line-height-normal);
+}
+
+.site-hero__metric-value {
+    display: block;
+
+    margin-block: var(--site-space-2);
+
+    color: var(--site-color-heading);
+
+    font-size: var(--site-font-size-xl);
+    line-height: 1;
+}
+
+.site-hero__metric:first-child {
+    border-top-color: var(--site-color-accent);
+}
+
+.site-hero__metric:nth-child(2) {
+    border-top-color: #F59E0B;
+}
+
+.site-hero__metric:nth-child(3) {
+    border-top-color: var(--site-color-success);
+}
+
+
+/* ==========================================================
+   GRID ANALÍTICO
+========================================================== */
+
+.site-hero__dashboard-grid {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1.45fr)
+        minmax(8rem, 0.75fr);
+
+    gap: var(--site-space-4);
+}
+
+
+/* ==========================================================
+   CARDS ANALÍTICOS
+========================================================== */
+
+.site-hero__chart-card,
+.site-hero__status-card {
+    min-width: 0;
+
+    padding: var(--site-space-4);
+
+    border:
+        var(--site-border-width)
+        solid
+        var(--site-color-border);
+
+    border-radius: var(--site-radius-md);
+
+    background-color: var(--site-color-white);
+
+    box-shadow: var(--site-shadow-xs);
+}
+
+.site-hero__card-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: var(--site-space-3);
+
+    margin-bottom: var(--site-space-4);
+
+    color: var(--site-color-heading);
+
+    font-size: 0.6875rem;
+    font-weight: var(--site-font-weight-semibold);
+}
+
+.site-hero__card-heading small {
+    color: var(--site-color-text-muted);
+
+    font-size: 0.5625rem;
+    font-weight: var(--site-font-weight-medium);
+}
+
+
+/* ==========================================================
+   GRÁFICO
+========================================================== */
+
+.site-hero__chart {
+    display: flex;
+    align-items: flex-end;
+
+    gap: var(--site-space-3);
+
+    height: 7.5rem;
+    padding-top: var(--site-space-3);
+
+    border-bottom:
+        var(--site-border-width)
+        solid
+        var(--site-color-border);
+}
+
+.site-hero__chart > span {
+    width: 100%;
+    height: var(--bar-height);
+
+    border-radius:
+        var(--site-radius-sm)
+        var(--site-radius-sm)
+        0
+        0;
+
+    background:
+        linear-gradient(
+            180deg,
+            var(--site-color-accent) 0%,
+            var(--site-color-primary) 100%
+        );
+
+    opacity: 0.78;
+}
+
+.site-hero__chart > span:last-child {
+    opacity: 1;
+
+    box-shadow:
+        0 0.35rem 0.8rem
+        rgba(37, 99, 235, 0.18);
+}
+
+
+/* ==========================================================
+   STATUS
+========================================================== */
+
+.site-hero__status-list {
+    display: flex;
+    flex-direction: column;
+
+    gap: var(--site-space-3);
+}
+
+.site-hero__status-item {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+
+    gap: var(--site-space-2);
+
+    color: var(--site-color-text-secondary);
+
+    font-size: 0.625rem;
+}
+
+.site-hero__status-item strong {
+    color: var(--site-color-heading);
+}
+
+.site-hero__status-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+
+    border-radius: 50%;
+
+    background-color: var(--site-color-accent);
+}
+
+.site-hero__status-item:nth-child(2)
+.site-hero__status-dot {
+    background-color: var(--site-color-success);
+}
+
+.site-hero__status-item:nth-child(3)
+.site-hero__status-dot {
+    background-color: var(--site-color-neutral-400);
+}
+
+
+/* ==========================================================
+   CARDS FLUTUANTES
+========================================================== */
+
+.site-hero__floating-card {
+    position: absolute;
+    z-index: 3;
+
+    display: flex;
+    align-items: center;
+
+    gap: var(--site-space-3);
+
+    padding:
+        var(--site-space-3)
+        var(--site-space-4);
+
+    border:
+        var(--site-border-width)
+        solid
+        rgba(15, 39, 71, 0.1);
+
+    border-radius: var(--site-radius-md);
+
+    background-color: rgba(255, 255, 255, 0.96);
+
+    box-shadow: var(--site-shadow-md);
+
+    -webkit-backdrop-filter: blur(1rem);
+    backdrop-filter: blur(1rem);
+}
+
+.site-hero__floating-card strong,
+.site-hero__floating-card small {
+    display: block;
+}
+
+.site-hero__floating-card strong {
+    color: var(--site-color-heading);
+
+    font-size: var(--site-font-size-xs);
+}
+
+.site-hero__floating-card small {
+    margin-top: var(--site-space-1);
+
+    color: var(--site-color-text-muted);
+
+    font-size: 0.625rem;
+}
+
+.site-hero__floating-card--security {
+    bottom: 0;
+    left: 0;
+}
+
+.site-hero__floating-card--status {
+    top: 8%;
+    right: -1rem;
+}
+
+.site-hero__floating-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 2.25rem;
+    height: 2.25rem;
+
+    border-radius: var(--site-radius-md);
+
+    background-color: var(--site-color-success-soft);
+    color: var(--site-color-success);
+
+    flex: 0 0 auto;
+}
+
+.site-hero__floating-icon svg {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.site-hero__status-indicator {
+    width: 0.625rem;
+    height: 0.625rem;
+
+    border-radius: 50%;
+
+    background-color: var(--site-color-accent);
+
+    box-shadow:
+        0 0 0 0.375rem
+        var(--site-color-accent-soft);
+}
+
+
+/* ==========================================================
+   NOTEBOOK
+========================================================== */
+
+@media (max-width: 74.9375rem) {
+
+    .site-hero__grid {
+        grid-template-columns:
+            minmax(0, 0.9fr)
+            minmax(28rem, 1.1fr);
+
+        gap: var(--site-space-12);
+    }
+
+    .site-hero__visual {
+        padding-left: var(--site-space-4);
+    }
+
+    .site-hero__floating-card--status {
+        right: -0.25rem;
+    }
+
+}
+
+
+/* ==========================================================
+   TABLET
+========================================================== */
+
+@media (max-width: 61.9375rem) {
+
+    .site-hero {
+        padding:
+            var(--site-space-20)
+            0
+            var(--site-space-24);
+    }
+
+    .site-hero__grid {
+        grid-template-columns: 1fr;
+
+        gap: var(--site-space-16);
+    }
+
+    .site-hero__content {
+        max-width: var(--site-content-width-md);
+
+        margin-inline: auto;
+
+        text-align: center;
+    }
+
+    .site-hero__title {
+        max-width: 15ch;
+
+        margin-inline: auto;
+    }
+
+    .site-hero__description {
+        margin-inline: auto;
+    }
+
+    .site-hero__actions {
+        justify-content: center;
+    }
+
+    .site-hero__benefits {
+        justify-content: center;
+    }
+
+    .site-hero__visual {
+        width: min(100%, 46rem);
+
+        margin-inline: auto;
+
+        padding:
+            var(--site-space-8)
+            var(--site-space-8)
+            var(--site-space-10);
+    }
+
+}
+
+
+/* ==========================================================
+   MOBILE
+========================================================== */
+
+@media (max-width: 47.9375rem) {
+
+    .site-hero {
+        padding:
+            var(--site-space-16)
+            0
+            var(--site-space-20);
+    }
+
+    .site-hero__eyebrow {
+        max-width: 100%;
+
+        padding:
+            var(--site-space-2)
+            var(--site-space-3);
+
+        font-size: var(--site-font-size-xs);
+    }
+
+    .site-hero__title {
+        max-width: none;
+
+        font-size:
+            clamp(
+                2.1rem,
+                9.5vw,
+                2.85rem
+            );
+
+        line-height: 1.08;
+    }
+
+    .site-hero__description {
+        font-size: var(--site-font-size-base);
+    }
+
+    .site-hero__benefits {
+        align-items: flex-start;
+        flex-direction: column;
+
+        width: fit-content;
+
+        margin-inline: auto;
+
+        text-align: left;
+    }
+
+    .site-hero__visual {
+        padding:
+            var(--site-space-6)
+            0
+            var(--site-space-10);
+    }
+
+    .site-hero__browser {
+        border-radius: var(--site-radius-lg);
+    }
+
+    .site-hero__browser-header {
+        grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .site-hero__browser-address {
+        justify-self: end;
+
+        min-width: 0;
+        padding-inline: var(--site-space-3);
+    }
+
+    .site-hero__dashboard {
+        grid-template-columns: 3rem minmax(0, 1fr);
+
+        min-height: 21rem;
+    }
+
+    .site-hero__sidebar {
+        padding-inline: var(--site-space-2);
+    }
+
+    .site-hero__sidebar-brand {
+        font-size: 0.5rem;
+    }
+
+    .site-hero__sidebar-menu span {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+
+    .site-hero__workspace {
+        padding: var(--site-space-4);
+    }
+
+    .site-hero__workspace-title {
+        font-size: var(--site-font-size-base);
+    }
+
+    .site-hero__metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .site-hero__metric:last-child {
+        display: none;
+    }
+
+    .site-hero__dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .site-hero__status-card {
+        display: none;
+    }
+
+    .site-hero__floating-card--security {
+        bottom: 0;
+        left: var(--site-space-3);
+    }
+
+    .site-hero__floating-card--status {
+        top: var(--site-space-2);
+        right: var(--site-space-2);
+    }
+
+}
+
+
+/* ==========================================================
+   MOBILE REDUZIDO
+========================================================== */
+
+@media (max-width: 27.5rem) {
+
+    .site-hero__floating-card--status {
+        display: none;
+    }
+
+    .site-hero__floating-card--security {
+        right: var(--site-space-3);
+        left: var(--site-space-3);
+    }
+
+    .site-hero__browser-address {
+        font-size: 0.625rem;
+    }
+
+}
+
+
+/* ==========================================================
+   ACESSIBILIDADE
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .site-hero *,
+    .site-hero *::before,
+    .site-hero *::after {
+        transition: none !important;
+        animation: none !important;
+    }
+
+}

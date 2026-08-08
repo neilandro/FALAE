@@ -1,0 +1,175 @@
+/* ==========================================================
+   FALAE
+   COMPONENT: NAVBAR
+   ========================================================== */
+
+.site-header{
+    position:sticky;
+    top:0;
+    left:0;
+    width:100%;
+    z-index:1000;
+}
+
+.site-navbar{
+
+    background:rgba(255,255,255,.88);
+
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+
+    border-bottom:1px solid rgba(15,39,71,.08);
+
+    transition:
+        background .25s ease,
+        box-shadow .25s ease;
+
+}
+
+.site-navbar__content{
+
+    height:82px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+}
+
+.site-navbar__brand{
+
+    text-decoration:none;
+
+}
+
+.site-navbar__brand-name{
+
+    font-size:1.65rem;
+
+    font-weight:700;
+
+    color:var(--color-primary);
+
+    letter-spacing:-.03em;
+
+}
+
+.site-navbar__menu{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:48px;
+
+}
+
+.site-navbar__links{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:32px;
+
+    list-style:none;
+
+    margin:0;
+
+    padding:0;
+
+}
+
+.site-navbar__link{
+
+    text-decoration:none;
+
+    color:var(--color-text);
+
+    font-weight:500;
+
+    transition:color .25s ease;
+
+}
+
+.site-navbar__link:hover{
+
+    color:var(--color-primary);
+
+}
+
+.site-navbar__actions{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+}
+
+.site-navbar__login{
+
+    color:var(--color-text);
+
+    text-decoration:none;
+
+    font-weight:600;
+
+}
+
+.site-navbar__login:hover{
+
+    color:var(--color-primary);
+
+}
+
+.site-navbar__cta{
+
+    padding:.85rem 1.5rem;
+
+}
+
+.site-navbar__toggle{
+
+    display:none;
+
+    background:none;
+
+    border:none;
+
+    cursor:pointer;
+
+}
+
+.site-navbar__toggle-line{
+
+    width:28px;
+
+    height:2px;
+
+    display:block;
+
+    margin:6px 0;
+
+    background:#0F2747;
+
+}
+
+@media(max-width:992px){
+
+    .site-navbar__toggle{
+
+        display:block;
+
+    }
+
+    .site-navbar__menu{
+
+        display:none;
+
+    }
+
+}

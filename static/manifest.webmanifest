@@ -1,0 +1,17 @@
+{
+    "name": "FALAE",
+    "short_name": "FALAE",
+    "description": "Canal de Denúncias Corporativo",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0F2747",
+    "theme_color": "#0F2747",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/static/img/brand/icon-32.png",
+            "sizes": "32x32",
+            "type": "image/png"
+        }
+    ]
+}

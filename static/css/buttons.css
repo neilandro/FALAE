@@ -25,3 +25,31 @@
 .btn-secundario:hover {
     background: var(--gray-300);
 }
+
+.btn-falae-primary{
+
+    background:var(--color-primary);
+
+    color:#fff;
+
+    border:none;
+
+    border-radius:12px;
+
+    padding:14px 28px;
+
+    font-weight:600;
+
+    transition:.25s;
+
+}
+
+.btn-falae-primary:hover{
+
+    background:var(--color-primary-dark);
+
+    color:#fff;
+
+    transform:translateY(-1px);
+
+}

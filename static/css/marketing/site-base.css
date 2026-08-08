@@ -1,0 +1,520 @@
+/* ==========================================================
+   FALAE
+
+   Arquivo:
+      site-base.css
+
+   Domínio:
+      Site Institucional
+
+   Camada:
+      Fundação Visual
+
+   Responsabilidade:
+      Definir a base estrutural e os comportamentos globais
+      exclusivos da Landing Page institucional do FALAE.
+
+   Dependências:
+      site-variables.css
+
+   Escopo:
+      templates/layouts/site_base.html
+      templates/site/
+      static/css/site/
+
+   Sprint:
+      20.1 — Produção Landing Page
+
+   Regras:
+      1. Não utilizar este arquivo nas telas internas do SaaS.
+      2. Não estilizar componentes específicos neste arquivo.
+      3. Componentes devem possuir arquivos CSS próprios.
+      4. Todo valor visual deve consumir tokens do site.
+========================================================== */
+
+
+/* ==========================================================
+   BOX MODEL
+========================================================== */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+
+/* ==========================================================
+   DOCUMENTO
+========================================================== */
+
+html {
+    min-width: 20rem;
+    scroll-behavior: smooth;
+    text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    min-width: 20rem;
+    min-height: 100vh;
+    margin: 0;
+
+    background-color: var(--site-color-background);
+    color: var(--site-color-text);
+
+    font-family: var(--site-font-family);
+    font-size: var(--site-font-size-base);
+    font-weight: var(--site-font-weight-regular);
+    line-height: var(--site-line-height-normal);
+
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body.site-menu-open {
+    overflow: hidden;
+}
+
+
+/* ==========================================================
+   ELEMENTOS ESTRUTURAIS
+========================================================== */
+
+header,
+main,
+footer,
+section,
+article,
+aside,
+nav {
+    display: block;
+}
+
+main {
+    display: block;
+    min-height: 60vh;
+}
+
+
+/* ==========================================================
+   MÍDIA
+========================================================== */
+
+img,
+picture,
+svg,
+canvas,
+video {
+    display: block;
+    max-width: 100%;
+}
+
+img {
+    height: auto;
+}
+
+svg {
+    flex-shrink: 0;
+}
+
+
+/* ==========================================================
+   FORMULÁRIOS E CONTROLES
+========================================================== */
+
+button,
+input,
+textarea,
+select {
+    margin: 0;
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+button:disabled,
+input:disabled,
+textarea:disabled,
+select:disabled {
+    cursor: not-allowed;
+}
+
+textarea {
+    resize: vertical;
+}
+
+
+/* ==========================================================
+   LISTAS
+========================================================== */
+
+ul,
+ol {
+    margin-top: 0;
+}
+
+ul[role="list"],
+ol[role="list"] {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+
+/* ==========================================================
+   LINKS
+========================================================== */
+
+a {
+    color: inherit;
+}
+
+a:not([class]) {
+    color: var(--site-color-accent);
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 0.18em;
+}
+
+a:not([class]):hover {
+    color: var(--site-color-accent-hover);
+}
+
+
+/* ==========================================================
+   CONTAINER INSTITUCIONAL
+========================================================== */
+
+.site-container {
+    width: min(
+        calc(100% - (var(--site-container-gutter) * 2)),
+        var(--site-container-width)
+    );
+
+    margin-inline: auto;
+}
+
+.site-container--narrow {
+    max-width: var(--site-container-narrow);
+}
+
+.site-container--full {
+    width: 100%;
+    max-width: none;
+}
+
+
+/* ==========================================================
+   SEÇÕES
+========================================================== */
+
+.site-section {
+    position: relative;
+    padding-block: var(--site-section-space-md);
+}
+
+.site-section--small {
+    padding-block: var(--site-section-space-sm);
+}
+
+.site-section--large {
+    padding-block: var(--site-section-space-lg);
+}
+
+.site-section--soft {
+    background-color: var(--site-color-background-soft);
+}
+
+.site-section--dark {
+    background-color: var(--site-color-background-dark);
+    color: var(--site-color-text-inverse);
+}
+
+.site-section__header {
+    max-width: var(--site-content-width-md);
+    margin-bottom: var(--site-space-12);
+}
+
+.site-section__header--center {
+    margin-inline: auto;
+    text-align: center;
+}
+
+
+/* ==========================================================
+   LARGURAS DE CONTEÚDO
+========================================================== */
+
+.site-content-sm {
+    max-width: var(--site-content-width-sm);
+}
+
+.site-content-md {
+    max-width: var(--site-content-width-md);
+}
+
+.site-content-lg {
+    max-width: var(--site-content-width-lg);
+}
+
+.site-content-center {
+    margin-inline: auto;
+}
+
+
+/* ==========================================================
+   UTILITÁRIOS DE LAYOUT
+========================================================== */
+
+.site-stack {
+    display: flex;
+    flex-direction: column;
+}
+
+.site-stack--2 {
+    gap: var(--site-space-2);
+}
+
+.site-stack--4 {
+    gap: var(--site-space-4);
+}
+
+.site-stack--6 {
+    gap: var(--site-space-6);
+}
+
+.site-stack--8 {
+    gap: var(--site-space-8);
+}
+
+.site-stack--12 {
+    gap: var(--site-space-12);
+}
+
+.site-cluster {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--site-space-4);
+}
+
+.site-cluster--center {
+    justify-content: center;
+}
+
+.site-cluster--between {
+    justify-content: space-between;
+}
+
+.site-grid {
+    display: grid;
+    gap: var(--site-space-8);
+}
+
+.site-grid--2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.site-grid--3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.site-grid--4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+
+/* ==========================================================
+   ACESSIBILIDADE
+========================================================== */
+
+.visually-hidden {
+    position: absolute !important;
+
+    width: 1px !important;
+    height: 1px !important;
+
+    padding: 0 !important;
+    margin: -1px !important;
+
+    overflow: hidden !important;
+
+    clip: rect(0, 0, 0, 0) !important;
+    clip-path: inset(50%) !important;
+
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+.skip-link {
+    position: fixed;
+    top: var(--site-space-4);
+    left: var(--site-space-4);
+
+    z-index: var(--site-z-modal);
+
+    padding:
+        var(--site-space-3)
+        var(--site-space-5);
+
+    border-radius: var(--site-radius-md);
+
+    background-color: var(--site-color-primary);
+    color: var(--site-color-text-inverse);
+
+    font-weight: var(--site-font-weight-semibold);
+    text-decoration: none;
+
+    box-shadow: var(--site-shadow-md);
+
+    transform: translateY(-200%);
+
+    transition:
+        transform var(--site-transition-fast);
+}
+
+.skip-link:focus {
+    transform: translateY(0);
+}
+
+
+/* ==========================================================
+   FOCO DE TECLADO
+========================================================== */
+
+:focus {
+    outline: none;
+}
+
+:focus-visible {
+    outline: none;
+    box-shadow: var(--site-shadow-focus);
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+    border-radius: var(--site-radius-xs);
+}
+
+
+/* ==========================================================
+   SELEÇÃO DE TEXTO
+========================================================== */
+
+::selection {
+    background-color: var(--site-color-primary-soft);
+    color: var(--site-color-primary-active);
+}
+
+::-moz-selection {
+    background-color: var(--site-color-primary-soft);
+    color: var(--site-color-primary-active);
+}
+
+
+/* ==========================================================
+   RESPONSIVIDADE
+========================================================== */
+
+@media (max-width: 61.9375rem) {
+
+    .site-section {
+        padding-block: var(--site-section-space-sm);
+    }
+
+    .site-section--large {
+        padding-block: var(--site-section-space-md);
+    }
+
+    .site-grid--3,
+    .site-grid--4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+@media (max-width: 47.9375rem) {
+
+    :root {
+        --site-container-gutter: 1rem;
+    }
+
+    .site-section,
+    .site-section--small,
+    .site-section--large {
+        padding-block: var(--site-space-16);
+    }
+
+    .site-section__header {
+        margin-bottom: var(--site-space-8);
+    }
+
+    .site-grid--2,
+    .site-grid--3,
+    .site-grid--4 {
+        grid-template-columns: 1fr;
+    }
+
+    .site-cluster--mobile-column {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+}
+
+
+/* ==========================================================
+   PREFERÊNCIAS DE ACESSIBILIDADE
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+
+}
+
+
+/* ==========================================================
+   IMPRESSÃO
+========================================================== */
+
+@media print {
+
+    body {
+        background: var(--site-color-white);
+        color: var(--site-color-black);
+    }
+
+    .site-header,
+    .site-footer,
+    .skip-link {
+        display: none !important;
+    }
+
+    main {
+        min-height: auto;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+}

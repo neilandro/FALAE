@@ -1,0 +1,522 @@
+/* ==========================================================
+   FALAE
+
+   Arquivo:
+      site-buttons.css
+
+   Domínio:
+      Site Institucional
+
+   Camada:
+      Componentes de Interface
+
+   Responsabilidade:
+      Definir o sistema oficial de botões utilizado
+      exclusivamente no site institucional do FALAE.
+
+   Dependências:
+      site-variables.css
+      site-base.css
+      site-typography.css
+
+   Escopo:
+      templates/layouts/site_base.html
+      templates/site/
+      static/css/site/
+
+   Sprint:
+      20.1 — Produção Landing Page
+
+   Regras:
+      1. Não utilizar este arquivo nas telas internas do SaaS.
+      2. Todo botão deve utilizar a classe base .site-button.
+      3. Variantes devem complementar a classe base.
+      4. Todo valor visual deve consumir tokens do site.
+========================================================== */
+
+
+/* ==========================================================
+   BASE
+========================================================== */
+
+.site-button {
+    position: relative;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--site-space-2);
+
+    min-height: 3rem;
+    padding:
+        var(--site-space-3)
+        var(--site-space-6);
+
+    border:
+        var(--site-border-width)
+        solid
+        transparent;
+
+    border-radius: var(--site-radius-md);
+
+    font-family: var(--site-font-family);
+    font-size: var(--site-font-size-base);
+    font-weight: var(--site-font-weight-semibold);
+    line-height: 1;
+    letter-spacing: var(--site-letter-spacing-normal);
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
+
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+
+    transition:
+        background-color var(--site-transition-base),
+        border-color var(--site-transition-base),
+        color var(--site-transition-base),
+        box-shadow var(--site-transition-base),
+        transform var(--site-transition-base),
+        opacity var(--site-transition-base);
+}
+
+.site-button:hover {
+    text-decoration: none;
+}
+
+.site-button:active {
+    transform: translateY(1px);
+}
+
+.site-button:focus-visible {
+    outline: none;
+    box-shadow: var(--site-shadow-focus);
+}
+
+
+/* ==========================================================
+   VARIANTE PRIMÁRIA
+========================================================== */
+
+.site-button--primary {
+    border-color: var(--site-color-primary);
+    background-color: var(--site-color-primary);
+    color: var(--site-color-text-inverse);
+
+    box-shadow: var(--site-shadow-xs);
+}
+
+.site-button--primary:hover {
+    border-color: var(--site-color-primary-hover);
+    background-color: var(--site-color-primary-hover);
+    color: var(--site-color-text-inverse);
+
+    box-shadow: var(--site-shadow-sm);
+    transform: translateY(-1px);
+}
+
+.site-button--primary:active {
+    border-color: var(--site-color-primary-active);
+    background-color: var(--site-color-primary-active);
+
+    box-shadow: var(--site-shadow-xs);
+    transform: translateY(0);
+}
+
+
+/* ==========================================================
+   VARIANTE ACCENT
+========================================================== */
+
+.site-button--accent {
+    border-color: var(--site-color-accent);
+    background-color: var(--site-color-accent);
+    color: var(--site-color-text-inverse);
+
+    box-shadow: var(--site-shadow-xs);
+}
+
+.site-button--accent:hover {
+    border-color: var(--site-color-accent-hover);
+    background-color: var(--site-color-accent-hover);
+    color: var(--site-color-text-inverse);
+
+    box-shadow: var(--site-shadow-sm);
+    transform: translateY(-1px);
+}
+
+.site-button--accent:active {
+    border-color: var(--site-color-accent-hover);
+    background-color: var(--site-color-accent-hover);
+
+    box-shadow: var(--site-shadow-xs);
+    transform: translateY(0);
+}
+
+
+/* ==========================================================
+   VARIANTE SECUNDÁRIA
+========================================================== */
+
+.site-button--secondary {
+    border-color: var(--site-color-border);
+    background-color: var(--site-color-surface);
+    color: var(--site-color-primary);
+
+    box-shadow: var(--site-shadow-xs);
+}
+
+.site-button--secondary:hover {
+    border-color: var(--site-color-border-strong);
+    background-color: var(--site-color-background-soft);
+    color: var(--site-color-primary-hover);
+
+    box-shadow: var(--site-shadow-sm);
+    transform: translateY(-1px);
+}
+
+.site-button--secondary:active {
+    background-color: var(--site-color-neutral-100);
+
+    box-shadow: var(--site-shadow-xs);
+    transform: translateY(0);
+}
+
+
+/* ==========================================================
+   VARIANTE OUTLINE
+========================================================== */
+
+.site-button--outline {
+    border-color: var(--site-color-primary);
+    background-color: transparent;
+    color: var(--site-color-primary);
+}
+
+.site-button--outline:hover {
+    border-color: var(--site-color-primary);
+    background-color: var(--site-color-primary-soft);
+    color: var(--site-color-primary-hover);
+}
+
+.site-button--outline:active {
+    background-color: var(--site-color-neutral-100);
+}
+
+
+/* ==========================================================
+   VARIANTE GHOST
+========================================================== */
+
+.site-button--ghost {
+    border-color: transparent;
+    background-color: transparent;
+    color: var(--site-color-primary);
+}
+
+.site-button--ghost:hover {
+    background-color: var(--site-color-primary-soft);
+    color: var(--site-color-primary-hover);
+}
+
+.site-button--ghost:active {
+    background-color: var(--site-color-neutral-100);
+}
+
+
+/* ==========================================================
+   VARIANTES PARA FUNDO ESCURO
+========================================================== */
+
+.site-button--inverse {
+    border-color: var(--site-color-white);
+    background-color: var(--site-color-white);
+    color: var(--site-color-primary);
+}
+
+.site-button--inverse:hover {
+    border-color: var(--site-color-neutral-100);
+    background-color: var(--site-color-neutral-100);
+    color: var(--site-color-primary-hover);
+
+    box-shadow: var(--site-shadow-sm);
+    transform: translateY(-1px);
+}
+
+.site-button--inverse-outline {
+    border-color: rgba(255, 255, 255, 0.52);
+    background-color: transparent;
+    color: var(--site-color-text-inverse);
+}
+
+.site-button--inverse-outline:hover {
+    border-color: var(--site-color-white);
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--site-color-text-inverse);
+}
+
+
+/* ==========================================================
+   TAMANHOS
+========================================================== */
+
+.site-button--small {
+    min-height: 2.5rem;
+
+    padding:
+        var(--site-space-2)
+        var(--site-space-4);
+
+    border-radius: var(--site-radius-sm);
+
+    font-size: var(--site-font-size-sm);
+}
+
+.site-button--medium {
+    min-height: 3rem;
+
+    padding:
+        var(--site-space-3)
+        var(--site-space-6);
+
+    font-size: var(--site-font-size-base);
+}
+
+.site-button--large {
+    min-height: 3.5rem;
+
+    padding:
+        var(--site-space-4)
+        var(--site-space-8);
+
+    border-radius: var(--site-radius-lg);
+
+    font-size: var(--site-font-size-md);
+}
+
+
+/* ==========================================================
+   LARGURA
+========================================================== */
+
+.site-button--full {
+    width: 100%;
+}
+
+.site-button--fit {
+    width: fit-content;
+}
+
+
+/* ==========================================================
+   ÍCONES
+========================================================== */
+
+.site-button__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 1.125rem;
+    height: 1.125rem;
+
+    flex: 0 0 auto;
+}
+
+.site-button__icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.site-button__icon--start {
+    margin-left: calc(var(--site-space-1) * -1);
+}
+
+.site-button__icon--end {
+    margin-right: calc(var(--site-space-1) * -1);
+}
+
+
+/* ==========================================================
+   BOTÃO APENAS COM ÍCONE
+========================================================== */
+
+.site-button--icon {
+    width: 3rem;
+    min-width: 3rem;
+    height: 3rem;
+    min-height: 3rem;
+
+    padding: 0;
+
+    border-radius: var(--site-radius-md);
+}
+
+.site-button--icon.site-button--small {
+    width: 2.5rem;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    min-height: 2.5rem;
+}
+
+.site-button--icon.site-button--large {
+    width: 3.5rem;
+    min-width: 3.5rem;
+    height: 3.5rem;
+    min-height: 3.5rem;
+
+    border-radius: var(--site-radius-lg);
+}
+
+
+/* ==========================================================
+   ESTADO DESABILITADO
+========================================================== */
+
+.site-button:disabled,
+.site-button[aria-disabled="true"],
+.site-button.is-disabled {
+    pointer-events: none;
+    cursor: not-allowed;
+
+    opacity: 0.52;
+
+    box-shadow: none;
+    transform: none;
+}
+
+
+/* ==========================================================
+   ESTADO DE CARREGAMENTO
+========================================================== */
+
+.site-button.is-loading {
+    pointer-events: none;
+    cursor: wait;
+}
+
+.site-button.is-loading .site-button__label {
+    visibility: hidden;
+}
+
+.site-button.is-loading::after {
+    position: absolute;
+
+    width: 1rem;
+    height: 1rem;
+
+    border:
+        2px
+        solid
+        currentColor;
+
+    border-right-color: transparent;
+    border-radius: 50%;
+
+    content: "";
+
+    animation:
+        site-button-spinner
+        700ms
+        linear
+        infinite;
+}
+
+@keyframes site-button-spinner {
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+/* ==========================================================
+   GRUPOS DE BOTÕES
+========================================================== */
+
+.site-button-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--site-space-3);
+}
+
+.site-button-group--center {
+    justify-content: center;
+}
+
+.site-button-group--end {
+    justify-content: flex-end;
+}
+
+.site-button-group--stack {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.site-button-group--stack .site-button {
+    width: 100%;
+}
+
+
+/* ==========================================================
+   RESPONSIVIDADE
+========================================================== */
+
+@media (max-width: 47.9375rem) {
+
+    .site-button-group--mobile-stack {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .site-button-group--mobile-stack .site-button {
+        width: 100%;
+    }
+
+    .site-button--mobile-full {
+        width: 100%;
+    }
+
+}
+
+
+/* ==========================================================
+   PREFERÊNCIAS DE ACESSIBILIDADE
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .site-button {
+        transition: none;
+    }
+
+    .site-button:hover,
+    .site-button:active {
+        transform: none;
+    }
+
+    .site-button.is-loading::after {
+        animation-duration: 1.2s;
+    }
+
+}
+
+
+/* ==========================================================
+   IMPRESSÃO
+========================================================== */
+
+@media print {
+
+    .site-button {
+        border-color: var(--site-color-neutral-500);
+        background: transparent;
+        color: var(--site-color-black);
+
+        box-shadow: none;
+    }
+
+}

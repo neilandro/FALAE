@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <meta
+        name="robots"
+        content="index,follow"
+    >
+
+    <meta
+        name="author"
+        content="FALAE"
+    >
+
+    <meta
+        name="application-name"
+        content="FALAE"
+    >
+
+    <meta
+        name="apple-mobile-web-app-title"
+        content="FALAE"
+    >
+
+    <meta
+        name="format-detection"
+        content="telephone=no"
+    >
+
+    <link
+        rel="canonical"
+        href="https://falae.cloud/"
+    >
+
+        <meta
+        property="og:type"
+        content="website"
+    >
+
+    <meta
+        property="og:site_name"
+        content="FALAE"
+    >
+
+    <meta
+        property="og:title"
+        content="FALAE — Canal de Denúncias Corporativo"
+    >
+
+    <meta
+        property="og:description"
+        content="Canal de denúncias seguro e confidencial para fortalecer ética, confiança, transparência e governança nas organizações."
+    >
+
+    <meta
+        property="og:url"
+        content="https://falae.cloud/"
+    >
+
+    <meta
+        property="og:image"
+        content="https://falae.cloud/static/img/brand/og-image.jpg"
+    >
+
+    <meta
+        property="og:locale"
+        content="pt_BR"
+    >
+
+    <meta
+    name="twitter:card"
+    content="summary_large_image"
+    >
+
+    <meta
+        name="twitter:title"
+        content="FALAE — Canal de Denúncias Corporativo"
+    >
+
+    <meta
+        name="twitter:description"
+        content="Canal de denúncias seguro e confidencial para fortalecer ética, confiança, transparência e governança nas organizações."
+    >
+
+    <meta
+        name="twitter:image"
+        content="https://falae.cloud/static/img/brand/og-image.jpg"
+    >
+
+    <link rel="icon"
+        type="image/png"
+        sizes="32x32"
+        href="{{ url_for('static', filename='img/brand/icon-32.png') }}">
+
+    <link rel="manifest"
+        href="{{ url_for('static', filename='manifest.webmanifest') }}">
+
+
+
+    <!-- ==========================================================
+     FALAE — Dados Estruturados / Schema.org
+    ========================================================== -->
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "Organization",
+                "@id": "https://falae.cloud/#organization",
+                "name": "FALAE",
+                "url": "https://falae.cloud/",
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": "https://falae.cloud/static/img/brand/logo.png"
+                },
+                "description": "Plataforma de canal de denúncias corporativo voltada à ética, transparência, confiança e governança nas organizações."
+            },
+            {
+                "@type": "WebSite",
+                "@id": "https://falae.cloud/#website",
+                "url": "https://falae.cloud/",
+                "name": "FALAE",
+                "publisher": {
+                    "@id": "https://falae.cloud/#organization"
+                },
+                "inLanguage": "pt-BR"
+            },
+            {
+                "@type": "SoftwareApplication",
+                "@id": "https://falae.cloud/#software",
+                "name": "FALAE",
+                "url": "https://falae.cloud/",
+                "applicationCategory": "BusinessApplication",
+                "operatingSystem": "Web",
+                "description": "Plataforma SaaS para recebimento, organização, acompanhamento e tratamento de relatos e denúncias corporativas.",
+                "publisher": {
+                    "@id": "https://falae.cloud/#organization"
+                },
+                "inLanguage": "pt-BR"
+            }
+        ]
+    }
+    </script>
+
+
+    <title>
+        {% block title %}FALAE{% endblock %}
+    </title>
+
+    <meta
+        name="description"
+        content="{% block description %}Toda grande transformação começa quando alguém tem coragem de falar.{% endblock %}"
+    >
+
+    <meta
+        name="theme-color"
+        content="#0F2747"
+    >
+
+    <link 
+        rel="icon"
+        type="image/png"
+        sizes="32x32"
+        href="{{ url_for('static', filename='img/brand/icon-32.png') }}"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://cdn.jsdelivr.net"
+        crossorigin
+    >
+
+    <!-- Bootstrap 5: somente Grid e utilitários -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+        crossorigin="anonymous"
+    >
+
+    <!-- FALAE — Site Institucional -->
+    <link
+        rel="stylesheet"
+        href="{{ url_for(
+            'static',
+            filename='css/marketing/site-variables.css'
+        ) }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for(
+            'static',
+            filename='css/marketing/site-base.css'
+        ) }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for(
+            'static',
+            filename='css/marketing/site-typography.css'
+        ) }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for(
+            'static',
+            filename='css/marketing/site-buttons.css'
+        ) }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for(
+            'static',
+            filename='css/marketing/site-navbar.css'
+        ) }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for(
+            'static',
+            filename='css/marketing/site-hero.css'
+        ) }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for(
+            'static',
+            filename='css/marketing/site-trust-bar.css'
+        ) }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for(
+            'static',
+            filename='css/marketing/site-problem.css'
+        ) }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for(
+            'static',
+            filename='css/marketing/site-solution.css'
+        ) }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for(
+            'static',
+            filename='css/marketing/site-workflow.css'
+        ) }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for(
+            'static',
+            filename='css/marketing/site-security.css'
+        ) }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for(
+            'static',
+            filename='css/marketing/site-benefits.css'
+        ) }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for(
+            'static',
+            filename='css/marketing/site-manifesto.css'
+        ) }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for(
+            'static',
+            filename='css/marketing/site-cta.css'
+        ) }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for(
+            'static',
+            filename='css/marketing/site-footer.css'
+        ) }}"
+    >
+
+    {% block styles %}{% endblock %}
+
+</head>
+
+<body>
+
+    <a
+        href="#conteudo-principal"
+        class="skip-link"
+    >
+        Ir para o conteúdo principal
+    </a>
+
+    {% include "site/components/navbar.html" %}
+
+    <main id="conteudo-principal">
+
+        {% include "site/components/sections/hero.html" %}
+
+        {% include "site/components/sections/trust_bar.html" %}
+
+        {% include "site/components/sections/problem.html" %}
+
+        {% include "site/components/sections/solution.html" %}
+
+        {% include "site/components/sections/workflow.html" %}
+
+        {% include "site/components/sections/benefits.html" %}
+
+        {% include "site/components/sections/manifesto.html" %}
+
+        {% include "site/components/sections/security.html" %}
+
+        {% include "site/components/sections/cta.html" %}
+
+        {% block content %}{% endblock %}
+
+    </main>
+
+    {% include "site/components/footer.html" %}
+
+    <script
+        src="{{ url_for('static', filename='js/site.js') }}"
+        defer
+    ></script>
+
+    {% block scripts %}{% endblock %}
+
+</body>
+
+</html>

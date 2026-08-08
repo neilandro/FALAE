@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Acompanhar Denúncia | FALAE</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/public.css') }}">
+    <link rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="{{ url_for('static', filename='img/brand/icon-32.png') }}">
 </head>
 <body>
 
@@ -12,9 +16,18 @@
     <section class="public-card">
 
         <div class="public-header">
-            <div class="public-logo">🔎</div>
+
+            <img
+                src="{{ url_for('static', filename='img/brand/logo.png') }}"
+                alt="FALAE"
+                class="public-logo">
+
             <h1>Acompanhar denúncia</h1>
-            <p>Informe o protocolo recebido no momento do registro da denúncia.</p>
+
+            <p>
+                Informe o protocolo recebido no momento do registro da denúncia.
+            </p>
+
         </div>
 
         <form method="POST" class="public-form">

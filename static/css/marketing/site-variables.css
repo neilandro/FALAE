@@ -1,0 +1,265 @@
+/* ==========================================================
+   FALAE
+
+   Arquivo:
+      site-variables.css
+
+   Domínio:
+      Site Institucional
+
+   Camada:
+      Design Tokens
+
+   Responsabilidade:
+      Centralizar exclusivamente os tokens visuais utilizados
+      pela Landing Page institucional do FALAE.
+
+   Escopo:
+      templates/layouts/site_base.html
+      templates/site/
+      static/css/site/
+
+   Sprint:
+      20.1 — Produção Landing Page
+
+   Regras:
+      1. Não utilizar este arquivo nas telas internas do SaaS.
+      2. Não importar tokens dos estilos legados da aplicação.
+      3. Todo CSS do site deve consumir estes tokens.
+      4. Alterações neste arquivo não podem afetar o SaaS.
+========================================================== */
+
+:root {
+
+    /* ======================================================
+       IDENTIDADE INSTITUCIONAL
+    ====================================================== */
+
+    --site-color-primary: #0F2747;
+    --site-color-primary-hover: #16385F;
+    --site-color-primary-active: #091C33;
+    --site-color-primary-soft: #EEF4FA;
+
+    --site-color-accent: #2563EB;
+    --site-color-accent-hover: #1D4ED8;
+    --site-color-accent-soft: #EFF6FF;
+
+    --site-color-success: #0F9F6E;
+    --site-color-success-soft: #ECFDF5;
+
+
+    /* ======================================================
+       CORES NEUTRAS
+    ====================================================== */
+
+    --site-color-white: #FFFFFF;
+    --site-color-black: #050B14;
+
+    --site-color-neutral-25: #FCFDFE;
+    --site-color-neutral-50: #F8FAFC;
+    --site-color-neutral-100: #F1F5F9;
+    --site-color-neutral-200: #E2E8F0;
+    --site-color-neutral-300: #CBD5E1;
+    --site-color-neutral-400: #94A3B8;
+    --site-color-neutral-500: #64748B;
+    --site-color-neutral-600: #475569;
+    --site-color-neutral-700: #334155;
+    --site-color-neutral-800: #1E293B;
+    --site-color-neutral-900: #0F172A;
+
+
+    /* ======================================================
+       CORES SEMÂNTICAS
+    ====================================================== */
+
+    --site-color-background: var(--site-color-white);
+    --site-color-background-soft: var(--site-color-neutral-50);
+    --site-color-background-dark: var(--site-color-primary);
+
+    --site-color-surface: var(--site-color-white);
+    --site-color-surface-soft: var(--site-color-neutral-50);
+    --site-color-surface-dark: var(--site-color-primary-active);
+
+    --site-color-heading: var(--site-color-primary);
+    --site-color-text: var(--site-color-neutral-800);
+    --site-color-text-secondary: var(--site-color-neutral-600);
+    --site-color-text-muted: var(--site-color-neutral-500);
+    --site-color-text-inverse: var(--site-color-white);
+
+    --site-color-border: var(--site-color-neutral-200);
+    --site-color-border-strong: var(--site-color-neutral-300);
+    --site-color-border-subtle: rgba(15, 39, 71, 0.09);
+
+    --site-color-focus: rgba(37, 99, 235, 0.3);
+    --site-color-overlay: rgba(5, 11, 20, 0.58);
+
+
+    /* ======================================================
+       TIPOGRAFIA
+    ====================================================== */
+
+    --site-font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+
+    --site-font-size-xs: 0.75rem;
+    --site-font-size-sm: 0.875rem;
+    --site-font-size-base: 1rem;
+    --site-font-size-md: 1.125rem;
+    --site-font-size-lg: 1.25rem;
+    --site-font-size-xl: 1.5rem;
+    --site-font-size-2xl: 1.875rem;
+    --site-font-size-3xl: 2.25rem;
+    --site-font-size-4xl: 3rem;
+
+    --site-font-size-display:
+        clamp(2.75rem, 5.5vw, 4.75rem);
+
+    --site-font-weight-regular: 400;
+    --site-font-weight-medium: 500;
+    --site-font-weight-semibold: 600;
+    --site-font-weight-bold: 700;
+    --site-font-weight-extrabold: 800;
+
+    --site-line-height-tight: 1.08;
+    --site-line-height-snug: 1.25;
+    --site-line-height-normal: 1.5;
+    --site-line-height-relaxed: 1.7;
+
+    --site-letter-spacing-tightest: -0.045em;
+    --site-letter-spacing-tight: -0.025em;
+    --site-letter-spacing-normal: 0;
+    --site-letter-spacing-wide: 0.04em;
+
+
+    /* ======================================================
+       ESPAÇAMENTOS
+    ====================================================== */
+
+    --site-space-0: 0;
+    --site-space-1: 0.25rem;
+    --site-space-2: 0.5rem;
+    --site-space-3: 0.75rem;
+    --site-space-4: 1rem;
+    --site-space-5: 1.25rem;
+    --site-space-6: 1.5rem;
+    --site-space-8: 2rem;
+    --site-space-10: 2.5rem;
+    --site-space-12: 3rem;
+    --site-space-16: 4rem;
+    --site-space-20: 5rem;
+    --site-space-24: 6rem;
+    --site-space-28: 7rem;
+    --site-space-32: 8rem;
+
+    --site-section-space-sm: var(--site-space-16);
+    --site-section-space-md: var(--site-space-24);
+    --site-section-space-lg: var(--site-space-32);
+
+
+    /* ======================================================
+       LAYOUT
+    ====================================================== */
+
+    --site-container-width: 75rem;
+    --site-container-narrow: 48rem;
+    --site-container-gutter: 1.5rem;
+
+    --site-navbar-height: 5rem;
+
+    --site-content-width-sm: 36rem;
+    --site-content-width-md: 46rem;
+    --site-content-width-lg: 62rem;
+
+
+    /* ======================================================
+       BORDAS E RAIOS
+    ====================================================== */
+
+    --site-border-width: 1px;
+
+    --site-radius-xs: 0.375rem;
+    --site-radius-sm: 0.5rem;
+    --site-radius-md: 0.75rem;
+    --site-radius-lg: 1rem;
+    --site-radius-xl: 1.5rem;
+    --site-radius-2xl: 2rem;
+    --site-radius-pill: 9999px;
+
+
+    /* ======================================================
+       SOMBRAS
+    ====================================================== */
+
+    --site-shadow-xs:
+        0 1px 2px rgba(15, 23, 42, 0.05);
+
+    --site-shadow-sm:
+        0 6px 18px rgba(15, 23, 42, 0.06);
+
+    --site-shadow-md:
+        0 16px 40px rgba(15, 23, 42, 0.09);
+
+    --site-shadow-lg:
+        0 28px 80px rgba(15, 23, 42, 0.13);
+
+    --site-shadow-focus:
+        0 0 0 4px var(--site-color-focus);
+
+
+    /* ======================================================
+       MOVIMENTO
+    ====================================================== */
+
+    --site-duration-fast: 150ms;
+    --site-duration-base: 250ms;
+    --site-duration-slow: 400ms;
+
+    --site-ease-standard:
+        cubic-bezier(0.2, 0, 0, 1);
+
+    --site-transition-fast:
+        var(--site-duration-fast)
+        var(--site-ease-standard);
+
+    --site-transition-base:
+        var(--site-duration-base)
+        var(--site-ease-standard);
+
+    --site-transition-slow:
+        var(--site-duration-slow)
+        var(--site-ease-standard);
+
+
+    /* ======================================================
+       CAMADAS
+    ====================================================== */
+
+    --site-z-base: 0;
+    --site-z-content: 10;
+    --site-z-dropdown: 100;
+    --site-z-header: 200;
+    --site-z-overlay: 300;
+    --site-z-modal: 400;
+}
+
+
+/* ==========================================================
+   ACESSIBILIDADE
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    :root {
+        --site-duration-fast: 0ms;
+        --site-duration-base: 0ms;
+        --site-duration-slow: 0ms;
+    }
+
+}

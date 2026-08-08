@@ -1,0 +1,873 @@
+/* ==========================================================
+   FALAE
+
+   Arquivo:
+      site-cta.css
+
+   Domínio:
+      Site Institucional
+
+   Componente:
+      CTA Final
+
+   Responsabilidade:
+      Definir o fechamento comercial da Landing Page,
+      conduzindo o visitante para uma conversa com o FALAE.
+
+   Dependências:
+      site-variables.css
+      site-base.css
+      site-typography.css
+      site-buttons.css
+
+   Sprint:
+      20.2 — Finalização Landing Page
+========================================================== */
+
+
+/* ==========================================================
+   PROTEÇÃO DE SVG
+========================================================== */
+
+.site-cta svg {
+    display: block;
+
+    width: 1em;
+    height: 1em;
+    max-width: 100%;
+    max-height: 100%;
+
+    flex: 0 0 auto;
+}
+
+
+/* ==========================================================
+   SEÇÃO
+========================================================== */
+
+.site-cta {
+    position: relative;
+
+    overflow: visible;
+
+    background-color: var(--site-color-white);
+}
+
+
+/* ==========================================================
+   PAINEL PRINCIPAL
+========================================================== */
+
+.site-cta__panel {
+    position: relative;
+
+    overflow: hidden;
+
+    padding:
+        clamp(4rem, 7vw, 6rem)
+        clamp(2rem, 6vw, 5rem);
+
+    border:
+        var(--site-border-width)
+        solid
+        rgba(15, 39, 71, 0.12);
+
+    border-radius: var(--site-radius-2xl);
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--site-color-primary-active) 0%,
+            var(--site-color-primary) 58%,
+            var(--site-color-primary-hover) 100%
+        );
+
+    box-shadow:
+        var(--site-shadow-lg),
+        0 0 0 0.5rem rgba(255, 255, 255, 0.72);
+
+    isolation: isolate;
+}
+
+
+/* ==========================================================
+   TEXTURA
+========================================================== */
+
+.site-cta__panel::before {
+    position: absolute;
+    inset: 0;
+
+    background-image:
+        linear-gradient(
+            rgba(255, 255, 255, 0.025) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.025) 1px,
+            transparent 1px
+        );
+
+    background-size: 4rem 4rem;
+
+    content: "";
+
+    pointer-events: none;
+
+    opacity: 0.7;
+
+    mask-image:
+        radial-gradient(
+            circle at center,
+            black 20%,
+            transparent 82%
+        );
+}
+
+
+/* ==========================================================
+   DECORAÇÕES
+========================================================== */
+
+.site-cta__decoration {
+    position: absolute;
+
+    width: 28rem;
+    height: 28rem;
+
+    border-radius: 50%;
+
+    pointer-events: none;
+
+    filter: blur(1.5rem);
+}
+
+.site-cta__decoration--left {
+    bottom: -18rem;
+    left: -10rem;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(37, 99, 235, 0.4),
+            transparent 72%
+        );
+}
+
+.site-cta__decoration--right {
+    top: -18rem;
+    right: -9rem;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(255, 255, 255, 0.14),
+            transparent 72%
+        );
+}
+
+
+/* ==========================================================
+   CONTEÚDO
+========================================================== */
+
+.site-cta__content {
+    position: relative;
+    z-index: var(--site-z-content);
+
+    width: min(100%, 64rem);
+
+    margin-inline: auto;
+}
+
+
+/* ==========================================================
+   CABEÇALHO
+========================================================== */
+
+.site-cta__header {
+    width: min(100%, 52rem);
+
+    margin:
+        0
+        auto
+        var(--site-space-8);
+
+    text-align: center;
+}
+
+
+/* ==========================================================
+   OVERLINE
+
+   Padding lateral proposital para impedir clipping
+   do primeiro caractere.
+========================================================== */
+
+.site-cta__overline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: auto;
+
+    margin:
+        0
+        auto
+        var(--site-space-4);
+
+    padding:
+        0.35rem
+        0.75rem;
+
+    overflow: visible;
+
+    border:
+        var(--site-border-width)
+        solid
+        rgba(255, 255, 255, 0.12);
+
+    border-radius: var(--site-radius-pill);
+
+    background-color: rgba(255, 255, 255, 0.07);
+
+    color: rgba(255, 255, 255, 0.72);
+
+    font-size: var(--site-font-size-xs);
+    font-weight: var(--site-font-weight-bold);
+    line-height: 1.4;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+
+    white-space: nowrap;
+}
+
+
+/* ==========================================================
+   TÍTULO
+
+   Tamanho vem EXCLUSIVAMENTE de .site-title-xl.
+========================================================== */
+
+.site-cta__title {
+    max-width: 19ch;
+
+    margin:
+        0
+        auto
+        var(--site-space-5);
+
+    color: var(--site-color-white);
+
+    text-align: center;
+    text-wrap: balance;
+}
+
+
+/* ==========================================================
+   DESCRIÇÃO
+========================================================== */
+
+.site-cta__description {
+    max-width: 43rem;
+
+    margin:
+        0
+        auto;
+
+    color: rgba(255, 255, 255, 0.72);
+
+    font-size: var(--site-font-size-lg);
+    line-height: var(--site-line-height-relaxed);
+
+    text-align: center;
+    text-wrap: pretty;
+}
+
+
+/* ==========================================================
+   BOTÕES
+========================================================== */
+
+.site-cta__actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    gap: var(--site-space-3);
+
+    margin-bottom: var(--site-space-3);
+}
+
+
+/* ==========================================================
+   MICROCOPY
+========================================================== */
+
+.site-cta__microcopy {
+    max-width: 36rem;
+
+    margin:
+        0
+        auto
+        var(--site-space-10);
+
+    color: rgba(255, 255, 255, 0.52);
+
+    font-size: var(--site-font-size-xs);
+    line-height: var(--site-line-height-relaxed);
+
+    text-align: center;
+}
+
+
+/* ==========================================================
+   BENEFÍCIOS
+========================================================== */
+
+.site-cta__benefits {
+    display: grid;
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    align-items: stretch;
+
+    gap: var(--site-space-4);
+
+    margin-bottom: var(--site-space-10);
+}
+
+
+/* ==========================================================
+   BENEFÍCIO
+========================================================== */
+
+.site-cta__benefit {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+
+    min-width: 0;
+    min-height: 10rem;
+
+    padding:
+        var(--site-space-5)
+        var(--site-space-5);
+
+    border:
+        var(--site-border-width)
+        solid
+        rgba(255, 255, 255, 0.12);
+
+    border-radius: var(--site-radius-lg);
+
+    background-color: rgba(255, 255, 255, 0.07);
+
+    box-shadow:
+        0 0.75rem 2rem
+        rgba(0, 0, 0, 0.08);
+
+    -webkit-backdrop-filter: blur(0.75rem);
+    backdrop-filter: blur(0.75rem);
+
+    transition:
+        background-color var(--site-transition-base),
+        border-color var(--site-transition-base),
+        transform var(--site-transition-base);
+}
+
+.site-cta__benefit:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+
+    background-color: rgba(255, 255, 255, 0.105);
+
+    transform: translateY(-3px);
+}
+
+
+/* ==========================================================
+   ÍCONE DO BENEFÍCIO
+========================================================== */
+
+.site-cta__benefit-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 2.5rem;
+    height: 2.5rem;
+
+    margin-bottom: var(--site-space-4);
+
+    border-radius: 50%;
+
+    background-color: rgba(52, 211, 153, 0.13);
+    color: #34D399;
+
+    flex: 0 0 auto;
+}
+
+.site-cta__benefit-icon svg {
+    width: 1.1rem;
+    height: 1.1rem;
+}
+
+
+/* ==========================================================
+   TEXTO DO BENEFÍCIO
+========================================================== */
+
+.site-cta__benefit > div {
+    min-width: 0;
+}
+
+.site-cta__benefit strong {
+    display: block;
+
+    margin-bottom: var(--site-space-2);
+
+    color: var(--site-color-white);
+
+    font-size: var(--site-font-size-sm);
+    font-weight: var(--site-font-weight-semibold);
+    line-height: var(--site-line-height-snug);
+}
+
+.site-cta__benefit span:not(.site-cta__benefit-icon) {
+    display: block;
+
+    color: rgba(255, 255, 255, 0.58);
+
+    font-size: var(--site-font-size-xs);
+    line-height: var(--site-line-height-relaxed);
+}
+
+
+/* ==========================================================
+   JORNADA
+========================================================== */
+
+.site-cta__journey {
+    padding:
+        var(--site-space-6)
+        var(--site-space-6);
+
+    border:
+        var(--site-border-width)
+        solid
+        rgba(255, 255, 255, 0.13);
+
+    border-radius: var(--site-radius-xl);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.1),
+            rgba(255, 255, 255, 0.05)
+        );
+
+    box-shadow:
+        0 1rem 2.5rem
+        rgba(0, 0, 0, 0.1);
+
+    -webkit-backdrop-filter: blur(1rem);
+    backdrop-filter: blur(1rem);
+}
+
+
+/* ==========================================================
+   CABEÇALHO DA JORNADA
+========================================================== */
+
+.site-cta__journey-header {
+    margin-bottom: var(--site-space-6);
+
+    text-align: center;
+}
+
+.site-cta__journey-overline {
+    display: block;
+
+    margin-bottom: var(--site-space-2);
+
+    color: rgba(255, 255, 255, 0.58);
+
+    font-size: var(--site-font-size-xs);
+    font-weight: var(--site-font-weight-bold);
+    line-height: var(--site-line-height-normal);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.site-cta__journey-title {
+    display: block;
+
+    color: var(--site-color-white);
+
+    font-size: var(--site-font-size-lg);
+    font-weight: var(--site-font-weight-semibold);
+    line-height: var(--site-line-height-snug);
+
+    text-wrap: balance;
+}
+
+
+/* ==========================================================
+   LISTA DA JORNADA
+========================================================== */
+
+.site-cta__journey-list {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1fr)
+        auto
+        minmax(0, 1fr)
+        auto
+        minmax(0, 1fr);
+
+    align-items: center;
+
+    gap: var(--site-space-4);
+
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+}
+
+
+/* ==========================================================
+   ETAPA
+========================================================== */
+
+.site-cta__journey-item {
+    display: grid;
+    grid-template-columns:
+        auto
+        minmax(0, 1fr);
+
+    align-items: flex-start;
+
+    gap: var(--site-space-3);
+
+    min-width: 0;
+}
+
+
+/* ==========================================================
+   NÚMERO
+========================================================== */
+
+.site-cta__journey-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 2.5rem;
+    height: 2.5rem;
+
+    border:
+        var(--site-border-width)
+        solid
+        rgba(255, 255, 255, 0.15);
+
+    border-radius: 50%;
+
+    background-color: rgba(255, 255, 255, 0.08);
+    color: var(--site-color-white);
+
+    font-size: var(--site-font-size-xs);
+    font-weight: var(--site-font-weight-bold);
+
+    flex: 0 0 auto;
+}
+
+
+/* ==========================================================
+   TEXTO DA ETAPA
+========================================================== */
+
+.site-cta__journey-item > div {
+    min-width: 0;
+}
+
+.site-cta__journey-item strong {
+    display: block;
+
+    margin-bottom: var(--site-space-1);
+
+    color: var(--site-color-white);
+
+    font-size: var(--site-font-size-sm);
+    line-height: var(--site-line-height-snug);
+}
+
+.site-cta__journey-item p {
+    margin: 0;
+
+    color: rgba(255, 255, 255, 0.58);
+
+    font-size: var(--site-font-size-xs);
+    line-height: var(--site-line-height-relaxed);
+}
+
+
+/* ==========================================================
+   CONECTOR
+========================================================== */
+
+.site-cta__journey-separator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 3rem;
+
+    padding: 0;
+}
+
+.site-cta__journey-separator > span {
+    position: relative;
+
+    display: block;
+
+    width: 100%;
+    height: 1px;
+
+    background-color: rgba(255, 255, 255, 0.18);
+}
+
+.site-cta__journey-separator > span::after {
+    position: absolute;
+    top: 50%;
+    right: 0;
+
+    width: 0.4rem;
+    height: 0.4rem;
+
+    border-top:
+        1px solid
+        rgba(255, 255, 255, 0.34);
+
+    border-right:
+        1px solid
+        rgba(255, 255, 255, 0.34);
+
+    content: "";
+
+    transform:
+        translateY(-50%)
+        rotate(45deg);
+}
+
+
+/* ==========================================================
+   NOTEBOOK
+========================================================== */
+
+@media (max-width: 74.9375rem) {
+
+    .site-cta__benefits {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .site-cta__benefit {
+        min-height: 8.75rem;
+    }
+
+}
+
+
+/* ==========================================================
+   TABLET
+========================================================== */
+
+@media (max-width: 61.9375rem) {
+
+    .site-cta__panel {
+        padding:
+            var(--site-space-14)
+            var(--site-space-8);
+    }
+
+    .site-cta__journey-list {
+        grid-template-columns: 1fr;
+
+        gap: 0;
+    }
+
+    .site-cta__journey-item {
+        padding:
+            var(--site-space-4)
+            0;
+    }
+
+    .site-cta__journey-item:not(:last-child) {
+        border-bottom:
+            var(--site-border-width)
+            solid
+            rgba(255, 255, 255, 0.1);
+    }
+
+    .site-cta__journey-separator {
+        display: none;
+    }
+
+}
+
+
+/* ==========================================================
+   MOBILE
+========================================================== */
+
+@media (max-width: 47.9375rem) {
+
+    .site-cta__panel {
+        padding:
+            var(--site-space-10)
+            var(--site-space-5);
+
+        border-radius: var(--site-radius-xl);
+    }
+
+    .site-cta__header {
+        margin-bottom: var(--site-space-7);
+
+        text-align: left;
+    }
+
+    .site-cta__overline {
+        margin-left: 0;
+    }
+
+    .site-cta__title {
+        max-width: none;
+
+        margin-inline: 0;
+
+        text-align: left;
+    }
+
+    .site-cta__description {
+        margin-inline: 0;
+
+        font-size: var(--site-font-size-base);
+
+        text-align: left;
+    }
+
+    .site-cta__actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .site-cta__actions .site-button {
+        width: 100%;
+    }
+
+    .site-cta__microcopy {
+        margin-inline: 0;
+
+        text-align: left;
+    }
+
+    .site-cta__benefits {
+        grid-template-columns: 1fr;
+
+        gap: var(--site-space-3);
+    }
+
+    .site-cta__benefit {
+        min-height: 0;
+    }
+
+    .site-cta__journey {
+        padding:
+            var(--site-space-5)
+            var(--site-space-5);
+    }
+
+    .site-cta__journey-header {
+        text-align: left;
+    }
+
+}
+
+
+/* ==========================================================
+   MOBILE REDUZIDO
+========================================================== */
+
+@media (max-width: 27.5rem) {
+
+    .site-cta__benefit {
+        padding: var(--site-space-4);
+    }
+
+    .site-cta__journey-item {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+/* ==========================================================
+   ACESSIBILIDADE
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .site-cta__benefit {
+        transition: none;
+    }
+
+    .site-cta__benefit:hover {
+        transform: none;
+    }
+
+}
+
+
+/* ==========================================================
+   IMPRESSÃO
+========================================================== */
+
+@media print {
+
+    .site-cta__panel {
+        border:
+            var(--site-border-width)
+            solid
+            var(--site-color-neutral-400);
+
+        background: var(--site-color-white);
+
+        box-shadow: none;
+    }
+
+    .site-cta__overline,
+    .site-cta__title,
+    .site-cta__description,
+    .site-cta__microcopy,
+    .site-cta__benefit strong,
+    .site-cta__benefit span,
+    .site-cta__journey-overline,
+    .site-cta__journey-title,
+    .site-cta__journey-item strong,
+    .site-cta__journey-item p {
+        color: var(--site-color-black);
+    }
+
+    .site-cta__benefit,
+    .site-cta__journey {
+        border-color: var(--site-color-neutral-400);
+
+        background: var(--site-color-white);
+
+        box-shadow: none;
+    }
+
+}

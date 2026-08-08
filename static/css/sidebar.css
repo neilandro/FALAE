@@ -172,6 +172,16 @@
     white-space: nowrap;
 }
 
+.sidebar-logo {
+
+    height: 52px;
+    width: auto;
+
+    object-fit: contain;
+
+    filter: brightness(0) invert(1);
+
+}
 
 /* ==========================================================
    NAVEGAÇÃO

@@ -1,0 +1,309 @@
+/* ==========================================================
+   FALAE
+
+   Arquivo:
+      site-trust-bar.css
+
+   Domínio:
+      Site Institucional
+
+   Componente:
+      Trust Bar
+
+   Responsabilidade:
+      Definir a apresentação visual dos pilares de confiança
+      exibidos abaixo da primeira dobra da Landing Page.
+
+   Dependências:
+      site-variables.css
+      site-base.css
+      site-typography.css
+
+   Sprint:
+      20.1 — Produção Landing Page
+========================================================== */
+
+
+/* ==========================================================
+   SEÇÃO
+========================================================== */
+
+.site-trust-bar {
+    position: relative;
+    z-index: var(--site-z-content);
+
+    border-top:
+        var(--site-border-width)
+        solid
+        var(--site-color-border-subtle);
+
+    border-bottom:
+        var(--site-border-width)
+        solid
+        var(--site-color-border-subtle);
+
+    background-color: var(--site-color-white);
+}
+
+
+/* ==========================================================
+   CONTEÚDO
+========================================================== */
+
+.site-trust-bar__content {
+    display: grid;
+    grid-template-columns:
+        minmax(15rem, 0.78fr)
+        minmax(0, 2.22fr);
+
+    align-items: center;
+
+    gap: var(--site-space-10);
+
+    min-height: 8.5rem;
+    padding-block: var(--site-space-6);
+}
+
+
+/* ==========================================================
+   INTRODUÇÃO
+========================================================== */
+
+.site-trust-bar__intro {
+    max-width: 19rem;
+    margin: 0;
+
+    color: var(--site-color-heading);
+
+    font-size: var(--site-font-size-base);
+    font-weight: var(--site-font-weight-semibold);
+    line-height: var(--site-line-height-relaxed);
+
+    text-wrap: pretty;
+}
+
+
+/* ==========================================================
+   ITENS
+========================================================== */
+
+.site-trust-bar__items {
+    display: grid;
+    grid-template-columns:
+        repeat(5, minmax(0, 1fr));
+
+    align-items: center;
+
+    gap: var(--site-space-3);
+
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+}
+
+.site-trust-bar__item {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: var(--site-space-2);
+
+    min-width: 0;
+    min-height: 3.5rem;
+
+    padding:
+        var(--site-space-3)
+        var(--site-space-2);
+
+    border-radius: var(--site-radius-md);
+
+    color: var(--site-color-text-secondary);
+
+    text-align: center;
+
+    transition:
+        background-color var(--site-transition-fast),
+        color var(--site-transition-fast),
+        transform var(--site-transition-fast);
+}
+
+.site-trust-bar__item:not(:last-child)::after {
+    position: absolute;
+    top: 50%;
+    right: calc(var(--site-space-2) * -1);
+
+    width: 1px;
+    height: 1.75rem;
+
+    background-color: var(--site-color-border-subtle);
+
+    content: "";
+
+    transform: translateY(-50%);
+}
+
+.site-trust-bar__item:hover {
+    background-color: var(--site-color-background-soft);
+    color: var(--site-color-primary);
+
+    transform: translateY(-1px);
+}
+
+
+/* ==========================================================
+   ÍCONES
+========================================================== */
+
+.site-trust-bar__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 2rem;
+    height: 2rem;
+
+    border-radius: var(--site-radius-md);
+
+    background-color: var(--site-color-primary-soft);
+    color: var(--site-color-primary);
+
+    flex: 0 0 auto;
+}
+
+.site-trust-bar__icon svg {
+    width: 1.125rem;
+    height: 1.125rem;
+}
+
+
+/* ==========================================================
+   TEXTO
+========================================================== */
+
+.site-trust-bar__label {
+    min-width: 0;
+
+    font-size: var(--site-font-size-sm);
+    font-weight: var(--site-font-weight-semibold);
+    line-height: var(--site-line-height-snug);
+}
+
+
+/* ==========================================================
+   NOTEBOOK E TABLET
+========================================================== */
+
+@media (max-width: 74.9375rem) {
+
+    .site-trust-bar__content {
+        grid-template-columns: 1fr;
+
+        gap: var(--site-space-5);
+
+        padding-block: var(--site-space-8);
+    }
+
+    .site-trust-bar__intro {
+        max-width: none;
+
+        text-align: center;
+    }
+
+}
+
+
+@media (max-width: 61.9375rem) {
+
+    .site-trust-bar__items {
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+
+        gap: var(--site-space-3);
+    }
+
+    .site-trust-bar__item {
+        border:
+            var(--site-border-width)
+            solid
+            var(--site-color-border-subtle);
+
+        background-color: var(--site-color-background-soft);
+    }
+
+    .site-trust-bar__item:not(:last-child)::after {
+        display: none;
+    }
+
+}
+
+
+/* ==========================================================
+   MOBILE
+========================================================== */
+
+@media (max-width: 47.9375rem) {
+
+    .site-trust-bar__content {
+        padding-block: var(--site-space-6);
+    }
+
+    .site-trust-bar__intro {
+        font-size: var(--site-font-size-sm);
+    }
+
+    .site-trust-bar__items {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .site-trust-bar__item {
+        justify-content: flex-start;
+
+        min-height: 4rem;
+        padding: var(--site-space-3);
+
+        text-align: left;
+    }
+
+    .site-trust-bar__item:last-child {
+        grid-column: 1 / -1;
+
+        justify-content: center;
+    }
+
+}
+
+
+@media (max-width: 27.5rem) {
+
+    .site-trust-bar__items {
+        grid-template-columns: 1fr;
+    }
+
+    .site-trust-bar__item,
+    .site-trust-bar__item:last-child {
+        grid-column: auto;
+
+        justify-content: flex-start;
+    }
+
+}
+
+
+/* ==========================================================
+   ACESSIBILIDADE
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .site-trust-bar__item {
+        transition: none;
+    }
+
+    .site-trust-bar__item:hover {
+        transform: none;
+    }
+
+}

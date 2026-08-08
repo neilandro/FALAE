@@ -1,0 +1,452 @@
+/* ==========================================================
+   FALAE
+
+   Arquivo:
+      site-navbar.css
+
+   Domínio:
+      Site Institucional
+
+   Componente:
+      Navbar
+
+   Responsabilidade:
+      Definir a apresentação e a responsividade da navegação
+      principal do site institucional.
+
+   Dependências:
+      site-variables.css
+      site-base.css
+      site-typography.css
+      site-buttons.css
+
+   Sprint:
+      20.1 — Produção Landing Page
+========================================================== */
+
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: var(--site-z-header);
+
+    width: 100%;
+
+    border-bottom:
+        var(--site-border-width)
+        solid
+        transparent;
+
+    background-color: rgba(255, 255, 255, 0.88);
+
+    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px);
+
+    transition:
+        background-color var(--site-transition-base),
+        border-color var(--site-transition-base),
+        box-shadow var(--site-transition-base);
+}
+
+.site-header.is-scrolled {
+    border-bottom-color: var(--site-color-border-subtle);
+    background-color: rgba(255, 255, 255, 0.96);
+    box-shadow: var(--site-shadow-xs);
+}
+
+
+/* ==========================================================
+   ESTRUTURA
+========================================================== */
+
+.site-navbar {
+    min-height: var(--site-navbar-height);
+}
+
+.site-navbar__content {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    min-height: var(--site-navbar-height);
+}
+
+
+/* ==========================================================
+   MARCA
+========================================================== */
+
+.site-navbar__brand {
+    position: relative;
+    z-index: 2;
+
+    display: inline-flex;
+    align-items: center;
+
+    flex: 0 0 auto;
+
+    text-decoration: none;
+}
+
+.site-navbar__logo{
+    height:52px;
+    width:auto;
+    display:block;
+    
+}
+
+
+/* ==========================================================
+   MENU DESKTOP
+========================================================== */
+
+.site-navbar__menu {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    flex: 1;
+
+    gap: var(--site-space-10);
+}
+
+.site-navbar__links {
+    display: flex;
+    align-items: center;
+
+    gap: var(--site-space-8);
+
+    margin: 0 auto;
+    padding: 0;
+
+    list-style: none;
+}
+
+.site-navbar__item {
+    margin: 0;
+}
+
+.site-navbar__link {
+    position: relative;
+
+    display: inline-flex;
+    align-items: center;
+
+    padding-block: var(--site-space-2);
+
+    color: var(--site-color-text-secondary);
+
+    font-size: var(--site-font-size-sm);
+    font-weight: var(--site-font-weight-medium);
+    line-height: 1;
+    text-decoration: none;
+
+    transition: color var(--site-transition-fast);
+}
+
+.site-navbar__link::after {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    height: 2px;
+
+    border-radius: var(--site-radius-pill);
+
+    background-color: var(--site-color-accent);
+
+    content: "";
+
+    opacity: 0;
+    transform: scaleX(0);
+    transform-origin: center;
+
+    transition:
+        opacity var(--site-transition-fast),
+        transform var(--site-transition-fast);
+}
+
+.site-navbar__link:hover,
+.site-navbar__link:focus-visible {
+    color: var(--site-color-primary);
+}
+
+.site-navbar__link:hover::after,
+.site-navbar__link:focus-visible::after {
+    opacity: 1;
+    transform: scaleX(1);
+}
+
+
+/* ==========================================================
+   AÇÕES
+========================================================== */
+
+.site-navbar__actions {
+    display: flex;
+    align-items: center;
+
+    gap: var(--site-space-4);
+
+    flex: 0 0 auto;
+}
+
+.site-navbar__login {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 2.75rem;
+    padding-inline: var(--site-space-3);
+
+    color: var(--site-color-primary);
+
+    font-size: var(--site-font-size-sm);
+    font-weight: var(--site-font-weight-semibold);
+    text-decoration: none;
+
+    transition: color var(--site-transition-fast);
+}
+
+.site-navbar__login:hover {
+    color: var(--site-color-accent-hover);
+}
+
+.site-navbar__cta {
+    min-height: 2.75rem;
+
+    padding:
+        var(--site-space-3)
+        var(--site-space-5);
+
+    border-radius: var(--site-radius-md);
+
+    font-size: var(--site-font-size-sm);
+}
+
+
+/* ==========================================================
+   BOTÃO MOBILE
+========================================================== */
+
+.site-navbar__toggle {
+    position: relative;
+    z-index: 2;
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: var(--site-space-2);
+
+    border:
+        var(--site-border-width)
+        solid
+        var(--site-color-border);
+
+    border-radius: var(--site-radius-md);
+
+    background-color: var(--site-color-surface);
+    color: var(--site-color-primary);
+
+    box-shadow: var(--site-shadow-xs);
+
+    transition:
+        border-color var(--site-transition-fast),
+        background-color var(--site-transition-fast),
+        box-shadow var(--site-transition-fast);
+}
+
+.site-navbar__toggle:hover {
+    border-color: var(--site-color-border-strong);
+    background-color: var(--site-color-background-soft);
+}
+
+.site-navbar__toggle-line {
+    display: block;
+
+    width: 1.25rem;
+    height: 2px;
+
+    border-radius: var(--site-radius-pill);
+
+    background-color: currentColor;
+
+    transition:
+        opacity var(--site-transition-base),
+        transform var(--site-transition-base);
+}
+
+.site-navbar__toggle-line + .site-navbar__toggle-line {
+    margin-top: 4px;
+}
+
+.site-navbar__toggle[aria-expanded="true"]
+.site-navbar__toggle-line:nth-child(1) {
+    transform: translateY(6px) rotate(45deg);
+}
+
+.site-navbar__toggle[aria-expanded="true"]
+.site-navbar__toggle-line:nth-child(2) {
+    opacity: 0;
+}
+
+.site-navbar__toggle[aria-expanded="true"]
+.site-navbar__toggle-line:nth-child(3) {
+    transform: translateY(-6px) rotate(-45deg);
+}
+
+
+/* ==========================================================
+   TABLET E MOBILE
+========================================================== */
+
+@media (max-width: 61.9375rem) {
+
+    .site-navbar__toggle {
+        display: inline-flex;
+    }
+
+    .site-navbar__menu {
+        position: absolute;
+        top: calc(100% + var(--site-space-2));
+        right: 0;
+        left: 0;
+
+        display: flex;
+        align-items: stretch;
+        flex-direction: column;
+
+        gap: var(--site-space-6);
+
+        padding: var(--site-space-6);
+
+        border:
+            var(--site-border-width)
+            solid
+            var(--site-color-border-subtle);
+
+        border-radius: var(--site-radius-xl);
+
+        background-color: rgba(255, 255, 255, 0.98);
+
+        box-shadow: var(--site-shadow-lg);
+
+        opacity: 0;
+        visibility: hidden;
+
+        transform: translateY(-0.75rem);
+
+        transition:
+            opacity var(--site-transition-base),
+            visibility var(--site-transition-base),
+            transform var(--site-transition-base);
+    }
+
+    .site-navbar__menu.is-open {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .site-navbar__links {
+        align-items: stretch;
+        flex-direction: column;
+
+        width: 100%;
+
+        gap: 0;
+    }
+
+    .site-navbar__item {
+        width: 100%;
+    }
+
+    .site-navbar__link {
+        width: 100%;
+
+        padding-block: var(--site-space-4);
+
+        border-bottom:
+            var(--site-border-width)
+            solid
+            var(--site-color-border-subtle);
+
+        font-size: var(--site-font-size-base);
+    }
+
+    .site-navbar__link::after {
+        display: none;
+    }
+
+    .site-navbar__actions {
+        align-items: stretch;
+        flex-direction: column;
+
+        width: 100%;
+
+        gap: var(--site-space-3);
+    }
+
+    .site-navbar__login,
+    .site-navbar__cta {
+        width: 100%;
+    }
+
+    .site-navbar__login {
+        border:
+            var(--site-border-width)
+            solid
+            var(--site-color-border);
+
+        border-radius: var(--site-radius-md);
+
+        background-color: var(--site-color-surface);
+    }
+
+}
+
+
+/* ==========================================================
+   MOBILE
+========================================================== */
+
+@media (max-width: 47.9375rem) {
+
+    .site-navbar__logo {
+        height: 2.125rem;
+    }
+
+    .site-navbar__menu {
+        padding: var(--site-space-5);
+        border-radius: var(--site-radius-lg);
+    }
+
+}
+
+
+/* ==========================================================
+   ACESSIBILIDADE
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .site-header,
+    .site-navbar__menu,
+    .site-navbar__toggle-line,
+    .site-navbar__link,
+    .site-navbar__link::after {
+        transition: none;
+    }
+
+}

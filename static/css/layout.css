@@ -397,3 +397,55 @@
 .context-bar .form-actions {
     margin-top: 12px;
 }
+
+.falae-navbar{
+
+    position: sticky;
+    top:0;
+    z-index:1000;
+
+    background:#ffffff;
+
+    border-bottom:1px solid #edf2f7;
+
+    height:96px;
+
+    display:flex;
+    align-items:center;
+
+}
+
+.falae-logo{
+
+    height:42px;
+    width:auto;
+
+}
+
+.navbar-nav{
+
+    gap:32px;
+
+}
+
+.nav-link{
+
+    color:#233248;
+
+    font-weight:500;
+
+    transition:.25s;
+
+}
+
+.nav-link:hover{
+
+    color:var(--color-primary);
+
+}
+
+.falae-navbar-actions{
+
+    margin-left:32px;
+
+}

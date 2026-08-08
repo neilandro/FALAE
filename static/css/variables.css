@@ -1,19 +1,420 @@
+/* ==========================================================
+   FALAE
+
+   Arquivo:
+      variables.css
+
+   Camada:
+      Design Tokens
+
+   Responsabilidade:
+      Centralizar os valores fundamentais da identidade
+      visual e da estrutura de interface do FALAE.
+
+   Utilização:
+      Landing Page
+      Área Administrativa
+      Portal da Empresa
+      Canal Público
+      Componentes compartilhados
+
+   Sprint:
+      20.3
+
+   Regras:
+      1. Componentes devem consumir tokens deste arquivo.
+      2. Evitar cores e medidas fixas nos componentes.
+      3. Tokens legados devem ser preservados até que todos
+         os módulos antigos sejam migrados.
+========================================================== */
+
 :root {
-    --primary: #1E3A8A;
-    --primary-light: #2563EB;
-    --success: #10B981;
-    --warning: #F59E0B;
-    --danger: #EF4444;
 
-    --gray-50: #F9FAFB;
-    --gray-100: #F3F4F6;
-    --gray-200: #E5E7EB;
-    --gray-500: #6B7280;
-    --gray-700: #374151;
-    --gray-900: #111827;
+    /* ======================================================
+       CORES DA MARCA
+    ====================================================== */
 
-    --white: #FFFFFF;
-    --radius: 12px;
-    --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    --sidebar-width: 250px;
+    --color-primary-50: #EFF6FF;
+    --color-primary-100: #DBEAFE;
+    --color-primary-200: #BFDBFE;
+    --color-primary-300: #93C5FD;
+    --color-primary-400: #60A5FA;
+    --color-primary-500: #3B82F6;
+    --color-primary-600: #2563EB;
+    --color-primary-700: #1D4ED8;
+    --color-primary-800: #1E40AF;
+    --color-primary-900: #1E3A8A;
+    --color-primary-950: #172554;
+
+    --color-primary: var(--color-primary-900);
+    --color-primary-hover: var(--color-primary-800);
+    --color-primary-active: var(--color-primary-950);
+    --color-primary-light: var(--color-primary-600);
+    --color-primary-soft: var(--color-primary-50);
+
+
+    /* ======================================================
+       CORES DE APOIO
+    ====================================================== */
+
+    --color-success-50: #ECFDF5;
+    --color-success-100: #D1FAE5;
+    --color-success-500: #10B981;
+    --color-success-600: #059669;
+    --color-success-700: #047857;
+
+    --color-warning-50: #FFFBEB;
+    --color-warning-100: #FEF3C7;
+    --color-warning-500: #F59E0B;
+    --color-warning-600: #D97706;
+    --color-warning-700: #B45309;
+
+    --color-danger-50: #FEF2F2;
+    --color-danger-100: #FEE2E2;
+    --color-danger-500: #EF4444;
+    --color-danger-600: #DC2626;
+    --color-danger-700: #B91C1C;
+
+    --color-info-50: #F0F9FF;
+    --color-info-100: #E0F2FE;
+    --color-info-500: #0EA5E9;
+    --color-info-600: #0284C7;
+    --color-info-700: #0369A1;
+
+    --color-success: var(--color-success-500);
+    --color-warning: var(--color-warning-500);
+    --color-danger: var(--color-danger-500);
+    --color-info: var(--color-info-500);
+
+
+    /* ======================================================
+       ESCALA NEUTRA
+    ====================================================== */
+
+    --color-gray-25: #FCFCFD;
+    --color-gray-50: #F9FAFB;
+    --color-gray-100: #F3F4F6;
+    --color-gray-200: #E5E7EB;
+    --color-gray-300: #D1D5DB;
+    --color-gray-400: #9CA3AF;
+    --color-gray-500: #6B7280;
+    --color-gray-600: #4B5563;
+    --color-gray-700: #374151;
+    --color-gray-800: #1F2937;
+    --color-gray-900: #111827;
+    --color-gray-950: #030712;
+
+    --color-white: #FFFFFF;
+    --color-black: #000000;
+
+
+    /* ======================================================
+       CORES SEMÂNTICAS
+    ====================================================== */
+
+    --color-background: var(--color-white);
+    --color-background-soft: var(--color-gray-50);
+    --color-background-muted: var(--color-gray-100);
+
+    --color-surface: var(--color-white);
+    --color-surface-soft: var(--color-gray-50);
+    --color-surface-elevated: var(--color-white);
+    --color-surface-inverse: var(--color-primary-950);
+
+    --color-text: var(--color-gray-900);
+    --color-text-strong: var(--color-gray-950);
+    --color-text-secondary: var(--color-gray-600);
+    --color-text-muted: var(--color-gray-500);
+    --color-text-disabled: var(--color-gray-400);
+    --color-text-inverse: var(--color-white);
+
+    --color-heading: var(--color-primary-950);
+    --color-link: var(--color-primary-700);
+    --color-link-hover: var(--color-primary-900);
+
+    --color-border: var(--color-gray-200);
+    --color-border-strong: var(--color-gray-300);
+    --color-border-subtle: rgba(15, 39, 71, 0.08);
+
+    --color-focus: rgba(37, 99, 235, 0.28);
+    --color-overlay: rgba(3, 7, 18, 0.56);
+
+
+    /* ======================================================
+       TIPOGRAFIA
+    ====================================================== */
+
+    --font-family-base:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+
+    --font-family-heading: var(--font-family-base);
+    --font-family-mono:
+        "SFMono-Regular",
+        Consolas,
+        "Liberation Mono",
+        monospace;
+
+    --font-size-2xs: 0.6875rem;
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-md: 1.125rem;
+    --font-size-lg: 1.25rem;
+    --font-size-xl: 1.5rem;
+    --font-size-2xl: 1.875rem;
+    --font-size-3xl: 2.25rem;
+    --font-size-4xl: 3rem;
+    --font-size-5xl: 3.75rem;
+    --font-size-6xl: 4.5rem;
+
+    --font-size-display-sm:
+        clamp(2.5rem, 6vw, 4rem);
+
+    --font-size-display-md:
+        clamp(3rem, 7vw, 5rem);
+
+    --font-size-display-lg:
+        clamp(3.5rem, 8vw, 6rem);
+
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    --font-weight-extrabold: 800;
+
+    --line-height-none: 1;
+    --line-height-tight: 1.1;
+    --line-height-snug: 1.25;
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.65;
+    --line-height-loose: 1.8;
+
+    --letter-spacing-tightest: -0.05em;
+    --letter-spacing-tight: -0.03em;
+    --letter-spacing-normal: 0;
+    --letter-spacing-wide: 0.025em;
+    --letter-spacing-wider: 0.05em;
+    --letter-spacing-widest: 0.1em;
+
+
+    /* ======================================================
+       ESPAÇAMENTOS
+    ====================================================== */
+
+    --space-0: 0;
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.25rem;
+    --space-6: 1.5rem;
+    --space-7: 1.75rem;
+    --space-8: 2rem;
+    --space-9: 2.25rem;
+    --space-10: 2.5rem;
+    --space-12: 3rem;
+    --space-14: 3.5rem;
+    --space-16: 4rem;
+    --space-18: 4.5rem;
+    --space-20: 5rem;
+    --space-24: 6rem;
+    --space-28: 7rem;
+    --space-32: 8rem;
+
+    --section-space-sm: var(--space-16);
+    --section-space-md: var(--space-24);
+    --section-space-lg: var(--space-32);
+
+
+    /* ======================================================
+       DIMENSÕES E LAYOUT
+    ====================================================== */
+
+    --container-width: 75rem;
+    --container-width-narrow: 50rem;
+    --container-width-wide: 87.5rem;
+    --container-gutter: 1.5rem;
+
+    --header-height: 5.125rem;
+    --sidebar-width: 15.625rem;
+
+    --content-width-xs: 30rem;
+    --content-width-sm: 40rem;
+    --content-width-md: 48rem;
+    --content-width-lg: 64rem;
+
+
+    /* ======================================================
+       BORDAS
+    ====================================================== */
+
+    --border-width: 1px;
+    --border-width-strong: 2px;
+
+    --border-default:
+        var(--border-width)
+        solid
+        var(--color-border);
+
+    --border-subtle:
+        var(--border-width)
+        solid
+        var(--color-border-subtle);
+
+
+    /* ======================================================
+       RAIOS
+    ====================================================== */
+
+    --radius-none: 0;
+    --radius-xs: 0.25rem;
+    --radius-sm: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+    --radius-xl: 1.5rem;
+    --radius-2xl: 2rem;
+    --radius-pill: 9999px;
+    --radius-circle: 50%;
+
+
+    /* ======================================================
+       SOMBRAS
+    ====================================================== */
+
+    --shadow-xs:
+        0 1px 2px rgba(15, 23, 42, 0.05);
+
+    --shadow-sm:
+        0 4px 12px rgba(15, 23, 42, 0.06);
+
+    --shadow-md:
+        0 12px 30px rgba(15, 23, 42, 0.08);
+
+    --shadow-lg:
+        0 24px 60px rgba(15, 23, 42, 0.12);
+
+    --shadow-xl:
+        0 32px 90px rgba(15, 23, 42, 0.16);
+
+    --shadow-focus:
+        0 0 0 4px var(--color-focus);
+
+
+    /* ======================================================
+       OPACIDADE
+    ====================================================== */
+
+    --opacity-disabled: 0.5;
+    --opacity-muted: 0.72;
+    --opacity-subtle: 0.12;
+
+
+    /* ======================================================
+       MOTION
+    ====================================================== */
+
+    --duration-fast: 150ms;
+    --duration-base: 250ms;
+    --duration-slow: 400ms;
+    --duration-slower: 600ms;
+
+    --ease-standard:
+        cubic-bezier(0.2, 0, 0, 1);
+
+    --ease-emphasized:
+        cubic-bezier(0.2, 0, 0, 1.2);
+
+    --transition-fast:
+        var(--duration-fast)
+        var(--ease-standard);
+
+    --transition-base:
+        var(--duration-base)
+        var(--ease-standard);
+
+    --transition-slow:
+        var(--duration-slow)
+        var(--ease-standard);
+
+
+    /* ======================================================
+       Z-INDEX
+    ====================================================== */
+
+    --z-base: 0;
+    --z-content: 10;
+    --z-dropdown: 100;
+    --z-sticky: 200;
+    --z-header: 300;
+    --z-overlay: 400;
+    --z-modal: 500;
+    --z-toast: 600;
+    --z-tooltip: 700;
+
+
+    /* ======================================================
+       BREAKPOINTS DE REFERÊNCIA
+
+       Observação:
+       Custom properties não podem ser utilizadas diretamente
+       na condição de @media em CSS tradicional. Estes valores
+       servem como referência documental para o Design System.
+    ====================================================== */
+
+    --breakpoint-sm: 36rem;
+    --breakpoint-md: 48rem;
+    --breakpoint-lg: 62rem;
+    --breakpoint-xl: 75rem;
+    --breakpoint-2xl: 87.5rem;
+
+
+    /* ======================================================
+       COMPATIBILIDADE COM CSS LEGADO
+
+       Estes aliases preservam o funcionamento dos módulos
+       existentes enquanto a migração para tokens semânticos
+       ocorre de forma gradual.
+    ====================================================== */
+
+    --primary: var(--color-primary);
+    --primary-light: var(--color-primary-light);
+
+    --success: var(--color-success);
+    --warning: var(--color-warning);
+    --danger: var(--color-danger);
+
+    --gray-50: var(--color-gray-50);
+    --gray-100: var(--color-gray-100);
+    --gray-200: var(--color-gray-200);
+    --gray-500: var(--color-gray-500);
+    --gray-700: var(--color-gray-700);
+    --gray-900: var(--color-gray-900);
+
+    --white: var(--color-white);
+
+    --radius: var(--radius-md);
+    --shadow: var(--shadow-md);
+}
+
+
+/* ==========================================================
+   PREFERÊNCIAS DE ACESSIBILIDADE
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    :root {
+        --duration-fast: 0ms;
+        --duration-base: 0ms;
+        --duration-slow: 0ms;
+        --duration-slower: 0ms;
+    }
+
 }

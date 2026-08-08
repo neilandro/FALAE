@@ -1,0 +1,745 @@
+/* ==========================================================
+   FALAE
+
+   Arquivo:
+      site-workflow.css
+
+   Domínio:
+      Site Institucional
+
+   Componente:
+      Como funciona
+
+   Responsabilidade:
+      Organizar visualmente as quatro etapas da jornada do
+      relato e apresentar o fluxo de forma clara e responsiva.
+
+   Dependências:
+      site-variables.css
+      site-base.css
+      site-typography.css
+      site-buttons.css
+
+   Sprint:
+      20.1 — Produção Landing Page
+========================================================== */
+
+
+/* ==========================================================
+   PROTEÇÃO DE SVG
+========================================================== */
+
+.site-workflow svg {
+    display: block;
+
+    width: 1em;
+    height: 1em;
+    max-width: 100%;
+    max-height: 100%;
+
+    flex: 0 0 auto;
+}
+
+
+/* ==========================================================
+   SEÇÃO
+========================================================== */
+
+.site-workflow {
+    position: relative;
+
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            180deg,
+            var(--site-color-background-soft) 0%,
+            var(--site-color-white) 100%
+        );
+}
+
+.site-workflow::before {
+    position: absolute;
+    top: 4rem;
+    right: -15rem;
+
+    width: 32rem;
+    height: 32rem;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(37, 99, 235, 0.08),
+            transparent 72%
+        );
+
+    content: "";
+
+    pointer-events: none;
+}
+
+.site-workflow::after {
+    position: absolute;
+    bottom: -14rem;
+    left: -12rem;
+
+    width: 28rem;
+    height: 28rem;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(15, 39, 71, 0.06),
+            transparent 72%
+        );
+
+    content: "";
+
+    pointer-events: none;
+}
+
+
+/* ==========================================================
+   CABEÇALHO
+========================================================== */
+
+.site-workflow__header {
+    position: relative;
+    z-index: var(--site-z-content);
+
+    max-width: var(--site-content-width-lg);
+
+    margin:
+        0
+        auto
+        var(--site-space-16);
+
+    text-align: center;
+}
+
+.site-workflow__header .site-overline {
+    margin-bottom: var(--site-space-4);
+}
+
+.site-workflow__title {
+    max-width: 21ch;
+
+    margin:
+        0
+        auto
+        var(--site-space-6);
+}
+
+.site-workflow__description {
+    max-width: 47rem;
+
+    margin-inline: auto;
+}
+
+
+/* ==========================================================
+   TIMELINE
+========================================================== */
+
+.site-workflow__timeline {
+    position: relative;
+    z-index: var(--site-z-content);
+
+    display: grid;
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    align-items: stretch;
+
+    gap: var(--site-space-5);
+
+    margin-bottom: var(--site-space-16);
+}
+
+.site-workflow__connection {
+    position: absolute;
+    z-index: 0;
+    top: 2rem;
+    right: 10%;
+    left: 10%;
+
+    height: 2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--site-color-primary-soft) 0%,
+            var(--site-color-accent) 50%,
+            var(--site-color-primary-soft) 100%
+        );
+
+    opacity: 0.76;
+}
+
+
+/* ==========================================================
+   ETAPAS
+========================================================== */
+
+.site-workflow__step {
+    position: relative;
+    z-index: 1;
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    min-width: 0;
+    height: 100%;
+}
+
+.site-workflow__marker {
+    position: relative;
+    z-index: 2;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 4rem;
+    height: 4rem;
+
+    margin-bottom: var(--site-space-5);
+
+    border:
+        var(--site-border-width)
+        solid
+        rgba(37, 99, 235, 0.18);
+
+    border-radius: 50%;
+
+    background-color: var(--site-color-white);
+
+    box-shadow:
+        var(--site-shadow-sm),
+        0 0 0 0.5rem var(--site-color-background-soft);
+
+    flex: 0 0 auto;
+}
+
+.site-workflow__number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 2.75rem;
+    height: 2.75rem;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--site-color-primary) 0%,
+            var(--site-color-primary-hover) 100%
+        );
+
+    color: var(--site-color-white);
+
+    font-size: var(--site-font-size-sm);
+    font-weight: var(--site-font-weight-bold);
+    letter-spacing: var(--site-letter-spacing-wide);
+}
+
+
+/* ==========================================================
+   CARDS
+========================================================== */
+
+.site-workflow__card {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+
+    padding:
+        var(--site-space-6)
+        var(--site-space-6)
+        var(--site-space-7);
+
+    border:
+        var(--site-border-width)
+        solid
+        var(--site-color-border-subtle);
+
+    border-radius: var(--site-radius-lg);
+
+    background-color: rgba(255, 255, 255, 0.92);
+
+    box-shadow: var(--site-shadow-xs);
+
+    transition:
+        border-color var(--site-transition-base),
+        box-shadow var(--site-transition-base),
+        transform var(--site-transition-base);
+}
+
+.site-workflow__card:hover {
+    border-color: var(--site-color-border-strong);
+
+    box-shadow: var(--site-shadow-md);
+
+    transform: translateY(-4px);
+}
+
+
+/* ==========================================================
+   ÍCONES
+========================================================== */
+
+.site-workflow__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 3rem;
+    height: 3rem;
+
+    margin-bottom: var(--site-space-5);
+
+    border:
+        var(--site-border-width)
+        solid
+        rgba(37, 99, 235, 0.14);
+
+    border-radius: var(--site-radius-md);
+
+    background-color: var(--site-color-accent-soft);
+    color: var(--site-color-accent);
+
+    flex: 0 0 auto;
+
+    transition:
+        background-color var(--site-transition-base),
+        color var(--site-transition-base),
+        transform var(--site-transition-base);
+}
+
+.site-workflow__icon svg {
+    width: 1.4rem;
+    height: 1.4rem;
+}
+
+.site-workflow__card:hover .site-workflow__icon {
+    background-color: var(--site-color-primary);
+    color: var(--site-color-white);
+
+    transform: scale(1.04);
+}
+
+
+/* ==========================================================
+   CONTEÚDO DOS CARDS
+========================================================== */
+
+.site-workflow__card-overline {
+    display: block;
+
+    margin-bottom: var(--site-space-2);
+
+    color: var(--site-color-accent);
+
+    font-size: var(--site-font-size-xs);
+    font-weight: var(--site-font-weight-bold);
+    letter-spacing: var(--site-letter-spacing-wide);
+    text-transform: uppercase;
+}
+
+.site-workflow__card-title {
+    margin:
+        0
+        0
+        var(--site-space-3);
+
+    color: var(--site-color-heading);
+
+    font-size: var(--site-font-size-lg);
+    font-weight: var(--site-font-weight-semibold);
+    line-height: var(--site-line-height-snug);
+    letter-spacing: var(--site-letter-spacing-tight);
+}
+
+.site-workflow__card-text {
+    margin:
+        0
+        0
+        var(--site-space-5);
+
+    color: var(--site-color-text-secondary);
+
+    font-size: var(--site-font-size-sm);
+    line-height: var(--site-line-height-relaxed);
+
+    text-wrap: pretty;
+}
+
+
+/* ==========================================================
+   LISTA DOS CARDS
+========================================================== */
+
+.site-workflow__card-list {
+    display: flex;
+    flex-direction: column;
+
+    gap: var(--site-space-2);
+
+    margin:
+        auto
+        0
+        0;
+
+    padding: 0;
+
+    list-style: none;
+}
+
+.site-workflow__card-list li {
+    position: relative;
+
+    padding-left: var(--site-space-5);
+
+    color: var(--site-color-text-secondary);
+
+    font-size: var(--site-font-size-xs);
+    font-weight: var(--site-font-weight-medium);
+    line-height: var(--site-line-height-relaxed);
+}
+
+.site-workflow__card-list li::before {
+    position: absolute;
+    top: 0.5em;
+    left: 0;
+
+    width: 0.875rem;
+    height: 0.875rem;
+
+    border-radius: 50%;
+
+    background-color: var(--site-color-success-soft);
+
+    content: "";
+}
+
+.site-workflow__card-list li::after {
+    position: absolute;
+    top: 0.64em;
+    left: 0.21rem;
+
+    width: 0.42rem;
+    height: 0.22rem;
+
+    border-bottom: 1.5px solid var(--site-color-success);
+    border-left: 1.5px solid var(--site-color-success);
+
+    content: "";
+
+    transform: rotate(-45deg);
+}
+
+
+/* ==========================================================
+   RESUMO
+========================================================== */
+
+.site-workflow__summary {
+    position: relative;
+    z-index: var(--site-z-content);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: var(--site-space-8);
+
+    padding:
+        var(--site-space-6)
+        var(--site-space-8);
+
+    border:
+        var(--site-border-width)
+        solid
+        rgba(15, 39, 71, 0.12);
+
+    border-radius: var(--site-radius-xl);
+
+    background-color: rgba(255, 255, 255, 0.94);
+
+    box-shadow: var(--site-shadow-md);
+
+    -webkit-backdrop-filter: blur(0.75rem);
+    backdrop-filter: blur(0.75rem);
+}
+
+.site-workflow__summary-content {
+    display: flex;
+    align-items: center;
+
+    gap: var(--site-space-4);
+
+    max-width: var(--site-content-width-md);
+}
+
+.site-workflow__summary-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 3.25rem;
+    height: 3.25rem;
+
+    border-radius: var(--site-radius-md);
+
+    background-color: var(--site-color-success-soft);
+    color: var(--site-color-success);
+
+    flex: 0 0 auto;
+}
+
+.site-workflow__summary-icon svg {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.site-workflow__summary-overline {
+    display: block;
+
+    margin-bottom: var(--site-space-1);
+
+    color: var(--site-color-accent);
+
+    font-size: var(--site-font-size-xs);
+    font-weight: var(--site-font-weight-bold);
+    letter-spacing: var(--site-letter-spacing-wide);
+    text-transform: uppercase;
+}
+
+.site-workflow__summary-title {
+    display: block;
+
+    margin-bottom: var(--site-space-1);
+
+    color: var(--site-color-heading);
+
+    font-size: var(--site-font-size-md);
+    line-height: var(--site-line-height-snug);
+}
+
+.site-workflow__summary-text {
+    margin: 0;
+
+    color: var(--site-color-text-secondary);
+
+    font-size: var(--site-font-size-sm);
+    line-height: var(--site-line-height-relaxed);
+}
+
+
+/* ==========================================================
+   NOTEBOOK
+========================================================== */
+
+@media (max-width: 74.9375rem) {
+
+    .site-workflow__timeline {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: var(--site-space-8);
+    }
+
+    .site-workflow__connection {
+        display: none;
+    }
+
+}
+
+
+/* ==========================================================
+   TABLET
+========================================================== */
+
+@media (max-width: 61.9375rem) {
+
+    .site-workflow__header {
+        margin-bottom: var(--site-space-12);
+    }
+
+    .site-workflow__summary {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .site-workflow__summary .site-button {
+        width: 100%;
+    }
+
+}
+
+
+/* ==========================================================
+   MOBILE
+========================================================== */
+
+@media (max-width: 47.9375rem) {
+
+    .site-workflow__header {
+        margin-bottom: var(--site-space-8);
+
+        text-align: left;
+    }
+
+    .site-workflow__title {
+        max-width: none;
+
+        margin-inline: 0;
+    }
+
+    .site-workflow__description {
+        margin-inline: 0;
+    }
+
+    .site-workflow__timeline {
+        grid-template-columns: 1fr;
+
+        gap: var(--site-space-5);
+
+        margin-bottom: var(--site-space-8);
+    }
+
+    .site-workflow__step {
+        display: grid;
+        grid-template-columns:
+            auto
+            minmax(0, 1fr);
+
+        align-items: flex-start;
+
+        gap: var(--site-space-4);
+    }
+
+    .site-workflow__marker {
+        width: 3.25rem;
+        height: 3.25rem;
+
+        margin-bottom: 0;
+
+        box-shadow: var(--site-shadow-sm);
+    }
+
+    .site-workflow__number {
+        width: 2.25rem;
+        height: 2.25rem;
+
+        font-size: var(--site-font-size-xs);
+    }
+
+    .site-workflow__card {
+        padding: var(--site-space-5);
+    }
+
+    .site-workflow__summary {
+        padding: var(--site-space-5);
+    }
+
+    .site-workflow__summary-content {
+        align-items: flex-start;
+    }
+
+}
+
+
+/* ==========================================================
+   MOBILE REDUZIDO
+========================================================== */
+
+@media (max-width: 27.5rem) {
+
+    .site-workflow__step {
+        grid-template-columns: 1fr;
+    }
+
+    .site-workflow__marker {
+        margin-inline: auto;
+    }
+
+    .site-workflow__card {
+        text-align: center;
+    }
+
+    .site-workflow__icon {
+        margin-inline: auto;
+    }
+
+    .site-workflow__card-list {
+        align-items: flex-start;
+
+        width: fit-content;
+
+        margin-inline: auto;
+
+        text-align: left;
+    }
+
+    .site-workflow__summary-content {
+        flex-direction: column;
+    }
+
+}
+
+
+/* ==========================================================
+   ACESSIBILIDADE
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .site-workflow__card,
+    .site-workflow__icon {
+        transition: none;
+    }
+
+    .site-workflow__card:hover,
+    .site-workflow__card:hover .site-workflow__icon {
+        transform: none;
+    }
+
+}
+
+
+/* ==========================================================
+   IMPRESSÃO
+========================================================== */
+
+@media print {
+
+    .site-workflow {
+        background: var(--site-color-white);
+    }
+
+    .site-workflow__card,
+    .site-workflow__summary {
+        border-color: var(--site-color-neutral-400);
+
+        background: var(--site-color-white);
+
+        box-shadow: none;
+    }
+
+    .site-workflow__connection {
+        display: none;
+    }
+
+}

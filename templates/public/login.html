@@ -69,32 +69,20 @@
         margin-bottom: 44px;
     }
 
-    .login-brand-icon {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 56px;
-        height: 56px;
-        border: 1px solid rgba(255, 255, 255, 0.22);
-        border-radius: 15px;
-        font-size: 27px;
-        background: rgba(255, 255, 255, 0.12);
-        backdrop-filter: blur(8px);
-    }
-
-    .login-brand-text h1 {
-        margin: 0;
-        color: #ffffff;
-        font-size: 27px;
-        letter-spacing: 0.06em;
-    }
-
-    .login-brand-text span {
+    .login-brand-logo {
         display: block;
-        margin-top: 3px;
-        color: rgba(255, 255, 255, 0.78);
-        font-size: 13px;
+
+        width: auto;
+        height: 72px;
+        max-width: 100%;
+
+        object-fit: contain;
+
+        filter:
+            brightness(0)
+            invert(1);
     }
+    
 
     .login-hero h2 {
         max-width: 560px;
@@ -364,6 +352,12 @@
             padding: 25px 20px;
             border-radius: 16px;
         }
+
+        .login-brand-logo {
+            height: 56px;
+        }
+
+
     }
 </style>
 
@@ -372,20 +366,16 @@
     <section class="login-hero">
 
         <div class="login-hero-content">
-
             <div class="login-brand">
 
-                <div class="login-brand-icon">
-                    🛡
-                </div>
-
-                <div class="login-brand-text">
-                    <h1>FALAE</h1>
-                    <span>Compliance & SST</span>
-                </div>
+                <img
+                    src="{{ url_for('static', filename='img/brand/logo.png') }}"
+                    alt="FALAE"
+                    class="login-brand-logo"
+                >
 
             </div>
-
+            
             <h2>
                 Gestão segura, confidencial e inteligente.
             </h2>

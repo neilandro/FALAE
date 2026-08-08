@@ -1,0 +1,568 @@
+/* ==========================================================
+   FALAE
+
+   Arquivo:
+      site-problem.css
+
+   Domínio:
+      Site Institucional
+
+   Componente:
+      Problema
+
+   Responsabilidade:
+      Apresentar visualmente os riscos relacionados ao silêncio,
+      à falta de confiança e à ausência de um processo seguro
+      para recebimento e tratamento de relatos.
+
+   Dependências:
+      site-variables.css
+      site-base.css
+      site-typography.css
+
+   Sprint:
+      20.1 — Produção Landing Page
+========================================================== */
+
+
+/* ==========================================================
+   PROTEÇÃO DE SVG
+========================================================== */
+
+.site-problem svg {
+    display: block;
+
+    width: 1em;
+    height: 1em;
+    max-width: 100%;
+    max-height: 100%;
+
+    flex: 0 0 auto;
+}
+
+
+/* ==========================================================
+   SEÇÃO
+========================================================== */
+
+.site-problem {
+    position: relative;
+
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            180deg,
+            var(--site-color-white) 0%,
+            var(--site-color-background-soft) 100%
+        );
+}
+
+.site-problem::before {
+    position: absolute;
+    top: 3rem;
+    left: -14rem;
+
+    width: 30rem;
+    height: 30rem;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(37, 99, 235, 0.08),
+            transparent 70%
+        );
+
+    content: "";
+
+    pointer-events: none;
+}
+
+.site-problem::after {
+    position: absolute;
+    right: -12rem;
+    bottom: -12rem;
+
+    width: 28rem;
+    height: 28rem;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(15, 39, 71, 0.07),
+            transparent 72%
+        );
+
+    content: "";
+
+    pointer-events: none;
+}
+
+
+/* ==========================================================
+   CABEÇALHO
+========================================================== */
+
+.site-problem__header {
+    position: relative;
+    z-index: var(--site-z-content);
+
+    max-width: var(--site-content-width-lg);
+
+    margin:
+        0
+        auto
+        var(--site-space-16);
+
+    text-align: center;
+}
+
+.site-problem__header .site-overline {
+    margin-bottom: var(--site-space-4);
+}
+
+.site-problem__title {
+    max-width: 22ch;
+
+    margin:
+        0
+        auto
+        var(--site-space-6);
+}
+
+.site-problem__title-highlight {
+    display: block;
+
+    margin-top: var(--site-space-2);
+
+    color: var(--site-color-accent);
+}
+
+.site-problem__description {
+    max-width: 47rem;
+
+    margin-inline: auto;
+}
+
+
+/* ==========================================================
+   GRID
+========================================================== */
+
+.site-problem__grid {
+    position: relative;
+    z-index: var(--site-z-content);
+
+    display: grid;
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: var(--site-space-5);
+
+    margin-bottom: var(--site-space-12);
+}
+
+
+/* ==========================================================
+   CARDS
+========================================================== */
+
+.site-problem__card {
+    position: relative;
+
+    min-width: 0;
+    min-height: 100%;
+
+    padding:
+        var(--site-space-6)
+        var(--site-space-6)
+        var(--site-space-7);
+
+    border:
+        var(--site-border-width)
+        solid
+        var(--site-color-border-subtle);
+
+    border-radius: var(--site-radius-lg);
+
+    background-color: rgba(255, 255, 255, 0.9);
+
+    box-shadow: var(--site-shadow-xs);
+
+    transition:
+        border-color var(--site-transition-base),
+        box-shadow var(--site-transition-base),
+        transform var(--site-transition-base);
+}
+
+.site-problem__card::before {
+    position: absolute;
+    top: 0;
+    right: var(--site-space-6);
+    left: var(--site-space-6);
+
+    height: 2px;
+
+    border-radius: var(--site-radius-pill);
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            var(--site-color-accent),
+            transparent
+        );
+
+    content: "";
+
+    opacity: 0;
+
+    transition: opacity var(--site-transition-base);
+}
+
+.site-problem__card:hover {
+    border-color: var(--site-color-border-strong);
+
+    box-shadow: var(--site-shadow-md);
+
+    transform: translateY(-4px);
+}
+
+.site-problem__card:hover::before {
+    opacity: 1;
+}
+
+
+/* ==========================================================
+   ÍCONES
+========================================================== */
+
+.site-problem__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 3rem;
+    height: 3rem;
+
+    margin-bottom: var(--site-space-5);
+
+    border:
+        var(--site-border-width)
+        solid
+        rgba(37, 99, 235, 0.14);
+
+    border-radius: var(--site-radius-md);
+
+    background-color: var(--site-color-accent-soft);
+    color: var(--site-color-accent);
+
+    transition:
+        background-color var(--site-transition-base),
+        color var(--site-transition-base),
+        transform var(--site-transition-base);
+}
+
+.site-problem__icon svg {
+    width: 1.4rem;
+    height: 1.4rem;
+}
+
+.site-problem__card:hover .site-problem__icon {
+    background-color: var(--site-color-primary);
+    color: var(--site-color-white);
+
+    transform: scale(1.04);
+}
+
+
+/* ==========================================================
+   NUMERAÇÃO
+========================================================== */
+
+.site-problem__card-number {
+    position: absolute;
+    top: var(--site-space-6);
+    right: var(--site-space-6);
+
+    color: var(--site-color-neutral-300);
+
+    font-size: var(--site-font-size-xs);
+    font-weight: var(--site-font-weight-bold);
+    letter-spacing: 0.12em;
+}
+
+
+/* ==========================================================
+   CONTEÚDO DOS CARDS
+========================================================== */
+
+.site-problem__card-title {
+    margin:
+        0
+        0
+        var(--site-space-3);
+
+    color: var(--site-color-heading);
+
+    font-size: var(--site-font-size-lg);
+    font-weight: var(--site-font-weight-semibold);
+    line-height: var(--site-line-height-snug);
+    letter-spacing: var(--site-letter-spacing-tight);
+}
+
+.site-problem__card-text {
+    margin: 0;
+
+    color: var(--site-color-text-secondary);
+
+    font-size: var(--site-font-size-sm);
+    line-height: var(--site-line-height-relaxed);
+
+    text-wrap: pretty;
+}
+
+
+/* ==========================================================
+   FECHAMENTO
+========================================================== */
+
+.site-problem__closing {
+    position: relative;
+    z-index: var(--site-z-content);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: var(--site-space-4);
+
+    max-width: var(--site-content-width-md);
+
+    margin-inline: auto;
+    padding:
+        var(--site-space-5)
+        var(--site-space-6);
+
+    border:
+        var(--site-border-width)
+        solid
+        rgba(15, 39, 71, 0.11);
+
+    border-radius: var(--site-radius-xl);
+
+    background-color: rgba(255, 255, 255, 0.92);
+
+    box-shadow: var(--site-shadow-sm);
+
+    -webkit-backdrop-filter: blur(0.75rem);
+    backdrop-filter: blur(0.75rem);
+}
+
+.site-problem__closing-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 3rem;
+    height: 3rem;
+
+    border-radius: var(--site-radius-md);
+
+    background-color: var(--site-color-primary-soft);
+    color: var(--site-color-primary);
+
+    flex: 0 0 auto;
+}
+
+.site-problem__closing-icon svg {
+    width: 1.4rem;
+    height: 1.4rem;
+}
+
+.site-problem__closing-content {
+    min-width: 0;
+}
+
+.site-problem__closing-overline {
+    display: block;
+
+    margin-bottom: var(--site-space-1);
+
+    color: var(--site-color-accent);
+
+    font-size: var(--site-font-size-xs);
+    font-weight: var(--site-font-weight-bold);
+    letter-spacing: var(--site-letter-spacing-wide);
+    text-transform: uppercase;
+}
+
+.site-problem__closing-text {
+    margin: 0;
+
+    color: var(--site-color-heading);
+
+    font-size: var(--site-font-size-md);
+    font-weight: var(--site-font-weight-semibold);
+    line-height: var(--site-line-height-relaxed);
+
+    text-wrap: balance;
+}
+
+
+/* ==========================================================
+   NOTEBOOK
+========================================================== */
+
+@media (max-width: 74.9375rem) {
+
+    .site-problem__grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: var(--site-space-5);
+    }
+
+}
+
+
+/* ==========================================================
+   TABLET
+========================================================== */
+
+@media (max-width: 61.9375rem) {
+
+    .site-problem__header {
+        margin-bottom: var(--site-space-12);
+    }
+
+    .site-problem__card {
+        padding: var(--site-space-5);
+    }
+
+    .site-problem__card-number {
+        top: var(--site-space-5);
+        right: var(--site-space-5);
+    }
+
+}
+
+
+/* ==========================================================
+   MOBILE
+========================================================== */
+
+@media (max-width: 47.9375rem) {
+
+    .site-problem__header {
+        margin-bottom: var(--site-space-8);
+
+        text-align: left;
+    }
+
+    .site-problem__title {
+        max-width: none;
+
+        margin-inline: 0;
+    }
+
+    .site-problem__title-highlight {
+        margin-top: var(--site-space-1);
+    }
+
+    .site-problem__description {
+        margin-inline: 0;
+    }
+
+    .site-problem__grid {
+        grid-template-columns: 1fr;
+
+        gap: var(--site-space-4);
+
+        margin-bottom: var(--site-space-8);
+    }
+
+    .site-problem__card {
+        padding:
+            var(--site-space-5)
+            var(--site-space-5)
+            var(--site-space-6);
+    }
+
+    .site-problem__closing {
+        align-items: flex-start;
+
+        padding:
+            var(--site-space-4)
+            var(--site-space-5);
+    }
+
+    .site-problem__closing-text {
+        font-size: var(--site-font-size-base);
+    }
+
+}
+
+
+/* ==========================================================
+   MOBILE REDUZIDO
+========================================================== */
+
+@media (max-width: 27.5rem) {
+
+    .site-problem__closing {
+        flex-direction: column;
+    }
+
+    .site-problem__closing-icon {
+        width: 2.75rem;
+        height: 2.75rem;
+    }
+
+}
+
+
+/* ==========================================================
+   ACESSIBILIDADE
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .site-problem__card,
+    .site-problem__card::before,
+    .site-problem__icon {
+        transition: none;
+    }
+
+    .site-problem__card:hover,
+    .site-problem__card:hover .site-problem__icon {
+        transform: none;
+    }
+
+}
+
+
+/* ==========================================================
+   IMPRESSÃO
+========================================================== */
+
+@media print {
+
+    .site-problem {
+        background: var(--site-color-white);
+    }
+
+    .site-problem__card,
+    .site-problem__closing {
+        border-color: var(--site-color-neutral-400);
+
+        background: var(--site-color-white);
+
+        box-shadow: none;
+    }
+
+}

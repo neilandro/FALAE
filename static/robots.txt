@@ -1,0 +1,11 @@
+User-agent: *
+
+Allow: /
+
+Disallow: /admin/
+Disallow: /empresa/
+Disallow: /auth/
+Disallow: /login
+Disallow: /logout
+
+Sitemap: https://falae.cloud/sitemap.xml

@@ -1,0 +1,574 @@
+/* ==========================================================
+   FALAE
+
+   Arquivo:
+      site-typography.css
+
+   Domínio:
+      Site Institucional
+
+   Camada:
+      Sistema Tipográfico
+
+   Responsabilidade:
+      Definir a hierarquia tipográfica, os estilos de texto
+      e as classes utilitárias exclusivas do site institucional.
+
+   Dependências:
+      site-variables.css
+      site-base.css
+
+   Escopo:
+      templates/layouts/site_base.html
+      templates/site/
+      static/css/site/
+
+   Sprint:
+      20.1 — Produção Landing Page
+
+   Regras:
+      1. Não utilizar este arquivo nas telas internas do SaaS.
+      2. Todo valor deve consumir tokens do site.
+      3. Componentes podem especializar a tipografia com BEM.
+      4. Evitar seletores genéricos fora da base tipográfica.
+========================================================== */
+
+
+/* ==========================================================
+   BASE TIPOGRÁFICA
+========================================================== */
+
+body {
+    font-family: var(--site-font-family);
+    font-size: var(--site-font-size-base);
+    font-weight: var(--site-font-weight-regular);
+    line-height: var(--site-line-height-normal);
+    letter-spacing: var(--site-letter-spacing-normal);
+    color: var(--site-color-text);
+}
+
+
+/* ==========================================================
+   TÍTULOS
+========================================================== */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin-top: 0;
+    margin-bottom: var(--site-space-4);
+
+    font-family: var(--site-font-family);
+    font-weight: var(--site-font-weight-bold);
+    line-height: var(--site-line-height-snug);
+    letter-spacing: var(--site-letter-spacing-tight);
+
+    color: var(--site-color-heading);
+
+    text-wrap: balance;
+}
+
+h1 {
+    font-size: var(--site-font-size-4xl);
+}
+
+h2 {
+    font-size: var(--site-font-size-3xl);
+}
+
+h3 {
+    font-size: var(--site-font-size-2xl);
+}
+
+h4 {
+    font-size: var(--site-font-size-xl);
+}
+
+h5 {
+    font-size: var(--site-font-size-lg);
+}
+
+h6 {
+    font-size: var(--site-font-size-md);
+}
+
+
+/* ==========================================================
+   PARÁGRAFOS E TEXTO CORRIDO
+========================================================== */
+
+p {
+    margin-top: 0;
+    margin-bottom: var(--site-space-4);
+
+    color: var(--site-color-text-secondary);
+}
+
+p:last-child {
+    margin-bottom: 0;
+}
+
+strong,
+b {
+    font-weight: var(--site-font-weight-bold);
+    color: inherit;
+}
+
+small {
+    font-size: var(--site-font-size-sm);
+    line-height: var(--site-line-height-normal);
+}
+
+
+/* ==========================================================
+   LINKS
+========================================================== */
+
+a {
+    color: inherit;
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 0.2em;
+
+    transition:
+        color var(--site-transition-fast),
+        text-decoration-color var(--site-transition-fast);
+}
+
+a:hover {
+    color: var(--site-color-accent-hover);
+}
+
+a:focus-visible {
+    border-radius: var(--site-radius-xs);
+}
+
+
+/* ==========================================================
+   DISPLAY
+========================================================== */
+
+.site-display {
+    margin: 0;
+
+    font-family: var(--site-font-family);
+    font-size: var(--site-font-size-display);
+    font-weight: var(--site-font-weight-extrabold);
+    line-height: var(--site-line-height-tight);
+    letter-spacing: var(--site-letter-spacing-tightest);
+
+    color: var(--site-color-heading);
+
+    text-wrap: balance;
+}
+
+.site-display--inverse {
+    color: var(--site-color-text-inverse);
+}
+
+
+/* ==========================================================
+   TÍTULOS INSTITUCIONAIS
+========================================================== */
+
+.site-title-xl {
+    margin: 0;
+
+    font-size:
+        clamp(
+            var(--site-font-size-3xl),
+            4.5vw,
+            var(--site-font-size-4xl)
+        );
+
+    font-weight: var(--site-font-weight-bold);
+    line-height: var(--site-line-height-tight);
+    letter-spacing: var(--site-letter-spacing-tightest);
+
+    color: var(--site-color-heading);
+
+    text-wrap: balance;
+}
+
+.site-title-lg {
+    margin: 0;
+
+    font-size:
+        clamp(
+            var(--site-font-size-2xl),
+            3.5vw,
+            var(--site-font-size-3xl)
+        );
+
+    font-weight: var(--site-font-weight-bold);
+    line-height: var(--site-line-height-snug);
+    letter-spacing: var(--site-letter-spacing-tight);
+
+    color: var(--site-color-heading);
+
+    text-wrap: balance;
+}
+
+.site-title-md {
+    margin: 0;
+
+    font-size: var(--site-font-size-2xl);
+    font-weight: var(--site-font-weight-bold);
+    line-height: var(--site-line-height-snug);
+    letter-spacing: var(--site-letter-spacing-tight);
+
+    color: var(--site-color-heading);
+
+    text-wrap: balance;
+}
+
+.site-title-sm {
+    margin: 0;
+
+    font-size: var(--site-font-size-xl);
+    font-weight: var(--site-font-weight-semibold);
+    line-height: var(--site-line-height-snug);
+    letter-spacing: var(--site-letter-spacing-tight);
+
+    color: var(--site-color-heading);
+}
+
+
+/* ==========================================================
+   TEXTO DE APOIO
+========================================================== */
+
+.site-lead {
+    max-width: var(--site-content-width-md);
+    margin: 0;
+
+    font-size: var(--site-font-size-lg);
+    font-weight: var(--site-font-weight-regular);
+    line-height: var(--site-line-height-relaxed);
+
+    color: var(--site-color-text-secondary);
+}
+
+.site-lead--center {
+    margin-inline: auto;
+    text-align: center;
+}
+
+.site-lead--inverse {
+    color: rgba(255, 255, 255, 0.78);
+}
+
+
+/* ==========================================================
+   TEXTO CORPORAL
+========================================================== */
+
+.site-text-lg {
+    font-size: var(--site-font-size-md);
+    line-height: var(--site-line-height-relaxed);
+    color: var(--site-color-text-secondary);
+}
+
+.site-text {
+    font-size: var(--site-font-size-base);
+    line-height: var(--site-line-height-normal);
+    color: var(--site-color-text-secondary);
+}
+
+.site-text-sm {
+    font-size: var(--site-font-size-sm);
+    line-height: var(--site-line-height-normal);
+    color: var(--site-color-text-secondary);
+}
+
+.site-caption {
+    font-size: var(--site-font-size-xs);
+    font-weight: var(--site-font-weight-medium);
+    line-height: var(--site-line-height-normal);
+    letter-spacing: var(--site-letter-spacing-wide);
+
+    color: var(--site-color-text-muted);
+}
+
+
+/* ==========================================================
+   OVERLINE E EYEBROW
+========================================================== */
+
+.site-overline {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--site-space-2);
+
+    margin: 0;
+
+    font-size: var(--site-font-size-xs);
+    font-weight: var(--site-font-weight-bold);
+    line-height: var(--site-line-height-normal);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+
+    color: var(--site-color-accent);
+}
+
+.site-overline--inverse {
+    color: rgba(255, 255, 255, 0.78);
+}
+
+
+/* ==========================================================
+   DESTAQUES
+========================================================== */
+
+.site-highlight {
+    color: var(--site-color-accent);
+}
+
+.site-highlight--primary {
+    color: var(--site-color-primary);
+}
+
+.site-highlight--success {
+    color: var(--site-color-success);
+}
+
+
+/* ==========================================================
+   CORES DE TEXTO
+========================================================== */
+
+.site-text-primary {
+    color: var(--site-color-primary);
+}
+
+.site-text-heading {
+    color: var(--site-color-heading);
+}
+
+.site-text-default {
+    color: var(--site-color-text);
+}
+
+.site-text-secondary {
+    color: var(--site-color-text-secondary);
+}
+
+.site-text-muted {
+    color: var(--site-color-text-muted);
+}
+
+.site-text-inverse {
+    color: var(--site-color-text-inverse);
+}
+
+.site-text-accent {
+    color: var(--site-color-accent);
+}
+
+.site-text-success {
+    color: var(--site-color-success);
+}
+
+
+/* ==========================================================
+   PESOS
+========================================================== */
+
+.site-font-regular {
+    font-weight: var(--site-font-weight-regular);
+}
+
+.site-font-medium {
+    font-weight: var(--site-font-weight-medium);
+}
+
+.site-font-semibold {
+    font-weight: var(--site-font-weight-semibold);
+}
+
+.site-font-bold {
+    font-weight: var(--site-font-weight-bold);
+}
+
+.site-font-extrabold {
+    font-weight: var(--site-font-weight-extrabold);
+}
+
+
+/* ==========================================================
+   ALINHAMENTO
+========================================================== */
+
+.site-text-left {
+    text-align: left;
+}
+
+.site-text-center {
+    text-align: center;
+}
+
+.site-text-right {
+    text-align: right;
+}
+
+
+/* ==========================================================
+   COMPORTAMENTO DO TEXTO
+========================================================== */
+
+.site-text-balance {
+    text-wrap: balance;
+}
+
+.site-text-pretty {
+    text-wrap: pretty;
+}
+
+.site-text-nowrap {
+    white-space: nowrap;
+}
+
+.site-text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.site-text-uppercase {
+    text-transform: uppercase;
+}
+
+.site-text-no-decoration {
+    text-decoration: none;
+}
+
+
+/* ==========================================================
+   LARGURA DE LEITURA
+========================================================== */
+
+.site-reading-sm {
+    max-width: var(--site-content-width-sm);
+}
+
+.site-reading-md {
+    max-width: var(--site-content-width-md);
+}
+
+.site-reading-lg {
+    max-width: var(--site-content-width-lg);
+}
+
+.site-reading-center {
+    margin-inline: auto;
+}
+
+
+/* ==========================================================
+   BLOCKQUOTE
+========================================================== */
+
+.site-quote {
+    margin: 0;
+    padding-left: var(--site-space-6);
+
+    border-left:
+        var(--site-border-width)
+        solid
+        var(--site-color-accent);
+
+    font-size: var(--site-font-size-lg);
+    font-weight: var(--site-font-weight-medium);
+    line-height: var(--site-line-height-relaxed);
+
+    color: var(--site-color-heading);
+}
+
+.site-quote__author {
+    display: block;
+    margin-top: var(--site-space-4);
+
+    font-size: var(--site-font-size-sm);
+    font-weight: var(--site-font-weight-semibold);
+
+    color: var(--site-color-text-muted);
+}
+
+
+/* ==========================================================
+   RESPONSIVIDADE
+========================================================== */
+
+@media (max-width: 61.9375rem) {
+
+    h1 {
+        font-size: var(--site-font-size-3xl);
+    }
+
+    h2 {
+        font-size: var(--site-font-size-2xl);
+    }
+
+    h3 {
+        font-size: var(--site-font-size-xl);
+    }
+
+    .site-lead {
+        font-size: var(--site-font-size-md);
+    }
+
+}
+
+
+@media (max-width: 47.9375rem) {
+
+    h1 {
+        font-size: var(--site-font-size-2xl);
+    }
+
+    h2 {
+        font-size: var(--site-font-size-xl);
+    }
+
+    h3 {
+        font-size: var(--site-font-size-lg);
+    }
+
+    .site-display {
+        font-size:
+            clamp(
+                2.5rem,
+                12vw,
+                3.5rem
+            );
+    }
+
+    .site-title-xl {
+        font-size: var(--site-font-size-3xl);
+    }
+
+    .site-title-lg {
+        font-size: var(--site-font-size-2xl);
+    }
+
+    .site-title-md {
+        font-size: var(--site-font-size-xl);
+    }
+
+    .site-title-sm {
+        font-size: var(--site-font-size-lg);
+    }
+
+    .site-lead {
+        font-size: var(--site-font-size-base);
+        line-height: var(--site-line-height-relaxed);
+    }
+
+    .site-quote {
+        padding-left: var(--site-space-4);
+        font-size: var(--site-font-size-md);
+    }
+
+}

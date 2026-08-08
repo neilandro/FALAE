@@ -1,0 +1,227 @@
+<!-- ==========================================================
+     FALAE
+
+     Arquivo:
+        footer.html
+
+     Componente:
+        Footer Institucional
+
+     Responsabilidade:
+        Encerrar a Landing Page com navegação complementar,
+        acessos úteis e informações institucionais.
+
+     Dependências:
+        css/marketing/site-footer.css
+
+     Sprint:
+        20.1 — Produção Landing Page
+========================================================== -->
+
+<footer class="site-footer">
+
+    <div class="site-container">
+
+        <div class="site-footer__main">
+
+            <div class="site-footer__brand">
+
+                <a
+                    href="{{ url_for('public.home') }}"
+                    class="site-footer__brand-link"
+                    aria-label="FALAE — Página inicial"
+                >
+                    <img
+                        src="{{ url_for('static', filename='img/brand/logo.png') }}"
+                        alt="FALAE"
+                        class="site-footer__logo"
+                        width="132"
+                        height="40"
+                    >
+                </a>
+
+                <p class="site-footer__description">
+                    Canal de denúncias seguro e confidencial para empresas
+                    que valorizam ética, confiança, transparência e governança.
+                </p>
+
+                <p class="site-footer__slogan">
+                    Transformando relatos em ações responsáveis para fortalecer
+                    a ética, a confiança e a transparência nas organizações.
+                </p>
+
+            </div>
+
+            <nav
+                class="site-footer__navigation"
+                aria-label="Navegação do rodapé"
+            >
+
+                <div class="site-footer__column">
+
+                    <h2 class="site-footer__column-title">
+                        Plataforma
+                    </h2>
+
+
+                    <ul
+                        class="site-footer__links"
+                        role="list"
+                    >
+                        <li>
+                            <a
+                                href="#beneficios"
+                                class="site-footer__link"
+                            >
+                                Benefícios
+                            </a>
+                        </li>
+
+                        <li>
+                            <a
+                                href="#plataforma"
+                                class="site-footer__link"
+                            >
+                                O problema
+                            </a>
+                        </li>
+
+                        <li>
+                            <a
+                                href="#solucao"
+                                class="site-footer__link"
+                            >
+                                A solução
+                            </a>
+                        </li>
+
+                        <li>
+                            <a
+                                href="#como-funciona"
+                                class="site-footer__link"
+                            >
+                                Como funciona
+                            </a>
+                        </li>
+
+                        <li>
+                            <a
+                                href="#seguranca"
+                                class="site-footer__link"
+                            >
+                                Segurança
+                            </a>
+                        </li>
+                    </ul>
+
+                </div>
+
+                <div class="site-footer__column">
+
+                    <h2 class="site-footer__column-title">
+                        Acessos
+                    </h2>
+
+                    <ul
+                        class="site-footer__links"
+                        role="list"
+                    >
+                        <li>
+                            <a
+                                href="{{ url_for('auth.login') }}"
+                                class="site-footer__link"
+                            >
+                                Área do cliente
+                            </a>
+                        </li>
+
+                        <li>
+                            <a
+                                href="{{ url_for('public.acompanhar') }}"
+                                class="site-footer__link"
+                            >
+                                Acompanhar protocolo
+                            </a>
+                        </li>
+
+                        <li>
+                            <a
+                                href="#contato"
+                                class="site-footer__link"
+                            >
+                                Solicitar demonstração
+                            </a>
+                        </li>
+                    </ul>
+
+                </div>
+
+                <div class="site-footer__column">
+
+                    <h2 class="site-footer__column-title">
+                        Institucional
+                    </h2>
+
+                    <ul
+                        class="site-footer__links"
+                        role="list"
+                    >
+                        <li>
+                            <a
+                                href="mailto:contato@falae.cloud"
+                                class="site-footer__link"
+                            >
+                                contato@falae.cloud
+                            </a>
+                        </li>
+
+                        <li>
+                            <a
+                                href="#privacidade"
+                                class="site-footer__link"
+                            >
+                                Política de privacidade
+                            </a>
+                        </li>
+
+                        <li>
+                            <a
+                                href="#termos"
+                                class="site-footer__link"
+                            >
+                                Termos de uso
+                            </a>
+                        </li>
+                    </ul>
+
+                </div>
+
+            </nav>
+
+        </div>
+
+        <div class="site-footer__bottom">
+
+            <p class="site-footer__copyright">
+                &copy; {{ current_year|default(2026) }} FALAE.
+                Todos os direitos reservados.
+            </p>
+
+            <div class="site-footer__status">
+
+                <span
+                    class="site-footer__status-dot"
+                    aria-hidden="true"
+                ></span>
+
+                <span>
+                    Plataforma disponível
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</footer>

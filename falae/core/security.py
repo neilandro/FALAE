@@ -33,7 +33,7 @@ def registrar_security(app: Flask) -> None:
             "frame-ancestors 'none'; "
             "object-src 'none'; "
             "script-src 'self' 'unsafe-inline' https://unpkg.com; "
-            "style-src 'self' 'unsafe-inline'; "
+            "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
             "img-src 'self' data: blob:; "
             "font-src 'self' data:; "
             "connect-src 'self' https://viacep.com.br;"
@@ -46,7 +46,7 @@ def registrar_security(app: Flask) -> None:
             response.headers["Pragma"] = "no-cache"
             response.headers["Expires"] = "0"
 
-        if app.config.get("ENVIRONMENT") == "production":
+        if app.config.get("APP_ENV") == "production":
             response.headers["Strict-Transport-Security"] = (
                 "max-age=31536000; includeSubDomains"
             )

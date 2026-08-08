@@ -410,6 +410,17 @@ def _registrar_denuncia(
 
     return protocolo
 
+@public_bp.route("/")
+def home():
+    return render_template("layouts/site_base.html")
+
+@public_bp.route("/robots.txt")
+def robots_txt():
+    return current_app.send_static_file("robots.txt")
+
+@public_bp.route("/sitemap.xml")
+def sitemap_xml():
+    return current_app.send_static_file("sitemap.xml")
 
 @public_bp.route(
     "/canal/<string:slug>",
