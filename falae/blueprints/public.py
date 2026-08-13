@@ -19,6 +19,9 @@ from falae.services.empresa_personalizacao_service import (
     EmpresaPersonalizacaoService
 )
 
+from falae.services.notificacao_service import (
+    NotificacaoService
+)
 
 public_bp = Blueprint(
     "public",
@@ -502,6 +505,23 @@ def canal_denunciar(slug):
                 arquivos_validados=arquivos_validados
             )
 
+            try:
+                NotificacaoService.notificar_nova_denuncia(
+                    empresa_id=empresa_id,
+                    protocolo=protocolo
+                )
+
+            except Exception:
+                current_app.logger.exception(
+                    (
+                        "Falha ao processar notificação "
+                        "de nova denúncia | "
+                        "empresa_id=%s | protocolo=%s"
+                    ),
+                    empresa_id,
+                    protocolo
+                )
+
             return render_template(
                 "public/denuncia_sucesso.html",
                 protocolo=protocolo,
@@ -527,7 +547,6 @@ def canal_denunciar(slug):
                 "Não foi possível registrar a denúncia. "
                 "Revise os dados e tente novamente."
             )
-
 
     return render_template(
         "public/denunciar.html",

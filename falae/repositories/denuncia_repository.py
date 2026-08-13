@@ -764,6 +764,105 @@ class DenunciaRepository:
 
         return self.cursor.fetchall()
 
+
+    def listar_paradas_para_notificacao(
+        self,
+        empresa_id,
+        dias=7,
+        limite=100
+    ):
+        try:
+            empresa_id = int(empresa_id)
+            dias = int(dias)
+            limite = int(limite)
+        except (TypeError, ValueError) as exc:
+            raise ValueError(
+                "Parâmetros inválidos para consulta de denúncias paradas."
+            ) from exc
+
+        dias = max(1, min(dias, 365))
+        limite = max(1, min(limite, 500))
+
+        self.cursor.execute(
+            """
+            SELECT
+                d.id,
+                d.protocolo,
+                d.status,
+                d.etapa_atual,
+                d.criticidade,
+                d.responsavel_id,
+                d.criado_em,
+
+                u.nome AS unidade,
+                usr.nome AS responsavel,
+
+                COALESCE(
+                    MAX(a.criado_em),
+                    d.criado_em
+                ) AS ultima_movimentacao,
+
+                TIMESTAMPDIFF(
+                    DAY,
+                    COALESCE(
+                        MAX(a.criado_em),
+                        d.criado_em
+                    ),
+                    NOW()
+                ) AS dias_sem_movimentacao
+
+            FROM denuncias d
+
+            INNER JOIN unidades u
+                ON u.id = d.unidade_id
+               AND u.empresa_id = d.empresa_id
+
+            LEFT JOIN usuarios usr
+                ON usr.id = d.responsavel_id
+               AND usr.empresa_id = d.empresa_id
+
+            LEFT JOIN auditoria a
+                ON a.empresa_id = d.empresa_id
+               AND a.registro_id = d.id
+               AND a.modulo IN (
+                    'denuncias',
+                    'triagem'
+               )
+
+            WHERE d.empresa_id = %s
+              AND d.status NOT IN (
+                    'CONCLUIDA',
+                    'ARQUIVADA'
+              )
+
+            GROUP BY
+                d.id,
+                d.protocolo,
+                d.status,
+                d.etapa_atual,
+                d.criticidade,
+                d.responsavel_id,
+                d.criado_em,
+                u.nome,
+                usr.nome
+
+            HAVING dias_sem_movimentacao >= %s
+
+            ORDER BY
+                dias_sem_movimentacao DESC,
+                d.criado_em ASC
+
+            LIMIT %s
+            """,
+            (
+                empresa_id,
+                dias,
+                limite
+            )
+        )
+
+        return self.cursor.fetchall()
+
     def close(self):
         if self.cursor:
             self.cursor.close()

@@ -62,6 +62,50 @@ def _normalize_samesite(value: str | None) -> str:
 class Config:
     APP_ENV = os.getenv("APP_ENV", "development").strip().lower()
 
+    # =========================================================
+    # E-MAIL
+    # =========================================================
+
+    MAIL_ENABLED = _as_bool(
+        os.getenv("MAIL_ENABLED"),
+        default=False,
+    )
+
+    MAIL_SERVER = os.getenv(
+        "MAIL_SERVER",
+        "",
+    ).strip()
+
+    MAIL_PORT = _as_int(
+        "MAIL_PORT",
+        587,
+    )
+
+    MAIL_USE_TLS = _as_bool(
+        os.getenv("MAIL_USE_TLS"),
+        default=True,
+    )
+
+    MAIL_USE_SSL = _as_bool(
+        os.getenv("MAIL_USE_SSL"),
+        default=False,
+    )
+
+    MAIL_USERNAME = os.getenv(
+        "MAIL_USERNAME",
+        "",
+    ).strip()
+
+    MAIL_PASSWORD = os.getenv(
+        "MAIL_PASSWORD",
+        "",
+    )
+
+    MAIL_DEFAULT_SENDER = os.getenv(
+        "MAIL_DEFAULT_SENDER",
+        "",
+    ).strip()
+
     SECRET_KEY = os.getenv("SECRET_KEY", "chave_dev_falae")
 
     UPLOAD_FOLDER = os.getenv(

@@ -4,6 +4,8 @@ from falae.repositories.denuncia_repository import DenunciaRepository
 from falae.repositories.usuario_repository import UsuarioRepository
 from falae.services.context_service import ContextService
 from falae.workflow.workflow_engine import WorkflowEngine
+from falae.services.notificacao_service import (NotificacaoService
+)
 
 
 class DenunciaService:
@@ -238,21 +240,32 @@ class DenunciaService:
             repo.close()
 
     @staticmethod
-    def atribuir_responsavel(denuncia_id, responsavel_id):
+    def atribuir_responsavel(
+        denuncia_id,
+        responsavel_id
+    ):
         empresa_id = DenunciaService._empresa_id()
 
         responsavel_id = responsavel_id or None
+
         repo = DenunciaRepository()
         usuario_repo = UsuarioRepository()
 
         try:
-            denuncia = repo.buscar_por_id(denuncia_id, empresa_id)
+            denuncia = repo.buscar_por_id(
+                denuncia_id,
+                empresa_id
+            )
 
             if not denuncia:
                 return {
                     "sucesso": False,
                     "mensagem": "Denúncia não encontrada."
                 }
+
+            responsavel_anterior_id = (
+                denuncia.get("responsavel_id")
+            )
 
             responsavel = None
 
@@ -277,15 +290,45 @@ class DenunciaService:
             if not atualizado:
                 return {
                     "sucesso": False,
-                    "mensagem": "Não foi possível atribuir o responsável."
+                    "mensagem": (
+                        "Não foi possível atribuir o responsável."
+                    )
                 }
+
+            houve_mudanca_responsavel = (
+                responsavel_id is not None
+                and responsavel_id != responsavel_anterior_id
+            )
+
+            if houve_mudanca_responsavel:
+                try:
+                    NotificacaoService.notificar_responsavel_atribuido(
+                        responsavel=responsavel,
+                        protocolo=denuncia["protocolo"]
+                    )
+
+                except Exception:
+                    from flask import current_app
+
+                    current_app.logger.exception(
+                        (
+                            "Falha ao enviar notificação "
+                            "de responsável atribuído | "
+                            "empresa_id=%s | "
+                            "denuncia_id=%s | "
+                            "responsavel_id=%s"
+                        ),
+                        empresa_id,
+                        denuncia_id,
+                        responsavel_id
+                    )
 
             return {
                 "sucesso": True,
                 "mensagem": "Responsável atribuído com sucesso.",
                 "responsavel": responsavel,
                 "valor_antigo": {
-                    "responsavel_id": denuncia.get("responsavel_id"),
+                    "responsavel_id": responsavel_anterior_id,
                     "responsavel": denuncia.get("responsavel")
                 },
                 "valor_novo": {
@@ -297,6 +340,7 @@ class DenunciaService:
                     )
                 }
             }
+
         finally:
             repo.close()
             usuario_repo.close()

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumo semanal FALAE</title>
+</head>
+
+<body style="
+    margin: 0;
+    padding: 0;
+    background-color: #f4f6f8;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #1f2937;
+">
+
+<table
+    role="presentation"
+    width="100%"
+    cellspacing="0"
+    cellpadding="0"
+    border="0"
+    style="background-color: #f4f6f8; padding: 32px 16px;"
+>
+    <tr>
+        <td align="center">
+
+            <table
+                role="presentation"
+                width="100%"
+                cellspacing="0"
+                cellpadding="0"
+                border="0"
+                style="
+                    max-width: 680px;
+                    background-color: #ffffff;
+                    border-radius: 12px;
+                    overflow: hidden;
+                    border: 1px solid #e5e7eb;
+                "
+            >
+
+                <tr>
+                    <td style="background-color: #163a5c; padding: 24px 32px;">
+                        <div style="color: #ffffff; font-size: 24px; font-weight: 700;">
+                            FALAE
+                        </div>
+
+                        <div style="color: #cbd5e1; font-size: 13px; margin-top: 4px;">
+                            Resumo semanal de pendências
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding: 32px;">
+
+                        <h1
+                            style="
+                                margin: 0 0 12px 0;
+                                font-size: 24px;
+                                color: #111827;
+                            "
+                        >
+                            Atenção às denúncias sem movimentação
+                        </h1>
+
+                        <p style="font-size: 15px; line-height: 1.7; color: #4b5563;">
+                            Olá, {{ nome }}.
+                        </p>
+
+                        <p style="font-size: 15px; line-height: 1.7; color: #4b5563;">
+                            Identificamos
+                            <strong>{{ denuncias|length }}</strong>
+                            denúncia(s) sem movimentação há pelo menos
+                            <strong>{{ dias }} dias</strong>.
+                        </p>
+
+                        <table
+                            role="presentation"
+                            width="100%"
+                            cellspacing="0"
+                            cellpadding="0"
+                            border="0"
+                            style="
+                                margin: 24px 0;
+                                border-collapse: collapse;
+                            "
+                        >
+
+                            {% for denuncia in denuncias %}
+
+                            <tr>
+                                <td
+                                    style="
+                                        padding: 18px;
+                                        border: 1px solid #e5e7eb;
+                                        background-color: #f8fafc;
+                                    "
+                                >
+
+                                    <div
+                                        style="
+                                            font-size: 16px;
+                                            font-weight: 700;
+                                            color: #163a5c;
+                                            margin-bottom: 8px;
+                                        "
+                                    >
+                                        {{ denuncia.protocolo }}
+                                    </div>
+
+                                    <div
+                                        style="
+                                            font-size: 13px;
+                                            line-height: 1.7;
+                                            color: #6b7280;
+                                        "
+                                    >
+                                        <strong>Sem movimentação:</strong>
+                                        {{ denuncia.dias_sem_movimentacao }} dia(s)
+                                        <br>
+
+                                        <strong>Status:</strong>
+                                        {{ denuncia.status }}
+
+                                        {% if denuncia.responsavel %}
+                                            <br>
+                                            <strong>Responsável:</strong>
+                                            {{ denuncia.responsavel }}
+                                        {% endif %}
+
+                                        {% if denuncia.unidade %}
+                                            <br>
+                                            <strong>Unidade:</strong>
+                                            {{ denuncia.unidade }}
+                                        {% endif %}
+                                    </div>
+
+                                </td>
+                            </tr>
+
+                            {% endfor %}
+
+                        </table>
+
+                        <p style="font-size: 14px; line-height: 1.7; color: #6b7280;">
+                            Recomendamos revisar essas pendências e registrar
+                            as próximas movimentações diretamente no FALAE.
+                        </p>
+
+                    </td>
+                </tr>
+
+                <tr>
+                    <td
+                        style="
+                            padding: 20px 32px;
+                            background-color: #f8fafc;
+                            border-top: 1px solid #e5e7eb;
+                        "
+                    >
+                        <p style="margin: 0; font-size: 12px; color: #9ca3af;">
+                            Esta é uma mensagem automática do FALAE.
+                            Não responda a este e-mail.
+                        </p>
+                    </td>
+                </tr>
+
+            </table>
+
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

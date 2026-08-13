@@ -380,6 +380,39 @@ class UsuarioRepository:
 
         return self.cursor.fetchall()
 
+
+    def listar_admins_empresa_para_notificacao(
+        self,
+        empresa_id
+    ):
+        empresa_id = self._normalizar_id(
+            empresa_id
+        )
+
+        self.cursor.execute(
+            """
+            SELECT
+                id,
+                nome,
+                email
+            FROM usuarios
+            WHERE empresa_id = %s
+            AND ativo = 1
+            AND perfil = 'ADMIN_EMPRESA'
+            AND email IS NOT NULL
+            AND TRIM(email) <> ''
+            ORDER BY nome
+            """,
+            (
+                empresa_id,
+            )
+        )
+
+        return self.cursor.fetchall()
+
+
+
+
     def buscar_por_id(
         self,
         usuario_id,

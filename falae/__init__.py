@@ -4,7 +4,7 @@ from flask import Flask, render_template
 from flask_wtf.csrf import CSRFError
 
 from config import Config
-from extensions import bcrypt, csrf
+from extensions import bcrypt, csrf, mail
 
 from falae.core.exceptions import registrar_exceptions
 from falae.core.logger import configurar_logger
@@ -169,8 +169,22 @@ def create_app() -> Flask:
         app
     )
 
+    mail.init_app(
+        app
+    )
+
     registrar_blueprints(
         app
     )
+
+    from falae.commands.notificacoes import (
+        notificacoes_semanais
+    )
+
+    app.cli.add_command(
+        notificacoes_semanais
+    )
+
+
 
     return app
