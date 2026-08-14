@@ -117,6 +117,7 @@ class TriagemService:
 
                 return {
                     "sucesso": True,
+                    "mensagem": "Triagem concluída com sucesso.",
                     "denuncia": denuncia,
                     "resultado": resultado
                 }

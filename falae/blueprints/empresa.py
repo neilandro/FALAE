@@ -384,7 +384,7 @@ def usuario_novo():
 
 
 @empresa_bp.route(
-    "/usuarios/<int:usuario_id>/editar",
+    "/empresa/usuarios/<int:usuario_id>/editar",
     methods=["GET", "POST"]
 )
 @perfil_required(
